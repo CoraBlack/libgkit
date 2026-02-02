@@ -4,10 +4,8 @@ project(gkit C CXX)
 
 include(cmake/common.cmake)
 
-# Include directories
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/core/include/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/c_abi/include/)
+# Third party dependencices build
+add_subdirectory(third_party)
 
 # build core
 set (GKIT_OBJS $<TARGET_OBJECTS:gkit_core>)
@@ -23,10 +21,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_subdirectory(${CMAKE_SOURCE_DIR}/test)
 endif()
 
-add_library(${PROJECT_NAME} 
-    ${GKIT_OBJS}
-)
+add_library(${PROJECT_NAME} ${GKIT_OBJS})
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3-static)
 
-add_library(${PROJECT_NAME}_static STATIC 
-    ${GKIT_OBJS}
-)
+add_library(${PROJECT_NAME}_static STATIC ${GKIT_OBJS})
+target_link_libraries(${PROJECT_NAME}_static PRIVATE SDL3::SDL3-static)
