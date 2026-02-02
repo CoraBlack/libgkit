@@ -1,0 +1,87 @@
+name: gkit-build-test
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+
+jobs:
+  build-and-test:
+    name: Build and Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        build_type: [Debug, Release]
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsdl3-dev cmake build-essential
+
+    - name: Install dependencies (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install sdl3
+        choco install cmake
+        choco install ninja
+
+    # - name: Install dependencies (macOS)
+    #   if: runner.os == 'macOS'
+    #   run: |
+    #     brew install sdl3
+    #     brew install cmake
+
+    - name: Configure CMake
+      run: |
+        cmake -B ${{ github.workspace }}/build \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DEXPORT_C_ABI=true
+
+    - name: Build project
+      run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
+
+    - name: Run core tests
+      if: matrix.build_type == 'Debug'
+      working-directory: ${{ github.workspace }}/build
+      run: |
+        # Run core library tests
+        if [ -f "test/core/graphic/window_test" ]; then
+          ./test/core/graphic/window_test
+        fi
+
+    - name: Run C ABI tests
+      if: matrix.build_type == 'Debug'
+      working-directory: ${{ github.workspace }}/build
+      run: |
+        # Run C ABI tests
+        if [ -f "test/c_abi/graphic/window_test" ]; then
+          ./test/c_abi/graphic/window_test
+        fi
+
+    - name: Test Rust binding (Linux/macOS)
+      if: runner.os != 'Windows' && matrix.build_type == 'Debug'
+      working-directory: ${{ github.workspace }}/binding/rust
+      run: |
+        cargo build
+        cargo test
+
+    - name: Test Rust binding (Windows)
+      if: runner.os == 'Windows' && matrix.build_type == 'Debug'
+      working-directory: ${{ github.workspace }}/binding/rust
+      shell: cmd
+      run: |
+        cargo build
+        cargo test
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: gkit-${{ matrix.os }}-${{ matrix.build_type }}
+        path: ${{ github.workspace }}/build/
