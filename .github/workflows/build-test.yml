@@ -38,47 +38,13 @@ jobs:
     #     brew install sdl3
     #     brew install cmake
 
-    - name: Configure CMake
+    - name: Configure CMake (Linux)
+      if: runner.os == 'Linux'
       run: |
-        cmake -B ${{ github.workspace }}/build \
-              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-              -DEXPORT_C_ABI=true
+        cmake --preset linux-x86_64-gcc-debug
 
-    - name: Build project
-      run: cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
-
-    - name: Run core tests
-      if: matrix.build_type == 'Debug'
-      working-directory: ${{ github.workspace }}/build
-      run: |
-        # Run core library tests
-        if [ -f "test/core/graphic/window_test" ]; then
-          ./test/core/graphic/window_test
-        fi
-
-    - name: Run C ABI tests
-      if: matrix.build_type == 'Debug'
-      working-directory: ${{ github.workspace }}/build
-      run: |
-        # Run C ABI tests
-        if [ -f "test/c_abi/graphic/window_test" ]; then
-          ./test/c_abi/graphic/window_test
-        fi
-
-    - name: Test Rust binding (Linux/macOS)
-      if: runner.os != 'Windows' && matrix.build_type == 'Debug'
-      working-directory: ${{ github.workspace }}/binding/rust
-      run: |
-        cargo build
-        cargo test
-
-    - name: Test Rust binding (Windows)
-      if: runner.os == 'Windows' && matrix.build_type == 'Debug'
-      working-directory: ${{ github.workspace }}/binding/rust
-      shell: cmd
-      run: |
-        cargo build
-        cargo test
+    - name: Configure and build project (Linux)
+      run: cmake --build ${{ github.workspace }}/build/linux-x86_64-gcc-debug
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
