@@ -2,7 +2,7 @@
     "version": 10,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 3,
+        "minor": 2,
         "patch": 0
     },
     "$comment": "gkit library build configration for different platforms",
