@@ -3,7 +3,7 @@
 > [!IMPORTANT]
 >
 > - libgkit is still in development. We need your help to improve it.
->
+
 > [!WARNING]
 >
 > - This library is used for technical implementation testing. It is not recommended to use it in production.
