@@ -1,4 +1,4 @@
-#include "../../core/include/gkit.hpp"
+#include "core/include/gkit.hpp"
 #include <SDL3/SDL_video.h>
 #include <chrono>
 #include <thread>

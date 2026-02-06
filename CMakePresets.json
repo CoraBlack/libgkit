@@ -1,11 +1,10 @@
 {
-    "version": 10,
+    "version": 4,
     "cmakeMinimumRequired": {
-        "major": 4,
-        "minor": 0,
+        "major": 3,
+        "minor": 2,
         "patch": 0
     },
-    "$comment": "gkit library build configration for different platforms",
     "configurePresets": [
         {
             "name": "common",
@@ -17,10 +16,6 @@
         {"name": "linux", "hidden": true },
         {"name": "windows", "hidden": true },
 
-        {"name": "x64", "hidden": true, "architecture": "x64"},
-        {"name": "x86", "hidden": true, "architecture": "x86"},
-        {"name": "arm64", "hidden": true, "architecture": "arm64"},
-        {"name": "arm", "hidden": true, "architecture": "arm"},
 
         {"name": "debug", "hidden": true, "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}},
         {"name": "release", "hidden": true, "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}},
@@ -32,28 +27,28 @@
 
         {
             "name": "linux-x86_64-gcc-debug",
-            "inherits": ["common", "linux", "x64", "debug", "gcc", "c_abi"],
+            "inherits": ["common", "linux", "debug", "gcc", "c_abi"],
             "cacheVariables": {
                 "BIN_FOLDER": "linux-x86_64-gcc"
             }
         },
         {
             "name": "linux-x86_64-gcc-noabi-debug",
-            "inherits": ["common", "linux", "x64", "debug", "gcc", "noabi"],
+            "inherits": ["common", "linux", "debug", "gcc", "noabi"],
             "cacheVariables": {
                 "BIN_FOLDER": "linux-x86_64-gcc-noabi"
             }
         },
         {
             "name": "windows-x86_64-mingw64-debug",
-            "inherits": ["common", "windows", "x64", "debug", "c_abi"],
+            "inherits": ["common", "windows", "debug", "c_abi"],
             "cacheVariables": {
                 "BIN_FOLDER": "windows-x86_64-gcc"
             }
         },
         {
             "name": "windows-x86_64-mingw64-noabi-debug",
-            "inherits": ["common", "windows", "x64", "debug", "noabi"],
+            "inherits": ["common", "windows", "debug", "noabi"],
             "cacheVariables": {
                 "BIN_FOLDER": "windows-x86_64-gcc-noabi"
             }

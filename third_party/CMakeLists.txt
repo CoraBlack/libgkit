@@ -1,0 +1,8 @@
+# build sdl (build for static lib)
+set (SDL_STATIC ON)
+set (SDL_SHARED OFF)
+set (SDL_BUILD_TESTS OFF)
+set (SDL_INSTALL OFF)
+set (SDL_TEST_LIBRARY OFF)
+set (SDL_TESTS OFF)
+add_subdirectory(sdl)

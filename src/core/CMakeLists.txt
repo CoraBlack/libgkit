@@ -1,8 +1,5 @@
 set (CORE "gkit_core")
 
-# Third party libraries
-find_package(SDL3 REQUIRED)
-
 ## Core Sources file ##
 file(GLOB_RECURSE CORE_SRC
   "./application/*.cpp"
@@ -12,5 +9,5 @@ file(GLOB_RECURSE CORE_SRC
 
 add_library(${CORE} OBJECT ${CORE_SRC})
 
-target_include_directories(${CORE} PRIVATE "include/")
-target_link_libraries(${CORE} PRIVATE SDL3::SDL3)
+target_include_directories(${CORE} PRIVATE "./include/") # include for header file
+target_include_directories(${CORE} PRIVATE "../")        # top include for source file
