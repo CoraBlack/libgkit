@@ -17,10 +17,6 @@
         {"name": "linux", "hidden": true },
         {"name": "windows", "hidden": true },
 
-        {"name": "x64", "hidden": true, "architecture": "x64"},
-        {"name": "x86", "hidden": true, "architecture": "x86"},
-        {"name": "arm64", "hidden": true, "architecture": "arm64"},
-        {"name": "arm", "hidden": true, "architecture": "arm"},
 
         {"name": "debug", "hidden": true, "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}},
         {"name": "release", "hidden": true, "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}},
@@ -32,14 +28,14 @@
 
         {
             "name": "linux-x86_64-gcc-debug",
-            "inherits": ["common", "linux", "x64", "debug", "gcc", "c_abi"],
+            "inherits": ["common", "linux", "debug", "gcc", "c_abi"],
             "cacheVariables": {
                 "BIN_FOLDER": "linux-x86_64-gcc"
             }
         },
         {
             "name": "linux-x86_64-gcc-noabi-debug",
-            "inherits": ["common", "linux", "x64", "debug", "gcc", "noabi"],
+            "inherits": ["common", "linux", "debug", "gcc", "noabi"],
             "cacheVariables": {
                 "BIN_FOLDER": "linux-x86_64-gcc-noabi"
             }
