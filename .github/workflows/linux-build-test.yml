@@ -10,6 +10,9 @@ jobs:
   build-and-test:
     name: Build and Test on Ubuntu-latest
     runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        preset: [ "linux-x86_64-gcc-debug", "linux-x86_64-gcc-noabi-debug" ]
       
     steps:
     - name: Checkout code
@@ -48,7 +51,7 @@ jobs:
     - name: Configure and build project (Linux)
       run: |
         echo "🔨 Building project on Linux..."
-        BUILD_DIR="${{ github.workspace }}/build/linux-x86_64-gcc-debug"
+        BUILD_DIR="${{ github.workspace }}/build/${{matrix.preset}}"
         echo "Build directory: $BUILD_DIR"
         cmake --build $BUILD_DIR
         echo "✅ Linux build completed successfully"
