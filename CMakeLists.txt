@@ -21,8 +21,17 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_subdirectory(${CMAKE_SOURCE_DIR}/test)
 endif()
 
-add_library(${PROJECT_NAME} ${GKIT_OBJS})
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3-static)
-
+add_library(${PROJECT_NAME} SHARED ${GKIT_OBJS})
 add_library(${PROJECT_NAME}_static STATIC ${GKIT_OBJS})
-target_link_libraries(${PROJECT_NAME}_static PRIVATE SDL3::SDL3-static)
+
+set (GKIT_LIBS)
+list (APPEND GKIT_LIBS ${PROJECT_NAME})
+list (APPEND GKIT_LIBS ${PROJECT_NAME}_static)
+
+# link third party static libraries
+foreach(GKIT_LIB ${GKIT_LIBS})
+    target_link_libraries(${GKIT_LIB} PRIVATE 
+        SDL3::SDL3-static 
+        SDL3_image::SDL3_image
+    )
+endforeach()

@@ -1,21 +1,25 @@
 # C standard
-set(C_Standard 11)
-set(C_Standard_REQUIRED ON)
-set(C_EXTENSIONS OFF)
+set(CMAKE_C_Standard 11)
+set(CMAKE_C_Standard_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
 # C++ standard
-set(CXX_STANDARD 20)
-set(CXX_STANDARD_REQUIRED ON)
-set(CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# compiler settings
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # Project settings
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin/${BIN_FOLDER})
+set(LIBRARY_OUTPUT_PATH ${BIN_FOLDER})
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 # Add third party include paths
 include_directories(${CMAKE_SOURCE_DIR}/third_party/sdl/include)
+include_directories(${CMAKE_SOURCE_DIR}/third_party/sdl_image/include)
 
 # Link third party libraries
-link_directories(${CMAKE_SOURCE_DIR}/bin/${BIN_FOLDER})
+link_directories(${BIN_FOLDER}/third_party)
