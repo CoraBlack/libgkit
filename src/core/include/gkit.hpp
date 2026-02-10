@@ -1,8 +1,19 @@
 #pragma once
 
+// Basic
 #include <application.hpp>
-#include <input/input.hpp>
-#include <window.hpp>
+
+// Graphic
+#include <graphic/window.hpp>
+
+// Resource
+#include <resource/resource.hpp>
+#include <resource/texture.hpp>
+#include <resource/resource_loader.hpp>
+
+// Utils
+#include <utils/vector2.hpp>
+#include <utils/vector3.hpp>
 
 namespace gkit {
     
