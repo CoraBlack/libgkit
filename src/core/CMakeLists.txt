@@ -7,6 +7,7 @@ file(GLOB_RECURSE CORE_SRC
   # "./input/*.cpp"
   "./resource/*cpp"
   "./utils/*.cpp"
+  "./*.cpp"
 )
 
 add_library(${CORE} OBJECT ${CORE_SRC})
