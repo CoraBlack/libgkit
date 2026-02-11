@@ -3,6 +3,7 @@
 > [!IMPORTANT]
 >
 > - libgkit is still in development. We need your help to improve it.
+> - libgkit only supports gnu toolchain. LLVM(clang) and msvc have not been tested and cmake support.
 
 > [!WARNING]
 >

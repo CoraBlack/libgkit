@@ -1,5 +1,5 @@
 #include "../include/window.h"
-#include "window.hpp"
+#include "core/include/graphic/window.hpp"
 #include <SDL3/SDL_video.h>
 #include <vector>
 
