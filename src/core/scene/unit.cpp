@@ -33,10 +33,12 @@ gkit::scene::Unit::Unit(std::string name) noexcept : gkit::scene::Unit() {
     this->name = name;
 }
 
+
 auto gkit::scene::Unit::_ready()            -> void { }
 auto gkit::scene::Unit::_process()          -> void { }
 auto gkit::scene::Unit::_physics_process()  -> void { }
 auto gkit::scene::Unit::_exit()             -> void { }
+
 
 auto gkit::scene::Unit::ready_handler() noexcept -> void {
     for (auto child_index : this->active_index_cache) {
@@ -171,6 +173,7 @@ auto gkit::scene::Unit::drop_children() -> void {
             auto child_temp = std::move(child_ptr);
             child_ptr.reset();
             this->modified = true;
+            child_temp->exit_handler();
         }
     }
 }
