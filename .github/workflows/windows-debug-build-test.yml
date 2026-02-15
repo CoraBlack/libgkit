@@ -37,6 +37,9 @@ jobs:
         
         echo "✅ Windows dependencies installed successfully"
 
+    - name: Configure MSVC
+      uses: TheMrMilchmann/setup-msvc-dev@v4.0.0
+      
     - name: Configure CMake
       run: |
         echo "⚙️ Configuring CMake ..."
