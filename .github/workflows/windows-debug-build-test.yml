@@ -5,6 +5,7 @@ on:
     branches-ignore: [ "main" ]
   pull_request:
     branches-ignore: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -42,9 +43,10 @@ jobs:
         echo "✅ CMake configuration completed"
 
     - name: Configure and build project
+      shell: powershell
       run: |
         echo "🔨 Building project..."
-        BUILD_DIR="${{ github.workspace }}/build/${{matrix.preset}}"
+        $env:BUILD_DIR = "${{ github.workspace }}/build/${{matrix.preset}}"
         echo "Build directory: $BUILD_DIR"
         cmake --build $BUILD_DIR
         echo "✅ Windows build completed successfully"
