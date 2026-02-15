@@ -38,6 +38,7 @@ jobs:
         echo "✅ Windows dependencies installed successfully"
 
     - name: Configure MSVC
+      if: ${{ matrix.preset == 'windows-x86_64-msvc-debug' || matrix.preset == 'windows-x86_64-msvc-noabi-debug' }}
       uses: TheMrMilchmann/setup-msvc-dev@v4.0.0
       with: 
         arch: x64
