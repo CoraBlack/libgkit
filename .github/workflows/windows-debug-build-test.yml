@@ -43,10 +43,10 @@ jobs:
         echo "✅ CMake configuration completed"
 
     - name: Configure and build project
-      shell: powershell
+      shell: pwsh
       run: |
         echo "Building project..."
-        $env:BUILD_DIR = "${{ github.workspace }}/build/${{matrix.preset}}"
+        $BUILD_DIR = "${{ github.workspace }}/build/${{matrix.preset}}"
         echo "Build directory: $BUILD_DIR"
         cmake --build $BUILD_DIR
         echo "Windows build completed successfully"
