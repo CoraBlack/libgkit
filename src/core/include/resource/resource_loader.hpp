@@ -33,9 +33,8 @@ namespace gkit::resource {
             }
         };
     private:
-        std::shared_mutex cache_rw_mutex = std::shared_mutex();
-        std::unordered_map<std::filesystem::path, std::shared_ptr<gkit::resource::Resource>> resource_cache 
-                    = std::unordered_map<std::filesystem::path, std::shared_ptr<gkit::resource::Resource>>();
+        std::shared_mutex cache_rw_mutex {};
+        std::unordered_map<std::filesystem::path, std::shared_ptr<gkit::resource::Resource>> resource_cache {};
 
         auto push_to_cache(std::shared_ptr<gkit::resource::Resource> res) -> void;
         auto get_cache(std::filesystem::path path) -> std::optional<std::shared_ptr<gkit::resource::Resource>>;
