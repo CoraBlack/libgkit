@@ -261,14 +261,13 @@ namespace gkit::scene {
 
         // Why this part didn't use auto, because it need to have a const_iterator use
         // but auto could not allow two same function but with different return
-        // but begin 
+        // but begin() and end() need those two return
+        // So I will not change it
         iterator begin() {
-            update_index_cache();
             return iterator(this, 0);
         }
 
         iterator end() {
-            update_index_cache();
             return iterator(this, active_index_cache.size());
         }
 
@@ -321,13 +320,13 @@ namespace gkit::scene {
             size_t m_pos;
         };
 
-        const_iterator begin() const {
-            const_cast<Unit*>(this)->update_index_cache();
+        const_iterator begin() const{
+            const_cast<Unit*>(this);
             return const_iterator(this, 0);
         }
 
         const_iterator end() const {
-            const_cast<Unit*>(this)->update_index_cache();
+            const_cast<Unit*>(this);
             return const_iterator(this, active_index_cache.size());
         }
 
