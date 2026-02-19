@@ -57,28 +57,25 @@ namespace gkit::scene {
 
     protected: // control workflow handler
         friend Application;
-        friend class iterator;
-        friend class const_iterator;
-
         /**
          * @brief The call the @ref _ready() of the unit and the children.
          * @note It will be called when the unit is ready.
          * It always will be called when the call @ref gkit::application::run
-         * and an unit become the child of another Unit instance by calling
+         * and an unit become the child of another Unit instance by calling 
          * @ref add_child if the unit is active.
-         *
-         * It will call the @ref _ready() of the children of the unit
+         * 
+         * It will call the @ref _ready() of the children of the unit 
          * in the forward order of valid indexes and call this one.
          */
         auto ready_handler() noexcept -> void;
 
         /**
          * @brief The call the @ref _process() of the unit and the children.
-         * @note It will be called before the frame begin. And call the @ref _process()
+         * @note It will be called before the frame begin. And call the @ref _process() 
          * of the children of the unit(the called order is same as @ref ready_handler)
-         *
+         * 
          * Before call the @ref _process(), it will call the @ref update_index_cache()
-         * to make sure the index cache is valid. After call @ref _process() for its children
+         * to make sure the index cache is valid. After call @ref _process() for its children 
          * and itself, it will call the @ref drop_children() to drop the children whose
          * @ref ready_to_drop is true.
          */
@@ -151,7 +148,7 @@ namespace gkit::scene {
          * @param index The index of the child.
          * @param func The callable method, which return type is not void.
          * @param args The arguments of the callable method.
-         * @return the callable method's return value.
+         * @return the callable method's return value. 
          * If the index is out of range, return std::nullopt.
          */
         template<typename Unit_T, typename F, typename... Args>
@@ -185,7 +182,7 @@ namespace gkit::scene {
         /**
          * @brief Get the available child pointer.
          * @param index The index of the child.
-         * @return std::optional<Unit*>
+         * @return std::optional<Unit*> 
          * If the index is valid, return the pointer to the child, otherwise return std::nullopt.
          */
         auto get_available_child(uint32_t index) noexcept -> std::optional<Unit*>;
@@ -355,7 +352,7 @@ namespace gkit::scene {
         try {
             auto ptr = std::unique_ptr<T>(new T(name));
             return ptr;
-        } catch (...) {
+        } catch(...) {
             return nullptr;
         }
     }
