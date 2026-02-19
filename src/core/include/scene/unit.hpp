@@ -216,14 +216,14 @@ namespace gkit::scene {
         // iterator
         class iterator {
         public:
-            using iterator_category =   std::bidirectional_iterator_tag;
-            using value_type =          Unit;
-            using difference_type =     std::ptrdiff_t;
-            using pointer =             Unit *;
-            using reference =           Unit &;
+            using iterator_category = std::bidirectional_iterator_tag;
+            using value_type = Unit;
+            using difference_type = std::ptrdiff_t;
+            using pointer = Unit*;
+            using reference = Unit&;
 
         public:
-            iterator(Unit *owner, size_t pos) : m_owner(owner), m_pos(pos) {}
+            iterator(Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
             reference operator*() const {
                 auto child_opt = m_owner->get_available_child(static_cast<uint32_t>(m_pos));
                 return **child_opt;
@@ -250,11 +250,11 @@ namespace gkit::scene {
                 --(*this);
                 return tmp;
             }
-            bool operator==(const iterator &other) const { return m_owner == other.m_owner && m_pos == other.m_pos; }
-            bool operator!=(const iterator &other) const { return !(*this == other); }
+            bool operator==(const iterator& other) const { return m_owner == other.m_owner && m_pos == other.m_pos; }
+            bool operator!=(const iterator& other) const { return !(*this == other); }
 
         private:
-            Unit *m_owner;
+            Unit* m_owner;
             size_t m_pos;
             friend class Unit;
         };
@@ -273,21 +273,21 @@ namespace gkit::scene {
         // Next, we are going to write the const implementation of the iterator.
         class const_iterator {
         public:
-            using iterator_category =   std::bidirectional_iterator_tag;
-            using value_type =          const Unit;
-            using difference_type =     std::ptrdiff_t;
-            using pointer =             const Unit *;
-            using reference =           const Unit &;
+            using iterator_category = std::bidirectional_iterator_tag;
+            using value_type = const Unit;
+            using difference_type = std::ptrdiff_t;
+            using pointer = const Unit*;
+            using reference = const Unit&;
 
-            const_iterator(const Unit *owner, size_t pos) : m_owner(owner), m_pos(pos) {}
+            const_iterator(const Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
 
             reference operator*() const {
-                auto child_opt = const_cast<Unit *>(m_owner)->get_available_child(static_cast<uint32_t>(m_pos));
+                auto child_opt = const_cast<Unit*>(m_owner)->get_available_child(static_cast<uint32_t>(m_pos));
                 return **child_opt;
             }
 
             pointer operator->() const {
-                auto child_opt = const_cast<Unit *>(m_owner)->get_available_child(static_cast<uint32_t>(m_pos));
+                auto child_opt = const_cast<Unit*>(m_owner)->get_available_child(static_cast<uint32_t>(m_pos));
                 return *child_opt;
             }
 
@@ -310,23 +310,23 @@ namespace gkit::scene {
                 return tmp;
             }
 
-            bool operator==(const const_iterator &other) const {
+            bool operator==(const const_iterator& other) const {
                 return m_owner == other.m_owner && m_pos == other.m_pos;
             }
-            bool operator!=(const const_iterator &other) const { return !(*this == other); }
+            bool operator!=(const const_iterator& other) const { return !(*this == other); }
 
         private:
-            const Unit *m_owner;
+            const Unit* m_owner;
             size_t m_pos;
         };
 
         const_iterator begin() const {
-            const_cast<Unit *>(this)->update_index_cache();
+            const_cast<Unit*>(this)->update_index_cache();
             return const_iterator(this, 0);
         }
 
         const_iterator end() const {
-            const_cast<Unit *>(this)->update_index_cache();
+            const_cast<Unit*>(this)->update_index_cache();
             return const_iterator(this, active_index_cache.size());
         }
 
@@ -339,13 +339,13 @@ namespace gkit::scene {
         using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
         reverse_iterator rbegin() { return reverse_iterator(end()); }
-        reverse_iterator rend()   { return reverse_iterator(begin()); }
+        reverse_iterator rend() { return reverse_iterator(begin()); }
 
         const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
-        const_reverse_iterator rend()   const { return const_reverse_iterator(begin()); }
+        const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
         const_reverse_iterator crbegin() const { return rbegin(); }
-        const_reverse_iterator crend()   const { return rend(); }
+        const_reverse_iterator crend() const { return rend(); }
 
     }; // class Unit
 
