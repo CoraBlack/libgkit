@@ -224,34 +224,34 @@ namespace gkit::scene {
 
         public:
             iterator(Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
-            reference operator*() const {
+            auto operator*() -> reference const {
                 auto child_opt = m_owner->get_available_child(static_cast<uint32_t>(m_pos));
                 return **child_opt;
             }
-            pointer operator->() const {
+            auto operator->() -> pointer const {
                 auto child_opt = m_owner->get_available_child(static_cast<uint32_t>(m_pos));
                 return *child_opt;
             }
-            iterator &operator++() {
+            auto operator++() -> iterator& {
                 ++m_pos;
                 return *this;
             }
-            iterator operator++(int) {
+            auto operator++(int) -> iterator {
                 iterator tmp = *this;
                 ++(*this);
                 return tmp;
             }
-            iterator &operator--() {
+            auto operator--() -> iterator& {
                 --m_pos;
                 return *this;
             }
-            iterator operator--(int) {
+            auto operator--(int) -> iterator {
                 iterator tmp = *this;
                 --(*this);
                 return tmp;
             }
-            bool operator==(const iterator& other) const { return m_owner == other.m_owner && m_pos == other.m_pos; }
-            bool operator!=(const iterator& other) const { return !(*this == other); }
+            auto operator==(const iterator& other) -> bool const { return m_owner == other.m_owner && m_pos == other.m_pos; }
+            auto operator!=(const iterator& other) -> bool const { return !(*this == other); }
 
         private:
             Unit* m_owner;
@@ -259,6 +259,9 @@ namespace gkit::scene {
             friend class Unit;
         };
 
+        // Why this part didn't use auto, because it need to have a const_iterator use
+        // but auto could not allow two same function but with different return
+        // but begin 
         iterator begin() {
             update_index_cache();
             return iterator(this, 0);
@@ -281,39 +284,37 @@ namespace gkit::scene {
 
             const_iterator(const Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
 
-            reference operator*() const {
+            auto operator*() -> reference const {
                 auto child_opt = const_cast<Unit*>(m_owner)->get_available_child(static_cast<uint32_t>(m_pos));
                 return **child_opt;
             }
 
-            pointer operator->() const {
+            auto operator->() -> pointer const {
                 auto child_opt = const_cast<Unit*>(m_owner)->get_available_child(static_cast<uint32_t>(m_pos));
                 return *child_opt;
             }
 
-            const_iterator &operator++() {
+            auto operator++() -> const_iterator& {
                 ++m_pos;
                 return *this;
             }
-            const_iterator operator++(int) {
+            auto operator++(int) -> const_iterator {
                 const_iterator tmp = *this;
                 ++(*this);
                 return tmp;
             }
-            const_iterator &operator--() {
+            auto operator--() -> const_iterator& {
                 --m_pos;
                 return *this;
             }
-            const_iterator operator--(int) {
+            auto  operator--(int) -> const_iterator {
                 const_iterator tmp = *this;
                 --(*this);
                 return tmp;
             }
 
-            bool operator==(const const_iterator& other) const {
-                return m_owner == other.m_owner && m_pos == other.m_pos;
-            }
-            bool operator!=(const const_iterator& other) const { return !(*this == other); }
+            auto operator==(const const_iterator& other) -> bool const { return m_owner == other.m_owner && m_pos == other.m_pos; }
+            auto operator!=(const const_iterator& other) -> bool const { return !(*this == other); }
 
         private:
             const Unit* m_owner;
