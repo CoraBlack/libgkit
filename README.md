@@ -13,6 +13,6 @@
 
 libgkit is a simple game library for game development. It is written in C++ mainly. We will also provide cabi for different program language.
 
-## What is our goal
+## Contribution
 
-This library is not designed for creating large, stable game projects. It aims to achieve zero runtime performance overhead by processing all object information at compile time. In terms of script extensions, we aim to use cabi as a bridge for the core content of the library to achieve high performance.
+We hope that you can contribute your code into `libgkit`. If you want to contribute your code but don't know where to start, you can visit the [discussion-section](https://github.com/AntarcticaCamp/libgkit/discussions) to know what plan we have. If you have some new idea, you can visit the [feature-section](https://github.com/AntarcticaCamp/libgkit/discussions/14) to express your idea.
