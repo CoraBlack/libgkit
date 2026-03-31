@@ -7,7 +7,7 @@
 
 namespace gkit {
 
-    class Application : utils::Singleton<Application> {
+    class Application : public utils::Singleton<Application> {
     public:
         explicit Application() noexcept;
         virtual ~Application() noexcept;
