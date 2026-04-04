@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/core/scene/singleton_unit.hpp"
+#include "gkit/core/scene/singleton.hpp"
 #include "gkit/core/resource/resource.hpp"
 #include <unordered_map>
 #include <shared_mutex>
