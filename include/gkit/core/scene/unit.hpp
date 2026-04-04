@@ -13,7 +13,7 @@
 #include <memory>
 
 namespace gkit {
-    class Application;
+    class Processer;
 }
 
 namespace gkit::scene {
@@ -57,7 +57,7 @@ namespace gkit::scene {
         virtual auto _exit() -> void;
 
     protected: // control workflow handler
-        friend Application;
+        friend Processer;
         /**
          * @brief The call the @ref _ready() of the unit and the children.
          * @note It will be called when the unit is ready.
