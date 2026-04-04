@@ -1,4 +1,4 @@
-#include "utils/vector3.hpp"
+#include "gkit/core/utils/vector3.hpp"
 
 
 gkit::utils::Vector3::Vector3(float x, float y, float z) noexcept : x(x), y(y), z(z) {}

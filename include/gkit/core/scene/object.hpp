@@ -1,6 +1,6 @@
 #pragma once
 
-#include "unit.hpp"
+#include "gkit/core/scene/unit.hpp"
 namespace gkit::scene {
     /**
      * @brief This is the basic unit of game composition

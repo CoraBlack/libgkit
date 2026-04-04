@@ -11,5 +11,5 @@ file(GLOB_RECURSE CORE_SRC
 
 add_library(${CORE} OBJECT ${CORE_SRC})
 
-target_include_directories(${CORE} PRIVATE "./include/") # include for header file
-target_include_directories(${CORE} PRIVATE "../")        # top include for source file
+target_include_directories(${CORE} PRIVATE ${CMAKE_SOURCE_DIR}/include)  # include for header file
+target_include_directories(${CORE} PRIVATE ${CMAKE_SOURCE_DIR}/src/core) # top include for source file

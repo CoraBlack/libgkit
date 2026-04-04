@@ -20,5 +20,4 @@ include_directories(${CMAKE_SOURCE_DIR}/third_party/sdl/include)
 include_directories(${CMAKE_SOURCE_DIR}/third_party/sdl_image/include)
 
 # Link third party libraries
-
 link_directories(${BIN_FOLDER}/third_party)

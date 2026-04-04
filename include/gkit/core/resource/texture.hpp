@@ -1,6 +1,6 @@
 #pragma once
 
-#include "resource.hpp"
+#include "gkit/core/resource/resource.hpp"
 #include <filesystem>
 #include <memory>
 
