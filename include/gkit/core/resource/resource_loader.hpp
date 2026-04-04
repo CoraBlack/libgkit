@@ -1,7 +1,7 @@
 #pragma once
 
-#include "utils/Singleton.hpp"
-#include "resource.hpp"
+#include "gkit/core/utils/Singleton.hpp"
+#include "gkit/core/resource/resource.hpp"
 #include <unordered_map>
 #include <shared_mutex>
 #include <optional>

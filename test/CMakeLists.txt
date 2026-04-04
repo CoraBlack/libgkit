@@ -1,7 +1,7 @@
 set (EXECUTABLE_OUTPUT_PATH ${BIN_FOLDER}/test)
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(${CMAKE_SOURCE_DIR}/src/core/include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src/c_abi/include)
 
 # build core tests

@@ -1,4 +1,4 @@
-#include <core/include/resource/resource_loader.hpp>
+#include <gkit/core/resource/resource_loader.hpp>
 
 
 auto gkit::resource::ResourceLoader::push_to_cache(std::shared_ptr<gkit::resource::Resource> res) -> void {

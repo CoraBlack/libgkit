@@ -1,5 +1,5 @@
-#include "../include/application.hpp"
-#include "scene/unit.hpp"
+#include "gkit/core/application.hpp"
+#include "gkit/core/scene/unit.hpp"
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_log.h>

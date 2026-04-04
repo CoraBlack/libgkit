@@ -1,6 +1,4 @@
-#include "scene/unit.hpp"
-#include <gkit.hpp>
-#include <format>
+#include <gkit/core/gkit.hpp>
 #include <iostream>
 #include <memory>
 #include <string>

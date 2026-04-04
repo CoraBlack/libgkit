@@ -1,10 +1,9 @@
 #pragma once
 
-#include "scene/unit.hpp"
-#include "utils/Singleton.hpp"
+#include "gkit/core/scene/unit.hpp"
+#include "gkit/core/utils/Singleton.hpp"
 #include <atomic>
 #include <memory>
-#include <vector>
 
 namespace gkit {
 

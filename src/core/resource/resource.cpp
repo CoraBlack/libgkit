@@ -1,4 +1,4 @@
-#include "core/include/resource/resource.hpp"
+#include "gkit/core/resource/resource.hpp"
 
 
 gkit::resource::Resource::Resource(std::filesystem::path path) : res_path(std::move(path)) { }

@@ -1,5 +1,5 @@
-#include "scene/unit.hpp"
-#include <gkit.hpp>
+#include <gkit/core/scene/unit.hpp>
+#include <gkit/core/application.hpp>
 #include <format>
 #include <iostream>
 #include <memory>
