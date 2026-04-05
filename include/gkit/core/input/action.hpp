@@ -26,17 +26,18 @@ namespace gkit::input {
 
     public:
         auto get_type() const -> Type { return type; }
-        auto set_action(const InputChord& action) -> void { 
-            if constexpr (std::is_same_v<KeyChord, typename std::decay_t<decltype(action)>>) {
-                type = Type::Key;
-                this->action = action;
-            } else {
-                
-            }
+        auto set_action(const InputChord& action) -> void {
+            std::visit([this](const auto& action) {
+                using ChordT = std::decay_t<decltype(action)>;
+                if constexpr (std::is_same_v<KeyChord, ChordT>) {
+                    this->type = Type::Key;
+                    this->chord = action;
+                }
+            }, action);
         }
 
     private:
         Type type;
-        InputChord action;
+        InputChord chord;
     }; // class Action
 } // namespace gkit::input
