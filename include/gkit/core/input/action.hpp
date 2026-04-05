@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gkit/core/input/keys.hpp"
+#include "gkit/core/input/mouse.hpp"
 #include <string>
 #include <variant>
 
@@ -10,7 +11,7 @@ namespace gkit {
 
 namespace gkit::input {
     /** @brief A variant type representing different types of input chords */
-    using InputChord = std::variant<KeyChord>;
+    using InputChord = std::variant<KeyChord, MouseChord>;
 
     class Action {
         friend class gkit::Input;
@@ -21,24 +22,27 @@ namespace gkit::input {
         /**
          * @brief Construct a new Action object with a name
          * @param name The name of the action
+         * @param auto_register Whether to automatically register the action
          */
-        Action(std::string name) : name(std::move(name)) {};
+        Action(std::string name, bool auto_register = true);
         ~Action() = default;
 
     public:
         /**
          * @brief Set the action's input chord
          * @param chord The input chord to set for this action.
-         * The type of chord can be @ref KeyChord
+         * The type of chord can be @ref KeyChord or @ref MouseChord
          */
-        auto set_action(const InputChord& chord) -> void {
-            std::visit([this](const auto& input_chord) {
-                using ChordT = std::decay_t<decltype(input_chord)>;
-                if constexpr (std::is_same_v<KeyChord, ChordT>) {
-                    /* this->type = Type::Key; */
-                    this->chord = input_chord;
-                }
-            }, chord);
+        inline auto set_action(const InputChord& chord) -> void {
+            this->chord = chord;
+        }
+
+        /**
+         * @brief Get the name of the action
+         * @return The name of the action
+         */
+        inline auto get_name() const -> const std::string& {
+            return this->name;
         }
 
     private:
