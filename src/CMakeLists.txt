@@ -9,8 +9,8 @@ list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_math>)
 add_subdirectory(resource)
 list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_resource>)
 
-# add_subdirectory(utils)
-# list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_utils>)
+add_subdirectory(utils)
+list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_utils>)
 
 add_library(${PROJECT_NAME} SHARED ${GKIT_OBJS})
 add_library(${PROJECT_NAME}_static STATIC ${GKIT_OBJS})
