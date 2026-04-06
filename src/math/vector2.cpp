@@ -1,4 +1,4 @@
-#include <gkit/core/utils/vector2.hpp>
+#include <gkit/math/vector2.hpp>
 
 
 gkit::utils::Vector2::Vector2(float x, float y) noexcept : x(x), y(y) { }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/core/utils/vector2.hpp"
+#include "gkit/math/vector2.hpp"
 #include <cstdint>
 #include <vector>
 

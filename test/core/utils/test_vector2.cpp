@@ -1,4 +1,4 @@
-#include <gkit/core/utils/vector2.hpp>
+#include <gkit/math/vector2.hpp>
 #include <iostream>
 #include <format>
 #include <string>
