@@ -7,10 +7,7 @@ namespace gkit::test {
     // A window for event system to work 
     struct Window {
         Window() {
-            if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-                std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
-                std::exit(1);
-            }
+            SDL_Init(SDL_INIT_VIDEO);
 
             win_ptr = SDL_CreateWindow("Window for input test", 640, 480, SDL_WINDOW_RESIZABLE);
             if (!win_ptr) {
