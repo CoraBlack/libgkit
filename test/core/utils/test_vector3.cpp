@@ -3,7 +3,7 @@
 #include <format>
 #include <iostream>
 
-using gkit::utils::Vector3;
+using gkit::math::Vector3;
 
 auto vec_str(Vector3& vec) -> std::string {
     auto [x, y, z] = vec.properties();
