@@ -15,7 +15,6 @@ namespace gkit::scene {
          **********************************/
         inline auto get_transform() -> Transform2D& { return transform; }
         inline auto get_transform() const -> const Transform2D& { return transform; }
-
         inline auto get_position() const -> math::Vector2 { return transform.get_position(); }
         inline auto set_position(const math::Vector2& position) -> void { transform.set_position(position); }
         inline auto get_rotation() const -> float { return transform.get_rotation(); }
