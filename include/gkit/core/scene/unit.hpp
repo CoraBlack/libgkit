@@ -51,10 +51,10 @@ namespace gkit::scene {
         virtual ~Unit() = default;
 
     public: // virtual methods
-        virtual auto _ready()   -> void;
-        virtual auto _process() -> void;
-        virtual auto _physics_process() -> void;
-        virtual auto _exit() -> void;
+        virtual auto ready()   -> void;
+        virtual auto process() -> void;
+        virtual auto physics_process() -> void;
+        virtual auto exit() -> void;
 
     protected: // control workflow handler
         friend Processer;

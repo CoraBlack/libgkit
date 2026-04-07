@@ -20,10 +20,10 @@ gkit::scene::Unit::Unit(std::string name) noexcept : gkit::scene::Unit() {
 }
 
 
-auto gkit::scene::Unit::_ready()            -> void { }
-auto gkit::scene::Unit::_process()          -> void { }
-auto gkit::scene::Unit::_physics_process()  -> void { }
-auto gkit::scene::Unit::_exit()             -> void { }
+auto gkit::scene::Unit::ready()            -> void { }
+auto gkit::scene::Unit::process()          -> void { }
+auto gkit::scene::Unit::physics_process()  -> void { }
+auto gkit::scene::Unit::exit()             -> void { }
 
 
 auto gkit::scene::Unit::ready_handler() noexcept -> void {
@@ -31,7 +31,7 @@ auto gkit::scene::Unit::ready_handler() noexcept -> void {
         auto& child = this->children[child_index];
         child->ready_handler();
     }
-    this->_ready();
+    this->ready();
 }
 
 
@@ -42,7 +42,7 @@ auto gkit::scene::Unit::process_handler() noexcept -> void {
         if (child == nullptr || !child->process_enabled) continue;
         child->process_handler();
     }
-    this->_process();
+    this->process();
     this->drop_children();
 }
 
@@ -56,7 +56,7 @@ auto gkit::scene::Unit::exit_handler() noexcept -> void {
     for (auto child_index : this->active_index_cache) {
         this->children[child_index]->exit_handler();
     }
-    this->_exit();
+    this->exit();
 }
 
 
@@ -65,7 +65,7 @@ auto gkit::scene::Unit::add_child(std::unique_ptr<Unit>&& child_ptr) noexcept ->
         return;
     }
 
-    child_ptr->_ready();
+    child_ptr->ready();
     {
         std::unique_lock<std::shared_mutex> w_lock(this->children_rw_mutex);
         child_ptr->parent = this;
