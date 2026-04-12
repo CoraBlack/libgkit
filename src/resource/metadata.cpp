@@ -64,63 +64,8 @@ namespace gkit::resource::metadata {
     }
 
     // =========================================================================
-    // Value - Type Checking
+    // Value - Unchecked Accessors (non-constexpr - container types)
     // =========================================================================
-
-    auto Value::is_null() const noexcept -> bool {
-        return std::holds_alternative<Null>(storage_);
-    }
-
-    auto Value::is_bool() const noexcept -> bool {
-        return std::holds_alternative<bool>(storage_);
-    }
-
-    auto Value::is_number() const noexcept -> bool {
-        return std::holds_alternative<Number>(storage_);
-    }
-
-    auto Value::is_number_integer() const noexcept -> bool {
-        if (!is_number()) return false;
-        return std::holds_alternative<std::int64_t>(std::get<Number>(storage_));
-    }
-
-    auto Value::is_number_float() const noexcept -> bool {
-        if (!is_number()) return false;
-        return std::holds_alternative<double>(std::get<Number>(storage_));
-    }
-
-    auto Value::is_string() const noexcept -> bool {
-        return std::holds_alternative<std::string>(storage_);
-    }
-
-    auto Value::is_array() const noexcept -> bool {
-        return std::holds_alternative<Array>(storage_);
-    }
-
-    auto Value::is_object() const noexcept -> bool {
-        return std::holds_alternative<Object>(storage_);
-    }
-
-    // =========================================================================
-    // Value - Unchecked Accessors
-    // =========================================================================
-
-    auto Value::as_bool() const noexcept -> bool {
-        return std::get<bool>(storage_);
-    }
-
-    auto Value::as_int64() const noexcept -> std::int64_t {
-        const auto& num = std::get<Number>(storage_);
-        return std::get<std::int64_t>(num);
-    }
-
-    auto Value::as_double() const noexcept -> double {
-        const auto& num = std::get<Number>(storage_);
-        if (std::holds_alternative<double>(num)) {
-            return std::get<double>(num);
-        }
-        return static_cast<double>(std::get<std::int64_t>(num));
-    }
 
     auto Value::as_string() const noexcept -> const std::string& {
         return std::get<std::string>(storage_);
@@ -143,20 +88,8 @@ namespace gkit::resource::metadata {
     }
 
     // =========================================================================
-    // Value - Safe Accessors with Fallback
+    // Value - Safe Accessors with Fallback (non-constexpr - container types)
     // =========================================================================
-
-    auto Value::as_bool_or(bool fallback) const noexcept -> bool {
-        return is_bool() ? as_bool() : fallback;
-    }
-
-    auto Value::as_int64_or(std::int64_t fallback) const noexcept -> std::int64_t {
-        return is_number_integer() ? as_int64() : fallback;
-    }
-
-    auto Value::as_double_or(double fallback) const noexcept -> double {
-        return is_number() ? as_double() : fallback;
-    }
 
     auto Value::as_string_or(const std::string& fallback) const noexcept -> const std::string& {
         return is_string() ? as_string() : fallback;
@@ -205,31 +138,6 @@ namespace gkit::resource::metadata {
 
     auto Value::push_back(Value value) -> void {
         as_array().push_back(std::move(value));
-    }
-
-    // =========================================================================
-    // Value - Type and Raw Access
-    // =========================================================================
-
-    auto Value::type() const noexcept -> Type {
-        return std::visit([](const auto& v) -> Type {
-            using T = std::decay_t<decltype(v)>;
-            if constexpr (std::is_same_v<T, Null>) return Type::Null;
-            if constexpr (std::is_same_v<T, bool>) return Type::Boolean;
-            if constexpr (std::is_same_v<T, Number>) return Type::Number;
-            if constexpr (std::is_same_v<T, std::string>) return Type::String;
-            if constexpr (std::is_same_v<T, Array>) return Type::Array;
-            if constexpr (std::is_same_v<T, Object>) return Type::Object;
-            return Type::Null; // unreachable
-        }, storage_);
-    }
-
-    auto Value::raw() noexcept -> Storage& {
-        return storage_;
-    }
-
-    auto Value::raw() const noexcept -> const Storage& {
-        return storage_;
     }
 
     // =========================================================================

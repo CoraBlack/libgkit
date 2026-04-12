@@ -92,19 +92,48 @@ namespace gkit::resource::metadata {
         auto operator=(Object value) -> Value&;
 
     public: // Type checking
-        [[nodiscard]] auto is_null() const noexcept -> bool;
-        [[nodiscard]] auto is_bool() const noexcept -> bool;
-        [[nodiscard]] auto is_number() const noexcept -> bool;
-        [[nodiscard]] auto is_number_integer() const noexcept -> bool;
-        [[nodiscard]] auto is_number_float() const noexcept -> bool;
-        [[nodiscard]] auto is_string() const noexcept -> bool;
-        [[nodiscard]] auto is_array() const noexcept -> bool;
-        [[nodiscard]] auto is_object() const noexcept -> bool;
+        [[nodiscard]] constexpr auto is_null() const noexcept -> bool {
+            return std::holds_alternative<Null>(storage_);
+        }
+        [[nodiscard]] constexpr auto is_bool() const noexcept -> bool {
+            return std::holds_alternative<bool>(storage_);
+        }
+        [[nodiscard]] constexpr auto is_number() const noexcept -> bool {
+            return std::holds_alternative<Number>(storage_);
+        }
+        [[nodiscard]] constexpr auto is_number_integer() const noexcept -> bool {
+            if (!is_number()) return false;
+            return std::holds_alternative<std::int64_t>(std::get<Number>(storage_));
+        }
+        [[nodiscard]] constexpr auto is_number_float() const noexcept -> bool {
+            if (!is_number()) return false;
+            return std::holds_alternative<double>(std::get<Number>(storage_));
+        }
+        [[nodiscard]] constexpr auto is_string() const noexcept -> bool {
+            return std::holds_alternative<std::string>(storage_);
+        }
+        [[nodiscard]] constexpr auto is_array() const noexcept -> bool {
+            return std::holds_alternative<Array>(storage_);
+        }
+        [[nodiscard]] constexpr auto is_object() const noexcept -> bool {
+            return std::holds_alternative<Object>(storage_);
+        }
 
     public: // Value accessors (unchecked - behavior undefined if wrong type)
-        [[nodiscard]] auto as_bool() const noexcept -> bool;
-        [[nodiscard]] auto as_int64() const noexcept -> std::int64_t;
-        [[nodiscard]] auto as_double() const noexcept -> double;
+        [[nodiscard]] constexpr auto as_bool() const noexcept -> bool {
+            return std::get<bool>(storage_);
+        }
+        [[nodiscard]] constexpr auto as_int64() const noexcept -> std::int64_t {
+            const auto& num = std::get<Number>(storage_);
+            return std::get<std::int64_t>(num);
+        }
+        [[nodiscard]] constexpr auto as_double() const noexcept -> double {
+            const auto& num = std::get<Number>(storage_);
+            if (std::holds_alternative<double>(num)) {
+                return std::get<double>(num);
+            }
+            return static_cast<double>(std::get<std::int64_t>(num));
+        }
         [[nodiscard]] auto as_string() const noexcept -> const std::string&;
         [[nodiscard]] auto as_array() const noexcept -> const Array&;
         [[nodiscard]] auto as_object() const noexcept -> const Object&;
@@ -114,9 +143,15 @@ namespace gkit::resource::metadata {
         [[nodiscard]] auto as_object() noexcept -> Object&;
 
     public: // Safe value accessors with fallback
-        [[nodiscard]] auto as_bool_or(bool fallback) const noexcept -> bool;
-        [[nodiscard]] auto as_int64_or(std::int64_t fallback) const noexcept -> std::int64_t;
-        [[nodiscard]] auto as_double_or(double fallback) const noexcept -> double;
+        [[nodiscard]] constexpr auto as_bool_or(bool fallback) const noexcept -> bool {
+            return is_bool() ? as_bool() : fallback;
+        }
+        [[nodiscard]] constexpr auto as_int64_or(std::int64_t fallback) const noexcept -> std::int64_t {
+            return is_number_integer() ? as_int64() : fallback;
+        }
+        [[nodiscard]] constexpr auto as_double_or(double fallback) const noexcept -> double {
+            return is_number() ? as_double() : fallback;
+        }
         [[nodiscard]] auto as_string_or(const std::string& fallback) const noexcept -> const std::string&;
 
     public: // Object helpers
@@ -155,14 +190,29 @@ namespace gkit::resource::metadata {
         }
 
     public:
-        [[nodiscard]] auto type() const noexcept -> Type;
+        [[nodiscard]] constexpr auto type() const noexcept -> Type {
+            return std::visit([](const auto& v) -> Type {
+                using T = std::decay_t<decltype(v)>;
+                if constexpr (std::is_same_v<T, Null>) return Type::Null;
+                if constexpr (std::is_same_v<T, bool>) return Type::Boolean;
+                if constexpr (std::is_same_v<T, Number>) return Type::Number;
+                if constexpr (std::is_same_v<T, std::string>) return Type::String;
+                if constexpr (std::is_same_v<T, Array>) return Type::Array;
+                if constexpr (std::is_same_v<T, Object>) return Type::Object;
+                return Type::Null; // unreachable
+            }, storage_);
+        }
 
         /**
          * @brief Direct access to underlying storage
          * @note For advanced use cases (visitation, etc.)
          */
-        [[nodiscard]] auto raw() noexcept -> Storage&;
-        [[nodiscard]] auto raw() const noexcept -> const Storage&;
+        [[nodiscard]] constexpr auto raw() noexcept -> Storage& {
+            return storage_;
+        }
+        [[nodiscard]] constexpr auto raw() const noexcept -> const Storage& {
+            return storage_;
+        }
 
     private:
         Storage storage_ = Null{};
