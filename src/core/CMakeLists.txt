@@ -12,6 +12,9 @@ set (CORE_SRC
     # Scene module
     "./scene/object.cpp"
     "./scene/unit.cpp"
+
+    # Reflection module
+    "./reflection/class_db.cpp"
 )
 
 add_library(${GKIT_CORE} OBJECT ${CORE_SRC})

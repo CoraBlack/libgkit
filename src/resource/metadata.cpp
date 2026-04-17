@@ -13,6 +13,8 @@ namespace gkit::resource::metadata {
     Value::Value(Null) noexcept : storage_(Null{}) {}
     Value::Value(bool value) noexcept : storage_(value) {}
     Value::Value(std::int64_t value) noexcept : storage_(Number{value}) {}
+    Value::Value(std::uint64_t value) noexcept : storage_(Number{value}) {}
+    Value::Value(float value) noexcept : storage_(Number{value}) {}
     Value::Value(double value) noexcept : storage_(Number{value}) {}
     Value::Value(const char* value) : storage_(std::string(value)) {}
     Value::Value(std::string value) : storage_(std::move(value)) {}
@@ -34,6 +36,16 @@ namespace gkit::resource::metadata {
     }
 
     auto Value::operator=(std::int64_t value) noexcept -> Value& {
+        storage_ = Number{value};
+        return *this;
+    }
+
+    auto Value::operator=(std::uint64_t value) noexcept -> Value& {
+        storage_ = Number{value};
+        return *this;
+    }
+
+    auto Value::operator=(float value) noexcept -> Value& {
         storage_ = Number{value};
         return *this;
     }

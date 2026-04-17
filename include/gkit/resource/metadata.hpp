@@ -47,9 +47,9 @@ namespace gkit::resource::metadata {
     using Object = std::map<std::string, Value>;
 
     /**
-     * @brief JSON number type - holds either integer or floating-point
+     * @brief JSON number type - holds integer or floating-point
      */
-    using Number = std::variant<std::int64_t, double>;
+    using Number = std::variant<std::int64_t, std::uint64_t, float, double>;
 
     /**
      * @brief The core Value type representing any JSON value
@@ -70,6 +70,8 @@ namespace gkit::resource::metadata {
         Value(Null) noexcept;
         Value(bool value) noexcept;
         Value(std::int64_t value) noexcept;
+        Value(std::uint64_t value) noexcept;
+        Value(float value) noexcept;
         Value(double value) noexcept;
         Value(int value) noexcept : Value(static_cast<std::int64_t>(value)) {}
         Value(const char* value);
@@ -84,6 +86,8 @@ namespace gkit::resource::metadata {
         auto operator=(Null) noexcept -> Value&;
         auto operator=(bool value) noexcept -> Value&;
         auto operator=(std::int64_t value) noexcept -> Value&;
+        auto operator=(std::uint64_t value) noexcept -> Value&;
+        auto operator=(float value) noexcept -> Value&;
         auto operator=(int value) noexcept -> Value& { return *this = static_cast<std::int64_t>(value); }
         auto operator=(double value) noexcept -> Value&;
         auto operator=(const char* value) -> Value&;
@@ -103,11 +107,28 @@ namespace gkit::resource::metadata {
         }
         [[nodiscard]] constexpr auto is_number_integer() const noexcept -> bool {
             if (!is_number()) return false;
-            return std::holds_alternative<std::int64_t>(std::get<Number>(storage_));
+            const auto& num = std::get<Number>(storage_);
+            return std::holds_alternative<std::int64_t>(num);
+        }
+        [[nodiscard]] constexpr auto is_number_unsigned() const noexcept -> bool {
+            if (!is_number()) return false;
+            const auto& num = std::get<Number>(storage_);
+            return std::holds_alternative<std::uint64_t>(num);
         }
         [[nodiscard]] constexpr auto is_number_float() const noexcept -> bool {
             if (!is_number()) return false;
-            return std::holds_alternative<double>(std::get<Number>(storage_));
+            const auto& num = std::get<Number>(storage_);
+            return std::holds_alternative<float>(num) || std::holds_alternative<double>(num);
+        }
+        [[nodiscard]] constexpr auto is_number_float32() const noexcept -> bool {
+            if (!is_number()) return false;
+            const auto& num = std::get<Number>(storage_);
+            return std::holds_alternative<float>(num);
+        }
+        [[nodiscard]] constexpr auto is_number_float64() const noexcept -> bool {
+            if (!is_number()) return false;
+            const auto& num = std::get<Number>(storage_);
+            return std::holds_alternative<double>(num);
         }
         [[nodiscard]] constexpr auto is_string() const noexcept -> bool {
             return std::holds_alternative<std::string>(storage_);
@@ -127,12 +148,35 @@ namespace gkit::resource::metadata {
             const auto& num = std::get<Number>(storage_);
             return std::get<std::int64_t>(num);
         }
+        [[nodiscard]] constexpr auto as_uint64() const noexcept -> std::uint64_t {
+            const auto& num = std::get<Number>(storage_);
+            return std::get<std::uint64_t>(num);
+        }
+        [[nodiscard]] constexpr auto as_float() const noexcept -> float {
+            const auto& num = std::get<Number>(storage_);
+            if (std::holds_alternative<float>(num)) {
+                return std::get<float>(num);
+            }
+            if (std::holds_alternative<double>(num)) {
+                return static_cast<float>(std::get<double>(num));
+            }
+            if (std::holds_alternative<std::int64_t>(num)) {
+                return static_cast<float>(std::get<std::int64_t>(num));
+            }
+            return static_cast<float>(std::get<std::uint64_t>(num));
+        }
         [[nodiscard]] constexpr auto as_double() const noexcept -> double {
             const auto& num = std::get<Number>(storage_);
             if (std::holds_alternative<double>(num)) {
                 return std::get<double>(num);
             }
-            return static_cast<double>(std::get<std::int64_t>(num));
+            if (std::holds_alternative<float>(num)) {
+                return static_cast<double>(std::get<float>(num));
+            }
+            if (std::holds_alternative<std::int64_t>(num)) {
+                return static_cast<double>(std::get<std::int64_t>(num));
+            }
+            return static_cast<double>(std::get<std::uint64_t>(num));
         }
         [[nodiscard]] auto as_string() const noexcept -> const std::string&;
         [[nodiscard]] auto as_array() const noexcept -> const Array&;
@@ -212,6 +256,36 @@ namespace gkit::resource::metadata {
         }
         [[nodiscard]] constexpr auto raw() const noexcept -> const Storage& {
             return storage_;
+        }
+
+    public: // Generic type checking and access (Variant API)
+        template<typename T>
+        [[nodiscard]] constexpr bool is() const noexcept {
+            if constexpr (std::is_same_v<T, Null>) return is_null();
+            else if constexpr (std::is_same_v<T, bool>) return is_bool();
+            else if constexpr (std::is_same_v<T, std::int64_t>) return is_number_integer();
+            else if constexpr (std::is_same_v<T, std::uint64_t>) return is_number_unsigned();
+            else if constexpr (std::is_same_v<T, float>) return is_number_float32();
+            else if constexpr (std::is_same_v<T, double>) return is_number_float64();
+            else if constexpr (std::is_same_v<T, std::string>) return is_string();
+            else if constexpr (std::is_same_v<T, Array>) return is_array();
+            else if constexpr (std::is_same_v<T, Object>) return is_object();
+            else return false;
+        }
+
+        template<typename T>
+        [[nodiscard]] constexpr auto get() const noexcept -> std::optional<T> {
+            if (!is<T>()) return std::nullopt;
+            if constexpr (std::is_same_v<T, Null>) return Null{};
+            else if constexpr (std::is_same_v<T, bool>) return as_bool();
+            else if constexpr (std::is_same_v<T, std::int64_t>) return as_int64();
+            else if constexpr (std::is_same_v<T, std::uint64_t>) return as_uint64();
+            else if constexpr (std::is_same_v<T, float>) return as_float();
+            else if constexpr (std::is_same_v<T, double>) return as_double();
+            else if constexpr (std::is_same_v<T, std::string>) return std::optional<std::string>(as_string());
+            else if constexpr (std::is_same_v<T, Array>) return std::optional<Array>(as_array());
+            else if constexpr (std::is_same_v<T, Object>) return std::optional<Object>(as_object());
+            else return std::nullopt;
         }
 
     private:
