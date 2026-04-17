@@ -3,7 +3,6 @@
 #include "gkit/core/scene/singleton.hpp"
 #include "gkit/core/variant.hpp"
 
-#include <concepts>
 #include <functional>
 #include <mutex>
 #include <optional>
