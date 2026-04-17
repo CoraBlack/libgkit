@@ -111,11 +111,6 @@ namespace gkit::core::reflection {
         std::vector<FieldInfo> fields_;
     };
 
-    template <class T>
-    concept Bindable = requires (T v) {
-        { T::_register() } -> std::same_as<void>;
-    };
-
     /**
      * @brief A centralized database for class reflection information.
      *
@@ -139,7 +134,7 @@ namespace gkit::core::reflection {
                 class_map[class_name] = ClassInfo(class_name);
             }
 
-            if constexpr (Bindable<T>) {
+            if constexpr (requires{ T::_register(); }) {
                 T::_register();
             }
         }

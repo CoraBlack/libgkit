@@ -19,7 +19,7 @@ namespace gkit::resource::metadata {
     class Value;
 
     /**
-     * @brief JSON value types enumeration
+     * @brief Value type enumeration
      */
     enum class Type : std::uint8_t {
         Null,
@@ -31,33 +31,33 @@ namespace gkit::resource::metadata {
     };
 
     /**
-     * @brief JSON null type
+     * @brief Null value type
      */
     struct Null {};
 
     /**
-     * @brief JSON array type - ordered collection of values
+     * @brief Array type - ordered collection of values
      */
     using Array = std::vector<Value>;
 
     /**
-     * @brief JSON object type - string-keyed map of values
-     * @note Uses std::map to preserve key ordering for deterministic serialization
+     * @brief Object type - string-keyed map of values
+     * @note Uses std::map to preserve key ordering for deterministic output
      */
     using Object = std::map<std::string, Value>;
 
     /**
-     * @brief JSON number type - holds integer or floating-point
+     * @brief Number type - holds integer or floating-point
      */
     using Number = std::variant<std::int64_t, std::uint64_t, float, double>;
 
     /**
-     * @brief The core Value type representing any JSON value
+     * @brief The core Value type representing any metadata value
      */
     class Value final {
     public:
         /**
-         * @brief Underlying variant type holding all JSON value types
+         * @brief Underlying variant type holding all supported value types
          */
         using Storage = std::variant<Null, bool, Number, std::string, Array, Object>;
 
@@ -66,7 +66,7 @@ namespace gkit::resource::metadata {
         Value(Value&&) noexcept = default;
         ~Value() = default;
 
-        /** Convenience constructors for each JSON type **/
+        /** Convenience constructors for each supported type **/
         Value(Null) noexcept;
         Value(bool value) noexcept;
         Value(std::int64_t value) noexcept;
@@ -318,32 +318,32 @@ namespace gkit::resource::metadata {
     };
 
     /**
-     * @brief Deserialize a JSON string into a Value
-     * @param json The JSON string to parse
+     * @brief Parse a text payload into a Value
+     * @param json The input text to parse
      * @return The parsed Value
-     * @throws ParseError if the input is not valid JSON
+     * @throws ParseError if the input is not valid
      */
     [[nodiscard]] auto parse(std::string_view json) -> Value;
 
     /**
-     * @brief Try to deserialize a JSON string (non-throwing)
+     * @brief Try to parse a text payload (non-throwing)
      * @return std::nullopt on parse failure instead of throwing
      */
     [[nodiscard]] auto try_parse(std::string_view json) noexcept -> std::optional<Value>;
 
     /**
-     * @brief Serialize a Value to a JSON string
+     * @brief Serialize a Value to text
      * @param value The value to serialize
      * @param options Formatting options
-     * @return The JSON string representation
+     * @return The serialized string representation
      */
     [[nodiscard]] auto serialize(const Value& value, const FormatOptions& options = {}) -> std::string;
 
     /**
-     * @brief Serialize a Value to a JSON string with pretty formatting
+     * @brief Serialize a Value with pretty formatting
      * @param value The value to serialize
      * @param indent_size Number of spaces per indent level
-     * @return The pretty-printed JSON string
+     * @return The pretty-printed serialized string
      */
     [[nodiscard]] auto serialize_pretty(const Value& value, std::uint8_t indent_size = 4) -> std::string;
 
