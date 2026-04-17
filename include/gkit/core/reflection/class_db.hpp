@@ -3,6 +3,7 @@
 #include "gkit/core/scene/singleton.hpp"
 #include "gkit/core/variant.hpp"
 
+#include <concepts>
 #include <functional>
 #include <mutex>
 #include <optional>
@@ -110,6 +111,11 @@ namespace gkit::core::reflection {
         std::vector<FieldInfo> fields_;
     };
 
+    template <class T>
+    concept Bindable = requires (T v) {
+        { T::_register() } -> std::same_as<void>;
+    };
+
     /**
      * @brief A centralized database for class reflection information.
      *
@@ -131,6 +137,10 @@ namespace gkit::core::reflection {
             std::string class_name = typeid(T).name();
             if (class_map.find(class_name) == class_map.end()) {
                 class_map[class_name] = ClassInfo(class_name);
+            }
+
+            if constexpr (Bindable<T>) {
+                T::_register();
             }
         }
 
