@@ -5,13 +5,14 @@
 #include <functional>
 #include <map>
 #include <optional>
+#include <source_location>
 #include <string>
 #include <string_view>
 #include <utility>
 #include <variant>
 #include <vector>
 
-namespace gkit::resource::metadata {
+namespace gkit::core {
 
     /**
      * @brief Forward declaration of the Value type
@@ -297,7 +298,7 @@ namespace gkit::resource::metadata {
      */
     class ParseError : public std::exception {
     public:
-        explicit ParseError(const std::string& message, std::size_t line = 0, std::size_t column = 0);
+        explicit ParseError(const std::string& message, std::source_location location = std::source_location::current());
         [[nodiscard]] auto what() const noexcept -> const char* override;
         [[nodiscard]] auto line() const noexcept -> std::size_t;
         [[nodiscard]] auto column() const noexcept -> std::size_t;

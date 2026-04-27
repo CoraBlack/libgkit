@@ -1,16 +1,16 @@
-#include <gkit/resource/metadata.hpp>
+#include <gkit/core/value.hpp>
 #include <iostream>
 #include <cassert>
 #include <string>
 
-using gkit::resource::metadata::Value;
-using gkit::resource::metadata::Array;
-using gkit::resource::metadata::Object;
-using gkit::resource::metadata::parse;
-using gkit::resource::metadata::try_parse;
-using gkit::resource::metadata::serialize;
-using gkit::resource::metadata::serialize_pretty;
-using gkit::resource::metadata::ParseError;
+using gkit::core::Value;
+using gkit::core::Array;
+using gkit::core::Object;
+using gkit::core::parse;
+using gkit::core::try_parse;
+using gkit::core::serialize;
+using gkit::core::serialize_pretty;
+using gkit::core::ParseError;
 
 auto test_value_construction() -> void {
     std::cout << "=== Test: Value Construction ===" << std::endl;
@@ -436,7 +436,7 @@ auto test_modification() -> void {
 
 auto main() -> int {
     std::cout << "========================================" << std::endl;
-    std::cout << "    gkit::resource::metadata Tests     " << std::endl;
+    std::cout << "    gkit::core Tests     " << std::endl;
     std::cout << "========================================" << std::endl << std::endl;
 
     test_value_construction();

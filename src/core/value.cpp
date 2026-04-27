@@ -1,10 +1,10 @@
-#include "gkit/resource/metadata.hpp"
+#include "gkit/core/value.hpp"
 
 #include <iomanip>
 #include <optional>
 #include <sstream>
 
-namespace gkit::resource::metadata {
+namespace gkit::core {
 
     // =========================================================================
     // Value - Constructors
@@ -156,8 +156,8 @@ namespace gkit::resource::metadata {
     // ParseError Implementation
     // =========================================================================
 
-    ParseError::ParseError(const std::string& message, std::size_t line, std::size_t column)
-        : message_(message), line_(line), column_(column) {
+    ParseError::ParseError(const std::string& message, std::source_location location)
+        : message_(message), line_(location.line()), column_(location.column()) {
     }
 
     auto ParseError::what() const noexcept -> const char* {
@@ -187,7 +187,7 @@ namespace gkit::resource::metadata {
                 auto result = parse_value();
                 skip_whitespace();
                 if (!is_at_end()) {
-                    throw ParseError("Unexpected trailing content", line_, column());
+                    throw ParseError("Unexpected trailing content");
                 }
                 return result;
             }
@@ -238,7 +238,7 @@ namespace gkit::resource::metadata {
                     msg += "' but found '";
                     msg += peek() ? std::string(1, peek()) : "EOF";
                     msg += "'";
-                    throw ParseError(msg, line_, column());
+                    throw ParseError(msg);
                 }
                 advance();
             }
@@ -246,7 +246,7 @@ namespace gkit::resource::metadata {
             auto parse_value() -> Value {
                 skip_whitespace();
                 if (is_at_end()) {
-                    throw ParseError("Unexpected end of input", line_, column());
+                    throw ParseError("Unexpected end of input");
                 }
 
                 char c = peek();
@@ -262,13 +262,13 @@ namespace gkit::resource::metadata {
                     case '5': case '6': case '7': case '8': case '9':
                         return parse_number();
                     default:
-                        throw ParseError("Unexpected character", line_, column());
+                        throw ParseError("Unexpected character");
                 }
             }
 
             auto parse_null() -> Value {
                 if (input_.substr(pos_, 4) != "null") {
-                    throw ParseError("Invalid literal", line_, column());
+                    throw ParseError("Invalid literal");
                 }
                 pos_ += 4;
                 return Value(Null{});
@@ -276,7 +276,7 @@ namespace gkit::resource::metadata {
 
             auto parse_true() -> Value {
                 if (input_.substr(pos_, 4) != "true") {
-                    throw ParseError("Invalid literal", line_, column());
+                    throw ParseError("Invalid literal");
                 }
                 pos_ += 4;
                 return Value(true);
@@ -284,7 +284,7 @@ namespace gkit::resource::metadata {
 
             auto parse_false() -> Value {
                 if (input_.substr(pos_, 5) != "false") {
-                    throw ParseError("Invalid literal", line_, column());
+                    throw ParseError("Invalid literal");
                 }
                 pos_ += 5;
                 return Value(false);
@@ -298,7 +298,7 @@ namespace gkit::resource::metadata {
                     char c = advance();
                     if (c == '\\') {
                         if (is_at_end()) {
-                            throw ParseError("Unterminated string escape", line_, column());
+                            throw ParseError("Unterminated string escape");
                         }
                         char esc = advance();
                         switch (esc) {
@@ -312,7 +312,7 @@ namespace gkit::resource::metadata {
                             case 't':  result += '\t'; break;
                             case 'u': {
                                 if (pos_ + 4 > input_.size()) {
-                                    throw ParseError("Invalid unicode escape", line_, column());
+                                    throw ParseError("Invalid unicode escape");
                                 }
                                 auto hex = input_.substr(pos_, 4);
                                 unsigned int codepoint = 0;
@@ -321,7 +321,7 @@ namespace gkit::resource::metadata {
                                     if (h >= '0' && h <= '9') codepoint += h - '0';
                                     else if (h >= 'a' && h <= 'f') codepoint += h - 'a' + 10;
                                     else if (h >= 'A' && h <= 'F') codepoint += h - 'A' + 10;
-                                    else throw ParseError("Invalid unicode escape", line_, column());
+                                    else throw ParseError("Invalid unicode escape");
                                 }
                                 pos_ += 4;
                                 // Convert to UTF-8
@@ -338,10 +338,10 @@ namespace gkit::resource::metadata {
                                 break;
                             }
                             default:
-                                throw ParseError("Invalid escape sequence", line_, column());
+                                throw ParseError("Invalid escape sequence");
                         }
                     } else if (static_cast<unsigned char>(c) < 0x20) {
-                        throw ParseError("Unescaped control character", line_, column());
+                        throw ParseError("Unescaped control character");
                     } else {
                         result += c;
                     }
@@ -363,7 +363,7 @@ namespace gkit::resource::metadata {
                         advance();
                     }
                 } else {
-                    throw ParseError("Invalid number", line_, column());
+                    throw ParseError("Invalid number");
                 }
 
                 bool is_float = false;
@@ -372,7 +372,7 @@ namespace gkit::resource::metadata {
                     is_float = true;
                     advance();
                     if (peek() < '0' || peek() > '9') {
-                        throw ParseError("Invalid number fraction", line_, column());
+                        throw ParseError("Invalid number fraction");
                     }
                     while (!is_at_end() && peek() >= '0' && peek() <= '9') {
                         advance();
@@ -384,7 +384,7 @@ namespace gkit::resource::metadata {
                     advance();
                     if (peek() == '+' || peek() == '-') advance();
                     if (peek() < '0' || peek() > '9') {
-                        throw ParseError("Invalid number exponent", line_, column());
+                        throw ParseError("Invalid number exponent");
                     }
                     while (!is_at_end() && peek() >= '0' && peek() <= '9') {
                         advance();
@@ -398,14 +398,14 @@ namespace gkit::resource::metadata {
                         double val = std::stod(num_str);
                         return Value(val);
                     } catch (...) {
-                        throw ParseError("Invalid floating point number", line_, column());
+                        throw ParseError("Invalid floating point number");
                     }
                 } else {
                     try {
                         std::int64_t val = std::stoll(num_str);
                         return Value(val);
                     } catch (...) {
-                        throw ParseError("Invalid integer number", line_, column());
+                        throw ParseError("Invalid integer number");
                     }
                 }
             }
@@ -447,7 +447,7 @@ namespace gkit::resource::metadata {
                 while (true) {
                     skip_whitespace();
                     if (peek() != '"') {
-                        throw ParseError("Expected string key", line_, column());
+                        throw ParseError("Expected string key");
                     }
                     std::string key = parse_string();
                     skip_whitespace();
