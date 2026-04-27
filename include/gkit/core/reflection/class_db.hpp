@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gkit/core/scene/singleton.hpp"
-#include "gkit/core/variant.hpp"
+#include "gkit/core/value.hpp"
 
 #include <functional>
 #include <mutex>
@@ -35,7 +35,7 @@ namespace gkit::core::reflection {
          * @param getter A functional object that retrieves the field's value from an instance.
          */
         FieldInfo(std::string name, std::string type_name,
-                  std::function<auto(const void*) -> std::optional<Variant>> getter);
+                  std::function<auto(const void*) -> std::optional<Value>> getter);
 
         /**
          * @brief Gets the name of the field.
@@ -55,14 +55,14 @@ namespace gkit::core::reflection {
          * @brief Retrieves the value of this field from the given instance.
          * 
          * @param instance A pointer to the object instance.
-         * @return An optional Variant containing the field value, or nullopt if invalid.
+         * @return An optional Value containing the field value, or nullopt if invalid.
          */
-        [[nodiscard]] auto get(const void* instance) const -> std::optional<Variant>;
+        [[nodiscard]] auto get(const void* instance) const -> std::optional<Value>;
 
     private:
         std::string name_;
         std::string type_name_;
-        std::function<auto(const void*) -> std::optional<Variant>> getter_;
+        std::function<auto(const void*) -> std::optional<Value>> getter_;
     };
 
     /**
@@ -158,9 +158,9 @@ namespace gkit::core::reflection {
                 it = class_map.find(class_name);
             }
 
-            auto getter = [field](const void* obj) -> std::optional<Variant> {
+            auto getter = [field](const void* obj) -> std::optional<Value> {
                 const T* instance = static_cast<const T*>(obj);
-                return Variant(instance->*field);
+                return Value(instance->*field);
             };
 
             it->second.add_field(FieldInfo(std::move(name), typeid(FieldT).name(), std::move(getter)));

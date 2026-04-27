@@ -8,11 +8,10 @@
 #include <gkit/core/input/mouse.hpp>
 #include <gkit/core/scene/unit.hpp>
 #include <gkit/core/scene/object.hpp>
-#include <gkit/core/variant.hpp>
+#include <gkit/core/value.hpp>
 #include <gkit/core/reflection/class_db.hpp>
 
 /** Resource **/
-#include <gkit/resource/metadata.hpp>
 #include <gkit/resource/resource.hpp>
 #include <gkit/resource/texture.hpp>
 #include <gkit/resource/resource_loader.hpp>

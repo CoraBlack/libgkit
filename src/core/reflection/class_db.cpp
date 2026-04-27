@@ -3,7 +3,7 @@
 namespace gkit::core::reflection {
 
     FieldInfo::FieldInfo(std::string name, std::string type_name,
-                         std::function<auto(const void*) -> std::optional<Variant>> getter)
+                         std::function<auto(const void*) -> std::optional<Value>> getter)
         : name_(std::move(name)), type_name_(std::move(type_name)), getter_(std::move(getter)) {}
 
 
@@ -17,7 +17,7 @@ namespace gkit::core::reflection {
     }
 
 
-    auto FieldInfo::get(const void* instance) const -> std::optional<Variant> {
+    auto FieldInfo::get(const void* instance) const -> std::optional<Value> {
         return getter_ ? getter_(instance) : std::nullopt;
     }
 

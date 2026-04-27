@@ -1,64 +1,64 @@
-#include <gkit/core/variant.hpp>
+#include <gkit/core/value.hpp>
 #include <iostream>
 #include <cassert>
 #include <string>
 #include <vector>
 #include <map>
 
-using gkit::core::Variant;
+using gkit::core::Value;
 using gkit::core::Null;
 
-auto test_variant_construction() -> void {
-    std::cout << "=== Test: Variant Construction ===" << std::endl;
+auto test_value_construction() -> void {
+    std::cout << "=== Test: Value Construction ===" << std::endl;
 
-    Variant v_null;
+    Value v_null;
     assert(v_null.is<Null>());
     std::cout << "  Null: OK" << std::endl;
 
-    Variant v_bool(true);
+    Value v_bool(true);
     assert(v_bool.is<bool>());
     assert(v_bool.get<bool>().value() == true);
     std::cout << "  Bool: OK" << std::endl;
 
-    Variant v_i64(static_cast<std::int64_t>(42));
+    Value v_i64(static_cast<std::int64_t>(42));
     assert(v_i64.is<std::int64_t>());
     assert(v_i64.get<std::int64_t>().value() == 42);
     std::cout << "  int64_t: OK" << std::endl;
 
-    Variant v_u64(static_cast<std::uint64_t>(100));
+    Value v_u64(static_cast<std::uint64_t>(100));
     assert(v_u64.is<std::uint64_t>());
     assert(v_u64.get<std::uint64_t>().value() == 100);
     std::cout << "  uint64_t: OK" << std::endl;
 
-    Variant v_f32(3.14f);
+    Value v_f32(3.14f);
     assert(v_f32.is<float>());
     std::cout << "  float: OK" << std::endl;
 
-    Variant v_f64(2.718);
+    Value v_f64(2.718);
     assert(v_f64.is<double>());
     std::cout << "  double: OK" << std::endl;
 
-    Variant v_str("hello");
+    Value v_str("hello");
     assert(v_str.is<std::string>());
     assert(v_str.get<std::string>().value() == "hello");
     std::cout << "  string: OK" << std::endl;
 
-    Variant v_arr(std::vector<Variant>{});
-    assert(v_arr.is<std::vector<Variant>>());
+    Value v_arr(std::vector<Value>{});
+    assert(v_arr.is<std::vector<Value>>());
     std::cout << "  array: OK" << std::endl;
 
-    using MapType = std::map<std::string, Variant>;
-    Variant v_map(MapType{});
+    using MapType = std::map<std::string, Value>;
+    Value v_map(MapType{});
     assert(v_map.is<MapType>());
     std::cout << "  map: OK" << std::endl;
 
     std::cout << "All construction tests passed!" << std::endl << std::endl;
 }
 
-auto test_variant_type_mismatch() -> void {
-    std::cout << "=== Test: Variant Type Mismatch ===" << std::endl;
+auto test_value_type_mismatch() -> void {
+    std::cout << "=== Test: Value Type Mismatch ===" << std::endl;
 
-    Variant v(42);
+    Value v(42);
 
     assert(!v.is<bool>());
     assert(!v.is<std::string>());
@@ -70,14 +70,14 @@ auto test_variant_type_mismatch() -> void {
     std::cout << "All type mismatch tests passed!" << std::endl << std::endl;
 }
 
-auto test_variant_nested() -> void {
-    std::cout << "=== Test: Variant Nested Types ===" << std::endl;
+auto test_value_nested() -> void {
+    std::cout << "=== Test: Value Nested Types ===" << std::endl;
 
-    using MapType = std::map<std::string, Variant>;
-    Variant obj(MapType{});
-    obj["name"] = Variant("test");
-    obj["count"] = Variant(static_cast<std::int64_t>(10));
-    obj["active"] = Variant(true);
+    using MapType = std::map<std::string, Value>;
+    Value obj(MapType{});
+    obj["name"] = Value("test");
+    obj["count"] = Value(static_cast<std::int64_t>(10));
+    obj["active"] = Value(true);
 
     assert(obj.is<MapType>());
     assert(obj["name"].is<std::string>());
@@ -89,11 +89,11 @@ auto test_variant_nested() -> void {
 
     std::cout << "  Nested object: OK" << std::endl;
 
-    using ArrayType = std::vector<Variant>;
-    Variant arr(ArrayType{});
-    arr.emplace_back(Variant(static_cast<std::int64_t>(1)));
-    arr.emplace_back(Variant(static_cast<std::int64_t>(2)));
-    arr.emplace_back(Variant("three"));
+    using ArrayType = std::vector<Value>;
+    Value arr(ArrayType{});
+    arr.emplace_back(Value(static_cast<std::int64_t>(1)));
+    arr.emplace_back(Value(static_cast<std::int64_t>(2)));
+    arr.emplace_back(Value("three"));
 
     assert(arr.is<ArrayType>());
     assert(arr[0].get<std::int64_t>().value() == 1);
@@ -105,12 +105,12 @@ auto test_variant_nested() -> void {
 
 auto main() -> int {
     std::cout << "========================================" << std::endl;
-    std::cout << "       gkit::core::Variant Tests       " << std::endl;
+    std::cout << "       gkit::core::Value Tests       " << std::endl;
     std::cout << "========================================" << std::endl << std::endl;
 
-    test_variant_construction();
-    test_variant_type_mismatch();
-    test_variant_nested();
+    test_value_construction();
+    test_value_type_mismatch();
+    test_value_nested();
 
     std::cout << "========================================" << std::endl;
     std::cout << "         ALL TESTS PASSED!             " << std::endl;

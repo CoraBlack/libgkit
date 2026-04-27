@@ -294,6 +294,14 @@ namespace gkit::core {
     };
 
     /**
+     * @brief Concept constraining types that can be stored in a Value
+     */
+    template<class T>
+    concept StorableValue = requires(T&& v) {
+        Value::Storage(std::forward<T>(v));
+    };
+
+    /**
      * @brief Parse error exception type
      */
     class ParseError : public std::exception {
@@ -348,4 +356,4 @@ namespace gkit::core {
      */
     [[nodiscard]] auto serialize_pretty(const Value& value, std::uint8_t indent_size = 4) -> std::string;
 
-} // namespace gkit::resource::metadata
+} // namespace gkit::core

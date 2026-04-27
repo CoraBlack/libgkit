@@ -1,8 +1,8 @@
 set (GKIT_CORE "gkit_core")
 
 set (CORE_SRC
-    # Runner
     "./processer.cpp"
+    "./value.cpp"
 
     # Input module
     "./input/action.cpp"
