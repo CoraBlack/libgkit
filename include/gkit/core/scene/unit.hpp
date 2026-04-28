@@ -200,12 +200,12 @@ namespace gkit::core::scene {
         std::vector<std::unique_ptr<Unit>> children {};
 
         /**
-         * @brief Get the available child pointer.
+         * @brief Get child pointer by index.
          * @param index The index of the child.
-         * @return Unit* 
-         * If the index is valid, return the pointer to the child, otherwise return nullptr.
+         * @return Unit*
+         * If the index is valid, return the pointer to the child; otherwise return nullptr.
          */
-        auto get_available_child(uint32_t index) noexcept -> Unit*;
+        auto get_child(uint32_t index) noexcept -> Unit*;
 
         /**
          * @brief Get child pointer by name.
@@ -320,7 +320,7 @@ namespace gkit::core::scene {
     template<IsUnitExtend Unit_T, typename F, typename... Args>
     auto Unit::with_child(uint32_t index, F&& func, Args&&... args) 
     -> std::invoke_result_t<F, Unit_T&, Args...> {
-        auto* child_ptr = get_available_child(index);
+        auto* child_ptr = get_child(index);
         if (child_ptr == nullptr) {
             throw std::out_of_range("Child index is out of range");
         }
