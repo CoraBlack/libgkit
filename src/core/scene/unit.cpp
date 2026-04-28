@@ -92,14 +92,14 @@ auto gkit::core::scene::Unit::add_child(std::unique_ptr<Unit>&& child_ptr) -> vo
 auto gkit::core::scene::Unit::remove_child(uint32_t index) noexcept -> void {
     auto child_ptr = this->get_available_child(index);
     if (child_ptr == nullptr) return;
-    child_ptr->drop();
+    child_ptr->ready_to_drop();
 }
 
 
 auto gkit::core::scene::Unit::remove_child(const std::string& child_name) noexcept -> void {
     auto child_ptr = this->get_child(child_name);
     if (child_ptr == nullptr) return;
-    child_ptr->drop();
+    child_ptr->ready_to_drop();
 }
 
 
@@ -128,7 +128,7 @@ auto gkit::core::scene::Unit::drop_children() -> void {
     to_exit.reserve(this->children.size() / 2);
 
     std::erase_if(this->children, [&](std::unique_ptr<Unit>& p) -> bool {
-        if (p && p->ready_to_drop.load() == true) {
+        if (p && p->drop_flag.load() == true) {
             {
                 std::unique_lock<std::shared_mutex> w_lock(this->name_map_cache_rw_mutex);
                 this->name_map_cache.erase(p->name);

@@ -46,7 +46,7 @@ public:
         ++value;
         timeline.push_back(id + ":process");
         if (drop_on_process) {
-            drop();
+            ready_to_drop();
         }
     }
 
