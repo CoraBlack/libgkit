@@ -226,63 +226,36 @@ namespace gkit::core::scene {
         std::atomic<bool> drop_flag = false;  // mark as dead
 
     public:
-        // iterator
-        class iterator {
+        template<bool IsConst>
+        class UnitIterator {
         public:
-            using iterator_category = std::bidirectional_iterator_tag;
-            using value_type = Unit;
-            using difference_type = std::ptrdiff_t;
-            using pointer = Unit*;
-            using reference = Unit&;
-
-        public:
-            // Constructor and operators
-            iterator(Unit* owner, size_t pos);
-            auto operator*() const -> reference;
-            auto operator->() const -> pointer;
-            auto operator++() -> iterator&;
-            auto operator++(int) -> iterator;
-            auto operator--() -> iterator&;
-            auto operator--(int) -> iterator;
-            auto operator==(const iterator& other) const -> bool;
-            auto operator!=(const iterator& other) const -> bool;
-
-        private:
-            Unit* m_owner;
-            size_t m_pos;
-            friend class Unit;
-        };
-
-
-        auto begin() -> iterator;
-        auto end() -> iterator;
-
-    public:
-        // Next, we are going to write the const implementation of the iterator.
-        class const_iterator {
-        public:
-            using iterator_category = std::bidirectional_iterator_tag;
-            using value_type = const Unit;
-            using difference_type = std::ptrdiff_t;
-            using pointer = const Unit*;
-            using reference = const Unit&;
-
-        public:
-            // Constructor and operators
-            const_iterator(const Unit* owner, size_t pos);
-            auto operator*() const -> reference;
-            auto operator->() const -> pointer;
-            auto operator++() -> const_iterator&;
-            auto operator++(int) -> const_iterator;
-            auto operator--() -> const_iterator&;
-            auto operator--(int) -> const_iterator;
-            auto operator==(const const_iterator& other) const -> bool;
-            auto operator!=(const const_iterator& other) const -> bool;
+            using value_type       = Unit;
+            using difference_type  = std::ptrdiff_t;
+            using pointer          = std::conditional_t<IsConst, const Unit*, Unit*>;
+            using reference        = std::conditional_t<IsConst, const Unit&, Unit&>;
 
         private:
             const Unit* m_owner;
             size_t m_pos;
-        };
+
+        public:
+            UnitIterator() = default;
+            UnitIterator(const Unit* owner, size_t pos);
+            auto operator*() const -> reference;
+            auto operator->() const -> pointer;
+            auto operator++() -> UnitIterator&;
+            auto operator++(int) -> UnitIterator;
+            auto operator--() -> UnitIterator&;
+            auto operator--(int) -> UnitIterator;
+            auto operator==(const UnitIterator&) const -> bool;
+            friend class Unit;
+        }; // class UnitIterator<bool IsConst>
+
+        using iterator       = UnitIterator<false>;
+        using const_iterator = UnitIterator<true>;
+
+        auto begin() -> iterator;
+        auto end() -> iterator;
 
         auto begin() const -> const_iterator;
         auto end() const -> const_iterator;
@@ -291,8 +264,7 @@ namespace gkit::core::scene {
         auto cend() const -> const_iterator;
 
     public:
-        // This is a reverse iterator, implemented using std::reverse_iterator.
-        using reverse_iterator = std::reverse_iterator<iterator>;
+        using reverse_iterator       = std::reverse_iterator<iterator>;
         using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
         auto rbegin() -> reverse_iterator;

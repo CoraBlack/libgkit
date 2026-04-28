@@ -146,97 +146,62 @@ auto gkit::core::scene::Unit::get_parent<gkit::core::scene::Unit>() noexcept -> 
 }
 
 
-// iterator part use
-gkit::core::scene::Unit::iterator::iterator(Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
-auto gkit::core::scene::Unit::iterator::operator*() const -> reference {
-    auto child_ptr = m_owner->get_child(static_cast<uint32_t>(m_pos));
-    return *child_ptr;
+// UnitIterator
+
+template class gkit::core::scene::Unit::UnitIterator<false>;
+template class gkit::core::scene::Unit::UnitIterator<true>;
+
+template<bool IsConst>
+gkit::core::scene::Unit::UnitIterator<IsConst>::UnitIterator(const Unit* owner, size_t pos)
+    : m_owner(owner), m_pos(pos) {}
+
+template<bool IsConst>
+auto gkit::core::scene::Unit::UnitIterator<IsConst>::operator*() const -> reference {
+    return *const_cast<Unit*>(m_owner)->get_child(static_cast<uint32_t>(m_pos));
 }
-auto gkit::core::scene::Unit::iterator::operator->() const -> pointer {
-    auto child_ptr = m_owner->get_child(static_cast<uint32_t>(m_pos));
-    return child_ptr;
+
+template<bool IsConst>
+auto gkit::core::scene::Unit::UnitIterator<IsConst>::operator->() const -> pointer {
+    return const_cast<Unit*>(m_owner)->get_child(static_cast<uint32_t>(m_pos));
 }
-auto gkit::core::scene::Unit::iterator::operator++() -> iterator& {
+
+template<bool IsConst>
+auto gkit::core::scene::Unit::UnitIterator<IsConst>::operator++() -> UnitIterator& {
     ++m_pos;
     return *this;
 }
-auto gkit::core::scene::Unit::iterator::operator++(int) -> iterator {
-    iterator tmp = *this;
+
+template<bool IsConst>
+auto gkit::core::scene::Unit::UnitIterator<IsConst>::operator++(int) -> UnitIterator {
+    UnitIterator tmp = *this;
     ++(*this);
     return tmp;
 }
-auto gkit::core::scene::Unit::iterator::operator--() -> iterator& {
+
+template<bool IsConst>
+auto gkit::core::scene::Unit::UnitIterator<IsConst>::operator--() -> UnitIterator& {
     --m_pos;
     return *this;
 }
-auto gkit::core::scene::Unit::iterator::operator--(int) -> iterator {
-    iterator tmp = *this;
-    --(*this);
-    return tmp;
-}
-auto gkit::core::scene::Unit::iterator::operator==(const iterator& other) const -> bool  { return m_owner == other.m_owner && m_pos == other.m_pos; }
-auto gkit::core::scene::Unit::iterator::operator!=(const iterator& other) const -> bool  { return !(*this == other); }
 
-auto gkit::core::scene::Unit::begin() -> iterator {
-    return iterator(this, 0);
-}
-
-auto gkit::core::scene::Unit::end() -> iterator {
-    return iterator(this, children.size());
-}
-
-// now is const_iterator use
-gkit::core::scene::Unit::const_iterator::const_iterator(const Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
-
-auto gkit::core::scene::Unit::const_iterator::operator*() const -> reference {
-    auto child_ptr = const_cast<Unit*>(m_owner)->get_child(static_cast<uint32_t>(m_pos));
-    return *child_ptr;
-}
-
-auto gkit::core::scene::Unit::const_iterator::operator->() const -> pointer {
-    auto child_ptr = const_cast<Unit*>(m_owner)->get_child(static_cast<uint32_t>(m_pos));
-    return child_ptr;
-}
-
-auto gkit::core::scene::Unit::const_iterator::operator++() -> const_iterator& {
-    ++m_pos;
-    return *this;
-}
-auto gkit::core::scene::Unit::const_iterator::operator++(int) -> const_iterator {
-    const_iterator tmp = *this;
-    ++(*this);
-    return tmp;
-}
-auto gkit::core::scene::Unit::const_iterator::operator--() -> const_iterator& {
-    --m_pos;
-    return *this;
-}
-auto gkit::core::scene::Unit::const_iterator::operator--(int) -> const_iterator {
-    const_iterator tmp = *this;
+template<bool IsConst>
+auto gkit::core::scene::Unit::UnitIterator<IsConst>::operator--(int) -> UnitIterator {
+    UnitIterator tmp = *this;
     --(*this);
     return tmp;
 }
 
-auto gkit::core::scene::Unit::const_iterator::operator==(const const_iterator& other) const -> bool { return m_owner == other.m_owner && m_pos == other.m_pos; }
-auto gkit::core::scene::Unit::const_iterator::operator!=(const const_iterator& other) const -> bool { return !(*this == other); }
-
-auto gkit::core::scene::Unit::begin() const -> const_iterator {
-    return const_iterator(const_cast<Unit*>(this), 0);
+template<bool IsConst>
+auto gkit::core::scene::Unit::UnitIterator<IsConst>::operator==(const UnitIterator& other) const -> bool {
+    return m_owner == other.m_owner && m_pos == other.m_pos;
 }
 
-auto gkit::core::scene::Unit::end() const -> const_iterator {
-    return const_iterator(const_cast<Unit*>(this), children.size());
-}
-
+auto gkit::core::scene::Unit::begin() -> iterator { return iterator(this, 0); }
+auto gkit::core::scene::Unit::end() -> iterator { return iterator(this, children.size()); }
+auto gkit::core::scene::Unit::begin() const -> const_iterator { return const_iterator(this, 0); }
+auto gkit::core::scene::Unit::end() const -> const_iterator { return const_iterator(this, children.size()); }
 auto gkit::core::scene::Unit::cbegin() const -> const_iterator { return begin(); }
 auto gkit::core::scene::Unit::cend() const -> const_iterator { return end(); }
-
-// This is a reverse iterator, implemented using std::reverse_iterator.
-// using at here maybe have some problem, just I guess,
-// So I deleted it
-
-// using reverse_iterator = std::reverse_iterator<gkit::core::scene::Unit::iterator>;
-// using const_reverse_iterator = std::reverse_iterator<gkit::core::scene::Unit::const_iterator>;
 
 auto gkit::core::scene::Unit::rbegin() -> reverse_iterator { return reverse_iterator(end()); }
 auto gkit::core::scene::Unit::rend() -> reverse_iterator { return reverse_iterator(begin()); }
