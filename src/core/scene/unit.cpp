@@ -84,7 +84,7 @@ auto gkit::core::scene::Unit::add_child(std::unique_ptr<Unit>&& child_ptr) -> vo
 
 
 auto gkit::core::scene::Unit::remove_child(uint32_t index) noexcept -> void {
-    auto child_ptr = this->get_available_child(index);
+    auto child_ptr = this->get_child(index);
     if (child_ptr == nullptr) return;
     child_ptr->ready_to_drop();
 }
@@ -97,7 +97,7 @@ auto gkit::core::scene::Unit::remove_child(const std::string& child_name) noexce
 }
 
 
-auto gkit::core::scene::Unit::get_available_child(uint32_t index) noexcept -> Unit* {
+auto gkit::core::scene::Unit::get_child(uint32_t index) noexcept -> Unit* {
     std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
 
     if (index >= this->children.size()) {
@@ -149,11 +149,11 @@ auto gkit::core::scene::Unit::get_parent<gkit::core::scene::Unit>() noexcept -> 
 // iterator part use
 gkit::core::scene::Unit::iterator::iterator(Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
 auto gkit::core::scene::Unit::iterator::operator*() const -> reference {
-auto child_ptr = m_owner->get_available_child(static_cast<uint32_t>(m_pos));
+    auto child_ptr = m_owner->get_child(static_cast<uint32_t>(m_pos));
     return *child_ptr;
 }
 auto gkit::core::scene::Unit::iterator::operator->() const -> pointer {
-    auto child_ptr = m_owner->get_available_child(static_cast<uint32_t>(m_pos));
+    auto child_ptr = m_owner->get_child(static_cast<uint32_t>(m_pos));
     return child_ptr;
 }
 auto gkit::core::scene::Unit::iterator::operator++() -> iterator& {
@@ -189,12 +189,12 @@ auto gkit::core::scene::Unit::end() -> iterator {
 gkit::core::scene::Unit::const_iterator::const_iterator(const Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
 
 auto gkit::core::scene::Unit::const_iterator::operator*() const -> reference {
-    auto child_ptr = const_cast<Unit*>(m_owner)->get_available_child(static_cast<uint32_t>(m_pos));
+    auto child_ptr = const_cast<Unit*>(m_owner)->get_child(static_cast<uint32_t>(m_pos));
     return *child_ptr;
 }
 
 auto gkit::core::scene::Unit::const_iterator::operator->() const -> pointer {
-    auto child_ptr = const_cast<Unit*>(m_owner)->get_available_child(static_cast<uint32_t>(m_pos));
+    auto child_ptr = const_cast<Unit*>(m_owner)->get_child(static_cast<uint32_t>(m_pos));
     return child_ptr;
 }
 
