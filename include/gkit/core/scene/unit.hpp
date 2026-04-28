@@ -195,20 +195,11 @@ namespace gkit::core::scene {
         Unit* parent = nullptr;
         
     private: // children management
-        std::atomic<bool> modified = false;
-
         std::unordered_map<std::string, Unit*> name_map_cache;
         mutable std::shared_mutex name_map_cache_rw_mutex;
 
-        std::vector<uint32_t> active_index_cache;
-        mutable std::shared_mutex index_cache_rw_mutex;
-        
         std::vector<std::unique_ptr<Unit>> children;
         mutable std::shared_mutex children_rw_mutex;
-
-        // when (active_index_cache.size() / children.size() <= overload_factor)
-        // children vector will realloc(call method @ref remap_children_and_cache())
-        static const constexpr float overload_factor = 0.5f;
 
         /**
          * @brief Get the available child pointer.
@@ -225,18 +216,6 @@ namespace gkit::core::scene {
          * If the child exists in name cache, return the pointer; otherwise return nullptr.
          */
         auto get_child(const std::string& child_name) noexcept -> Unit*;
-
-        /**
-         * @brief Update the index cache. It will be call substantively when @ref modified is true.
-         * @return void
-         */
-        auto update_index_cache() -> void;
-
-        /**
-         * @brief Move away the dead child ptr in @ref children and update index cache.
-         * @return void
-         */
-        auto remap_children_and_cache() -> void;
 
         /**
          * @brief Drop all children which are marked ready to drop.
