@@ -8,11 +8,6 @@
 #include <utility>
 #include <vector>
 
-
-gkit::core::scene::Unit::Unit() noexcept : 
-    children(std::vector<std::unique_ptr<Unit>>()),
-    children_rw_mutex() { }
-
     
 gkit::core::scene::Unit::Unit(std::string name) noexcept : gkit::core::scene::Unit() {
     this->name = name;
@@ -78,7 +73,6 @@ auto gkit::core::scene::Unit::add_child(std::unique_ptr<Unit>&& child_ptr) -> vo
     }
     {
         std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
-        std::unique_lock<std::shared_mutex> w_lock(this->name_map_cache_rw_mutex);
         auto& child_name = this->children.back()->name;
         auto* new_child_ptr = this->children.back().get();
         if (this->name_map_cache.contains(child_name)) {
@@ -114,7 +108,7 @@ auto gkit::core::scene::Unit::get_available_child(uint32_t index) noexcept -> Un
 
 
 auto gkit::core::scene::Unit::get_child(const std::string& child_name) noexcept -> Unit* {
-    std::shared_lock<std::shared_mutex> r_lock(this->name_map_cache_rw_mutex);
+    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
     auto iter = this->name_map_cache.find(child_name);
     if (iter == this->name_map_cache.end()) {
         return nullptr;
@@ -130,7 +124,7 @@ auto gkit::core::scene::Unit::drop_children() -> void {
     std::erase_if(this->children, [&](std::unique_ptr<Unit>& p) -> bool {
         if (p && p->drop_flag.load() == true) {
             {
-                std::unique_lock<std::shared_mutex> w_lock(this->name_map_cache_rw_mutex);
+                std::unique_lock<std::shared_mutex> w_lock(this->children_rw_mutex);
                 this->name_map_cache.erase(p->name);
             }
             to_exit.push_back(std::move(p));
