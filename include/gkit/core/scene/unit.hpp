@@ -34,7 +34,7 @@ namespace gkit::core::scene {
      */
     class Unit {
     protected:
-        Unit() noexcept;
+        Unit() noexcept = default;
         Unit(std::string name) noexcept;
     public:
         /**
@@ -195,11 +195,9 @@ namespace gkit::core::scene {
         Unit* parent = nullptr;
         
     private: // children management
-        std::unordered_map<std::string, Unit*> name_map_cache;
-        mutable std::shared_mutex name_map_cache_rw_mutex;
-
-        std::vector<std::unique_ptr<Unit>> children;
-        mutable std::shared_mutex children_rw_mutex;
+        mutable std::shared_mutex children_rw_mutex {};
+        std::unordered_map<std::string, Unit*> name_map_cache {};
+        std::vector<std::unique_ptr<Unit>> children {};
 
         /**
          * @brief Get the available child pointer.
