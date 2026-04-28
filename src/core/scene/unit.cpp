@@ -11,7 +11,6 @@
 
 gkit::core::scene::Unit::Unit() noexcept : 
     children(std::vector<std::unique_ptr<Unit>>()),
-    active_index_cache(),
     children_rw_mutex() { }
 
     
@@ -27,20 +26,20 @@ auto gkit::core::scene::Unit::exit()             -> void { }
 
 
 auto gkit::core::scene::Unit::ready_handler() noexcept -> void {
-    for (auto child_index : this->active_index_cache) {
-        auto& child = this->children[child_index];
-        child->ready_handler();
+    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
+    for (auto& child_ptr : this->children) {
+        if (child_ptr == nullptr) continue;
+        child_ptr->ready_handler();
     }
     this->ready();
 }
 
 
 auto gkit::core::scene::Unit::process_handler() noexcept -> void {
-    this->update_index_cache();
-    for (auto child_index : this->active_index_cache) {
-        auto& child = this->children[child_index];
-        if (child == nullptr || !child->process_enabled) continue;
-        child->process_handler();
+    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
+    for (auto& child_ptr : this->children) {
+        if (child_ptr == nullptr || !child_ptr->process_enabled) continue;
+        child_ptr->process_handler();
     }
     this->process();
     this->drop_children();
@@ -53,8 +52,10 @@ auto gkit::core::scene::Unit::physics_process_handler() noexcept -> void {
 
 
 auto gkit::core::scene::Unit::exit_handler() noexcept -> void {
-    for (auto child_index : this->active_index_cache) {
-        this->children[child_index]->exit_handler();
+    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
+    for (auto& child_ptr : this->children) {
+        if (child_ptr == nullptr) continue;
+        child_ptr->exit_handler();
     }
     this->exit();
 }
@@ -85,7 +86,6 @@ auto gkit::core::scene::Unit::add_child(std::unique_ptr<Unit>&& child_ptr) -> vo
         }
         this->name_map_cache.emplace(std::make_pair(child_name, new_child_ptr));
     }
-    this->modified.store(true);
 }
 
 
@@ -104,15 +104,12 @@ auto gkit::core::scene::Unit::remove_child(const std::string& child_name) noexce
 
 
 auto gkit::core::scene::Unit::get_available_child(uint32_t index) noexcept -> Unit* {
-    // check modified flag and update cache
-    this->update_index_cache();
     std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
 
-    if (index >= this->active_index_cache.size()) {
+    if (index >= this->children.size()) {
         return nullptr;
     }
-    auto raw_index = this->active_index_cache.at(index);
-    return this->children.at(raw_index).get();
+    return this->children[index].get();
 }
 
 
@@ -126,76 +123,24 @@ auto gkit::core::scene::Unit::get_child(const std::string& child_name) noexcept 
 }
 
 
-auto gkit::core::scene::Unit::update_index_cache() -> void {
-    bool need_remap = false;
-    // overload factor calculation
-    {
-        std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
-        std::shared_lock<std::shared_mutex> cache_r_lock(this->index_cache_rw_mutex);
-
-        auto cache_size = this->active_index_cache.size();
-        auto children_size = this->children.size();
-        if ((float)cache_size / children_size < Unit::overload_factor) {
-            need_remap = true;
-        }
-    }
-
-    // remap children and cache and exit
-    if (need_remap) {
-        this->remap_children_and_cache();
-        return; 
-    }
-
-    if (!this->modified) return;
-    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
-    std::unique_lock<std::shared_mutex> w_lock(this->index_cache_rw_mutex); 
-
-    this->active_index_cache.clear();
-    for (auto i = 0u; i < this->children.size(); ++i) {
-        auto& child_ptr = this->children.at(i);
-        if (child_ptr == nullptr) continue;
-        this->active_index_cache.push_back(i);
-    }
-
-    this->modified = false;
-}
-
-
-auto gkit::core::scene::Unit::remap_children_and_cache() -> void {
-    std::unique_lock<std::shared_mutex> cache_w_lock(this->index_cache_rw_mutex);
-    std::unique_lock<std::shared_mutex> children_w_lock(this->children_rw_mutex);
-    this->active_index_cache.clear();
-
-    // remap children
-    auto new_children_vec = std::vector<std::unique_ptr<Unit>>(0);
-    for (auto&& child_ptr : this->children) {
-        if (child_ptr == nullptr) continue;
-        new_children_vec.emplace_back(std::move(child_ptr));
-    }
-
-    this->children = std::move(new_children_vec);
-    this->children.shrink_to_fit(); // free some memory
-
-    // update cache
-    for (auto i = 0; i < this->children.size(); ++i) {
-        this->active_index_cache.emplace_back(i);
-    }
-}
-
-
 auto gkit::core::scene::Unit::drop_children() -> void {
-    for (auto& active_index : this->active_index_cache) {
-        auto& child_ptr = this->children[active_index];
-        if (child_ptr != nullptr && child_ptr->ready_to_drop == true) {
-            auto droped_child = std::move(child_ptr);
+    std::vector<std::unique_ptr<Unit>> to_exit;
+    to_exit.reserve(this->children.size() / 2);
+
+    std::erase_if(this->children, [&](std::unique_ptr<Unit>& p) -> bool {
+        if (p && p->ready_to_drop.load() == true) {
             {
                 std::unique_lock<std::shared_mutex> w_lock(this->name_map_cache_rw_mutex);
-                this->name_map_cache.erase(droped_child->name);
+                this->name_map_cache.erase(p->name);
             }
-            child_ptr.reset(nullptr);
-            this->modified = true;
-            droped_child->exit_handler();
+            to_exit.push_back(std::move(p));
+            return true;
         }
+        return false;
+    });
+
+    for (auto& child : to_exit) {
+        child->exit_handler();
     }
 }
 
@@ -243,7 +188,7 @@ auto gkit::core::scene::Unit::begin() -> iterator {
 }
 
 auto gkit::core::scene::Unit::end() -> iterator {
-    return iterator(this, active_index_cache.size());
+    return iterator(this, children.size());
 }
 
 // now is const_iterator use
@@ -286,7 +231,7 @@ auto gkit::core::scene::Unit::begin() const -> const_iterator {
 }
 
 auto gkit::core::scene::Unit::end() const -> const_iterator {
-    return const_iterator(const_cast<Unit*>(this), active_index_cache.size());
+    return const_iterator(const_cast<Unit*>(this), children.size());
 }
 
 auto gkit::core::scene::Unit::cbegin() const -> const_iterator { return begin(); }
