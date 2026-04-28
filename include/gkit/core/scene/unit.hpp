@@ -147,7 +147,7 @@ namespace gkit::core::scene {
          * @return void
          * @note The unit will be dropped after the end of @ref process_handler().
          */
-        inline auto drop() -> void {this->ready_to_drop.store(true);};
+        inline auto ready_to_drop() noexcept -> void { this->drop_flag.store(true); };
 
     public: // cross-unit methods
         /**
@@ -225,7 +225,7 @@ namespace gkit::core::scene {
 
     private:
         std::atomic<bool> process_enabled = true; // process enabled flag
-        std::atomic<bool> ready_to_drop = false;  // drop flag(mark as dead)
+        std::atomic<bool> drop_flag = false;  // mark as dead
 
     public:
         // iterator
