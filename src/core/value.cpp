@@ -19,7 +19,7 @@ namespace gkit::core {
     Value::Value(const char* value) : storage_(std::string(value)) {}
     Value::Value(std::string value) : storage_(std::move(value)) {}
     Value::Value(Array value) : storage_(std::move(value)) {}
-    Value::Value(Object value) : storage_(std::move(value)) {}
+    Value::Value(Map value) : storage_(std::move(value)) {}
 
     // =========================================================================
     // Value - Assignment Operators
@@ -70,7 +70,7 @@ namespace gkit::core {
         return *this;
     }
 
-    auto Value::operator=(Object value) -> Value& {
+    auto Value::operator=(Map value) -> Value& {
         storage_ = std::move(value);
         return *this;
     }
@@ -87,16 +87,16 @@ namespace gkit::core {
         return std::get<Array>(storage_);
     }
 
-    auto Value::as_object() const noexcept -> const Object& {
-        return std::get<Object>(storage_);
+    auto Value::as_map() const noexcept -> const Map& {
+        return std::get<Map>(storage_);
     }
 
     auto Value::as_array() noexcept -> Array& {
         return std::get<Array>(storage_);
     }
 
-    auto Value::as_object() noexcept -> Object& {
-        return std::get<Object>(storage_);
+    auto Value::as_map() noexcept -> Map& {
+        return std::get<Map>(storage_);
     }
 
     // =========================================================================
@@ -112,17 +112,17 @@ namespace gkit::core {
     // =========================================================================
 
     auto Value::contains(const std::string& key) const noexcept -> bool {
-        if (!is_object()) return false;
-        const auto& obj = as_object();
+        if (!is_map()) return false;
+        const auto& obj = as_map();
         return obj.find(key) != obj.end();
     }
 
     auto Value::operator[](const std::string& key) -> Value& {
-        return as_object()[key];
+        return as_map()[key];
     }
 
     auto Value::operator[](const std::string& key) const -> const Value& {
-        return as_object().at(key);
+        return as_map().at(key);
     }
 
     auto Value::operator[](std::size_t index) -> Value& {
@@ -134,8 +134,8 @@ namespace gkit::core {
     }
 
     auto Value::at(const std::string& key) const noexcept -> std::optional<std::reference_wrapper<const Value>> {
-        if (!is_object()) return std::nullopt;
-        const auto& obj = as_object();
+        if (!is_map()) return std::nullopt;
+        const auto& obj = as_map();
         auto it = obj.find(key);
         if (it == obj.end()) return std::nullopt;
         return std::cref(it->second);
@@ -438,7 +438,7 @@ namespace gkit::core {
                 expect('{');
                 skip_whitespace();
 
-                Object obj;
+                Map obj;
                 if (peek() == '}') {
                     advance();
                     return Value(std::move(obj));
@@ -567,7 +567,7 @@ namespace gkit::core {
                         }
                         if (!v.empty()) indent(depth);
                         result_ << ']';
-                    } else if constexpr (std::is_same_v<T, Object>) {
+                    } else if constexpr (std::is_same_v<T, Map>) {
                         result_ << '{';
                         bool first = true;
                         for (const auto& [key, val] : v) {

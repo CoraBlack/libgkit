@@ -28,7 +28,7 @@ namespace gkit::core {
         Number,
         String,
         Array,
-        Object
+        Map
     };
 
     /**
@@ -45,7 +45,7 @@ namespace gkit::core {
      * @brief Object type - string-keyed map of values
      * @note Uses std::map to preserve key ordering for deterministic output
      */
-    using Object = std::map<std::string, Value>;
+    using Map = std::map<std::string, Value>;
 
     /**
      * @brief Number type - holds integer or floating-point
@@ -60,7 +60,7 @@ namespace gkit::core {
         /**
          * @brief Underlying variant type holding all supported value types
          */
-        using Storage = std::variant<Null, bool, Number, std::string, Array, Object>;
+        using Storage = std::variant<Null, bool, Number, std::string, Array, Map>;
 
         Value() noexcept = default;
         Value(const Value&) = default;
@@ -78,7 +78,7 @@ namespace gkit::core {
         Value(const char* value);
         Value(std::string value);
         Value(Array value);
-        Value(Object value);
+        Value(Map value);
 
         /** Assignment operators **/
         auto operator=(const Value&) -> Value& = default;
@@ -94,7 +94,7 @@ namespace gkit::core {
         auto operator=(const char* value) -> Value&;
         auto operator=(std::string value) -> Value&;
         auto operator=(Array value) -> Value&;
-        auto operator=(Object value) -> Value&;
+        auto operator=(Map value) -> Value&;
 
     public: // Type checking
         [[nodiscard]] constexpr auto is_null() const noexcept -> bool {
@@ -137,8 +137,8 @@ namespace gkit::core {
         [[nodiscard]] constexpr auto is_array() const noexcept -> bool {
             return std::holds_alternative<Array>(storage_);
         }
-        [[nodiscard]] constexpr auto is_object() const noexcept -> bool {
-            return std::holds_alternative<Object>(storage_);
+        [[nodiscard]] constexpr auto is_map() const noexcept -> bool {
+            return std::holds_alternative<Map>(storage_);
         }
 
     public: // Value accessors (unchecked - behavior undefined if wrong type)
@@ -181,11 +181,11 @@ namespace gkit::core {
         }
         [[nodiscard]] auto as_string() const noexcept -> const std::string&;
         [[nodiscard]] auto as_array() const noexcept -> const Array&;
-        [[nodiscard]] auto as_object() const noexcept -> const Object&;
+        [[nodiscard]] auto as_map() const noexcept -> const Map&;
 
         /** Mutable accessors **/
         [[nodiscard]] auto as_array() noexcept -> Array&;
-        [[nodiscard]] auto as_object() noexcept -> Object&;
+        [[nodiscard]] auto as_map() noexcept -> Map&;
 
     public: // Safe value accessors with fallback
         [[nodiscard]] constexpr auto as_bool_or(bool fallback) const noexcept -> bool {
@@ -243,7 +243,7 @@ namespace gkit::core {
                 if constexpr (std::is_same_v<T, Number>) return Type::Number;
                 if constexpr (std::is_same_v<T, std::string>) return Type::String;
                 if constexpr (std::is_same_v<T, Array>) return Type::Array;
-                if constexpr (std::is_same_v<T, Object>) return Type::Object;
+                if constexpr (std::is_same_v<T, Map>) return Type::Map;
                 return Type::Null; // unreachable
             }, storage_);
         }
@@ -259,7 +259,7 @@ namespace gkit::core {
             return storage_;
         }
 
-    public: // Generic type checking and access (Variant API)
+    public: // Generic type checking and access
         template<typename T>
         [[nodiscard]] constexpr bool is() const noexcept {
             if constexpr (std::is_same_v<T, Null>) return is_null();
@@ -270,7 +270,7 @@ namespace gkit::core {
             else if constexpr (std::is_same_v<T, double>) return is_number_float64();
             else if constexpr (std::is_same_v<T, std::string>) return is_string();
             else if constexpr (std::is_same_v<T, Array>) return is_array();
-            else if constexpr (std::is_same_v<T, Object>) return is_object();
+            else if constexpr (std::is_same_v<T, Map>) return is_map();
             else return false;
         }
 
@@ -285,7 +285,7 @@ namespace gkit::core {
             else if constexpr (std::is_same_v<T, double>) return as_double();
             else if constexpr (std::is_same_v<T, std::string>) return std::optional<std::string>(as_string());
             else if constexpr (std::is_same_v<T, Array>) return std::optional<Array>(as_array());
-            else if constexpr (std::is_same_v<T, Object>) return std::optional<Object>(as_object());
+            else if constexpr (std::is_same_v<T, Map>) return std::optional<Map>(as_map());
             else return std::nullopt;
         }
 
