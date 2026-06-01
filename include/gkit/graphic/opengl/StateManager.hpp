@@ -3,6 +3,8 @@
 #include "config.hpp"
 #include "gkit/core/scene/singleton.hpp"
 
+#include <glad/gl.h>
+
 #include <cstdint>
 
 namespace gkit::graphic::opengl {

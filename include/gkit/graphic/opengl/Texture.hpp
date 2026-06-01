@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <string>
+#include <cstdint>
 
 /**
  * @brief Texture wrapper for OpenGL texture objects
