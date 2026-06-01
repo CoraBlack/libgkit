@@ -32,7 +32,7 @@ jobs:
         echo "Commit SHA: ${{ github.sha }}"
 
     - name: Install dependencies
-      shell: cmd
+      shell: pwsh
       run: |
         echo "📦 Installing Windows dependencies..."
         python -m pip install jinja2
