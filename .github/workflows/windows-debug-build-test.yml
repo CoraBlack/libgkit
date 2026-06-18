@@ -31,10 +31,28 @@ jobs:
         echo "Repository: ${{ github.repository }}"
         echo "Commit SHA: ${{ github.sha }}"
 
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Debug Python paths
+      shell: pwsh
+      run: |
+        echo "🔍 Python paths:"
+        python --version
+        python -c "import sys; print('sys.executable ->', sys.executable)"
+        echo "--- where.exe python ---"
+        where.exe python
+        echo "--- where.exe python3 ---"
+        where.exe python3
+
     - name: Install dependencies
       shell: pwsh
       run: |
         echo "📦 Installing Windows dependencies..."
+        $py = python -c "import sys; print(sys.executable)"
+        echo "Python used for install: $py"
         python -m pip install jinja2
         echo "✅ Windows dependencies installed successfully"
 
@@ -45,10 +63,13 @@ jobs:
         arch: x64
 
     - name: Configure CMake
+      shell: pwsh
       run: |
         echo "⚙️ Configuring CMake ..."
         echo "Using preset: ${{matrix.preset}}"
-        cmake --preset ${{matrix.preset}}
+        $PythonPath = python -c "import sys; print(sys.executable)"
+        echo "Using Python: $PythonPath"
+        cmake --preset ${{matrix.preset}} "-DPython_EXECUTABLE=$PythonPath"
         echo "✅ CMake configuration completed"
 
     - name: Configure and build project
