@@ -21,38 +21,38 @@ namespace gkit::graphic::opengl {
 
 			/** @brief Depth test state structure */
 			struct DepthState {
-				bool        enabled      = false;                     ///< Whether depth test is enabled
-				CompareFunc compareFunc  = CompareFunc::Less;         ///< Depth comparison function
-				bool        writeMask    = true;                      ///< Depth write mask
+				bool        enabled      = false;                     // Whether depth test is enabled
+				CompareFunc compareFunc  = CompareFunc::Less;         // Depth comparison function
+				bool        writeMask    = true;                      // Depth write mask
 			};
 
 			/** @brief Blend state structure */
 			struct BlendState {
-				bool          enabled    = false;                     ///< Whether blending is enabled
-				BlendFunc     srcRGB     = BlendFunc::One;            ///< Source RGB blend factor
-				BlendFunc     dstRGB     = BlendFunc::Zero;           ///< Destination RGB blend factor
-				BlendFunc     srcAlpha   = BlendFunc::One;            ///< Source alpha blend factor
-				BlendFunc     dstAlpha   = BlendFunc::Zero;           ///< Destination alpha blend factor
-				BlendEquation equation   = BlendEquation::Add;       ///< Blend equation
+				bool          enabled    = false;                     // Whether blending is enabled
+				BlendFunc     srcRGB     = BlendFunc::One;            // Source RGB blend factor
+				BlendFunc     dstRGB     = BlendFunc::Zero;           // Destination RGB blend factor
+				BlendFunc     srcAlpha   = BlendFunc::One;            // Source alpha blend factor
+				BlendFunc     dstAlpha   = BlendFunc::Zero;           // Destination alpha blend factor
+				BlendEquation equation   = BlendEquation::Add;        // Blend equation
 			};
 
 			/** @brief Cull face state structure */
 			struct CullFaceState {
-				bool          enabled    = false;                      ///< Whether cull face is enabled
-				CullFaceMode  mode       = CullFaceMode::Back;         ///< Cull face mode
-				FrontFace     frontFace  = FrontFace::CounterClockwise;///< Front face winding order
+				bool          enabled    = false;                      // Whether cull face is enabled
+				CullFaceMode  mode       = CullFaceMode::Back;         // Cull face mode
+				FrontFace     frontFace  = FrontFace::CounterClockwise;// Front face winding order
 			};
 
 			/** @brief Stencil state structure */
 			struct StencilState {
-				bool        enabled      = false;                     ///< Whether stencil test is enabled
-				CompareFunc compareFunc  = CompareFunc::Always;       ///< Stencil comparison function
-				uint32_t    ref          = 0;                         ///< Stencil reference value
-				uint32_t    readMask     = 0xFF;                      ///< Stencil read mask
-				uint32_t    writeMask    = 0xFF;                      ///< Stencil write mask
-				StencilOp   fail         = StencilOp::Keep;           ///< Stencil fail operation
-				StencilOp   zFail        = StencilOp::Keep;           ///< Stencil depth fail operation
-				StencilOp   zPass        = StencilOp::Keep;           ///< Stencil depth pass operation
+				bool        enabled      = false;                     // Whether stencil test is enabled
+				CompareFunc compareFunc  = CompareFunc::Always;       // Stencil comparison function
+				uint32_t    ref          = 0;                         // Stencil reference value
+				uint32_t    readMask     = 0xFF;                      // Stencil read mask
+				uint32_t    writeMask    = 0xFF;                      // Stencil write mask
+				StencilOp   fail         = StencilOp::Keep;           // Stencil fail operation
+				StencilOp   zFail        = StencilOp::Keep;           // Stencil depth fail operation
+				StencilOp   zPass        = StencilOp::Keep;           // Stencil depth pass operation
 			};
 
 			/** @brief Enable or disable depth testing
@@ -167,18 +167,18 @@ namespace gkit::graphic::opengl {
 			auto apply_stencil_state() -> void;
 
 			/// @brief Current shadow states
-			DepthState    m_DepthState;      ///< Current depth state
-			BlendState    m_BlendState;      ///< Current blend state
-			CullFaceState m_CullFaceState;   ///< Current cull face state
-			StencilState  m_StencilState;    ///< Current stencil state
+			DepthState    m_DepthState;      // Current depth state
+			BlendState    m_BlendState;      // Current blend state
+			CullFaceState m_CullFaceState;   // Current cull face state
+			StencilState  m_StencilState;    // Current stencil state
 
 			/// @brief Dirty flags bitmask
-			uint8_t m_DirtyFlags = 0;       ///< Bitmask indicating which states need updating
+			uint8_t m_DirtyFlags = 0;       // Bitmask indicating which states need updating
 
-			static constexpr uint8_t DIRTY_DEPTH   = 1 << 0;    ///< Dirty flag for depth state
-			static constexpr uint8_t DIRTY_BLEND   = 1 << 1;    ///< Dirty flag for blend state
-			static constexpr uint8_t DIRTY_CULL    = 1 << 2;    ///< Dirty flag for cull face state
-			static constexpr uint8_t DIRTY_STENCIL = 1 << 3;    ///< Dirty flag for stencil state
+			static constexpr uint8_t DIRTY_DEPTH   = 1 << 0;  // Dirty flag for depth state
+			static constexpr uint8_t DIRTY_BLEND   = 1 << 1;  // Dirty flag for blend state
+			static constexpr uint8_t DIRTY_CULL    = 1 << 2;  // Dirty flag for cull face state
+			static constexpr uint8_t DIRTY_STENCIL = 1 << 3;  // Dirty flag for stencil state
 		};
 
 } // namespace gkit::graphic::opengl

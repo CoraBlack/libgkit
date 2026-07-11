@@ -96,12 +96,12 @@ namespace gkit::graphic::opengl {
 	 * @brief Clear Options
 	 */
 	enum class ClearFlags : unsigned int {
-		Color      = 0x00004000,  ///< Clear Color (GL_COLOR_BUFFER_BIT)
-		Depth      = 0x00000100,  ///< Clear Depth (GL_DEPTH_BUFFER_BIT)
-		Stencil    = 0x00000400,  ///< Clear Stencil (GL_STENCIL_BUFFER_BIT)
+		Color      = 0x00004000,  // Clear Color (GL_COLOR_BUFFER_BIT)
+		Depth      = 0x00000100,  // Clear Depth (GL_DEPTH_BUFFER_BIT)
+		Stencil    = 0x00000400,  // Clear Stencil (GL_STENCIL_BUFFER_BIT)
 
-		ColorDepth = Color | Depth,              ///< Color + Depth
-		All        = Color | Depth | Stencil     ///< Clear All
+		ColorDepth = Color | Depth,              // Color + Depth
+		All        = Color | Depth | Stencil     // Clear All
 	};
 
 	constexpr auto operator|(ClearFlags a, ClearFlags b) noexcept -> ClearFlags {

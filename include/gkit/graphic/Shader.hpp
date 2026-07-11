@@ -9,8 +9,8 @@ namespace gkit::graphic{
  	 * @brief Structure holding parsed shader source code
 	 */
 	struct ShaderProgramSource {
-		std::string vertex_shader;    ///< Vertex shader source code
-		std::string fragment_shader;   ///< Fragment shader source code (note: typo in original)
+		std::string vertex_shader;    // Vertex shader source code
+		std::string fragment_shader;   // Fragment shader source code (note: typo in original)
 	};
 
 	/**
@@ -36,9 +36,9 @@ namespace gkit::graphic{
 		auto operator=(Shader&& other) noexcept -> Shader&;
 
 	private:
-		uint32_t m_renderer_id;                                  ///< OpenGL shader program ID
-		std::string m_FilePath;                                   ///< Path to the shader file
-		std::unordered_map<std::string, int> m_UniformLocationCach; ///< Cache for uniform locations
+		uint32_t m_renderer_id; // OpenGL shader program ID
+		std::string m_FilePath; // Path to the shader file
+		std::unordered_map<std::string, int> m_UniformLocationCach; // Cache for uniform locations
 	public:
 		/**
 		 * @brief Construct a shader from a file

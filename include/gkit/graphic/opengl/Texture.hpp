@@ -31,13 +31,13 @@ namespace gkit::graphic::opengl{
 		auto operator=(Texture&& other) noexcept -> Texture&;
 
 	private:
-		uint32_t          m_renderer_id;    ///< OpenGL texture ID
-		std::string       m_filepath;      ///< Path to the texture file
-		unsigned char*    m_localbuffer;   ///< Local buffer for texture data
-		int               m_width;         ///< Texture width in pixels
-		int               m_height;        ///< Texture height in pixels
-		int               m_bpp;           ///< Bits per pixel
-		TextureType       m_type;          ///< Texture type (2D, CubeMap, FrameBuffer)
+		uint32_t          m_renderer_id;   // OpenGL texture ID
+		std::string       m_filepath;      // Path to the texture file
+		unsigned char*    m_localbuffer;   // Local buffer for texture data
+		int               m_width;         // Texture width in pixels
+		int               m_height;        // Texture height in pixels
+		int               m_bpp;           // Bits per pixel
+		TextureType       m_type;          // Texture type (2D, CubeMap, FrameBuffer)
 
 	public:
 		/**
