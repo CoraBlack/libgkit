@@ -6,36 +6,36 @@
 
 gkit::graphic::opengl::buffer::FrameBuffer::FrameBuffer(int width, int height)
 	: fb_width(width), fb_height(height) {
-	glGenFramebuffers(1, &m_RendererID);
+	glGenFramebuffers(1, &m_renderer_id);
 }
 
 gkit::graphic::opengl::buffer::FrameBuffer::~FrameBuffer() {
-	if(m_RendererID != 0) {
-		glDeleteFramebuffers(1, &m_RendererID);
-		m_RendererID = 0;
+	if(m_renderer_id != 0) {
+		glDeleteFramebuffers(1, &m_renderer_id);
+		m_renderer_id = 0;
 	}
 }
 
 gkit::graphic::opengl::buffer::FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept
-    : m_RendererID(other.m_RendererID)
+    : m_renderer_id(other.m_renderer_id)
     , fb_height(other.fb_height)
     , fb_width(other.fb_width)
-    , leftX(other.leftX)
-    , bottomY(other.bottomY) {
-    other.m_RendererID = 0;
+    , left_x(other.left_x)
+    , bottom_y(other.bottom_y) {
+    other.m_renderer_id = 0;
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::operator=(FrameBuffer&& other) noexcept -> FrameBuffer& {
     if (this != &other) {
-        if (m_RendererID != 0) {
-            glDeleteFramebuffers(1, &m_RendererID);
+        if (m_renderer_id != 0) {
+            glDeleteFramebuffers(1, &m_renderer_id);
         }
-        m_RendererID = other.m_RendererID;
+        m_renderer_id = other.m_renderer_id;
         fb_height = other.fb_height;
         fb_width = other.fb_width;
-        leftX = other.leftX;
-        bottomY = other.bottomY;
-        other.m_RendererID = 0;
+        left_x = other.left_x;
+        bottom_y = other.bottom_y;
+        other.m_renderer_id = 0;
     }
     return *this;
 }
@@ -82,15 +82,15 @@ auto gkit::graphic::opengl::buffer::FrameBuffer::set_viewport(int x, int y, int 
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::set_viewport(int width, int height) -> void {
-	glViewport(leftX, bottomY, width, height);
+	glViewport(left_x, bottom_y, width, height);
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::set_viewport() -> void {
-	glViewport(leftX, bottomY, fb_width, fb_height);
+	glViewport(left_x, bottom_y, fb_width, fb_height);
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::bind() const -> void {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_renderer_id);
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::unbind() const -> void {

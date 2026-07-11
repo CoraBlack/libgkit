@@ -9,8 +9,8 @@ namespace gkit::graphic{
  	 * @brief Structure holding parsed shader source code
 	 */
 	struct ShaderProgramSource {
-		std::string vertexShader;    ///< Vertex shader source code
-		std::string fragmentShader;   ///< Fragment shader source code (note: typo in original)
+		std::string vertex_shader;    ///< Vertex shader source code
+		std::string fragment_shader;   ///< Fragment shader source code (note: typo in original)
 	};
 
 	/**
@@ -36,7 +36,7 @@ namespace gkit::graphic{
 		auto operator=(Shader&& other) noexcept -> Shader&;
 
 	private:
-		uint32_t m_RendererID;                                  ///< OpenGL shader program ID
+		uint32_t m_renderer_id;                                  ///< OpenGL shader program ID
 		std::string m_FilePath;                                   ///< Path to the shader file
 		std::unordered_map<std::string, int> m_UniformLocationCach; ///< Cache for uniform locations
 	public:
@@ -141,11 +141,11 @@ namespace gkit::graphic{
 
 		/**
 		 * @brief Create a shader program from vertex and fragment shaders
-		 * @param vertexShader Vertex shader source
-		 * @param fragmentShader Fragment shader source
+		 * @param vertex_shader Vertex shader source
+		 * @param fragment_shader Fragment shader source
 		 * @return Linked shader program ID
 		 */
-		auto create_shader(const std::string& vertexShader, const std::string& fragmentShader) -> uint32_t;
+		auto create_shader(const std::string& vertex_shader, const std::string& fragment_shader) -> uint32_t;
 
 		/**
 		 * @brief Get the location of a uniform variable

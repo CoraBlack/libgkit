@@ -31,13 +31,13 @@ namespace gkit::graphic::opengl{
 		auto operator=(Texture&& other) noexcept -> Texture&;
 
 	private:
-		uint32_t          m_RendererID;    ///< OpenGL texture ID
-		std::string       m_FilePath;      ///< Path to the texture file
-		unsigned char*    m_LocalBuffer;   ///< Local buffer for texture data
-		int               m_Width;         ///< Texture width in pixels
-		int               m_Height;        ///< Texture height in pixels
-		int               m_BPP;           ///< Bits per pixel
-		TextureType       m_Type;          ///< Texture type (2D, CubeMap, FrameBuffer)
+		uint32_t          m_renderer_id;    ///< OpenGL texture ID
+		std::string       m_filepath;      ///< Path to the texture file
+		unsigned char*    m_localbuffer;   ///< Local buffer for texture data
+		int               m_width;         ///< Texture width in pixels
+		int               m_height;        ///< Texture height in pixels
+		int               m_bpp;           ///< Bits per pixel
+		TextureType       m_type;          ///< Texture type (2D, CubeMap, FrameBuffer)
 
 	public:
 		/**
@@ -69,19 +69,19 @@ namespace gkit::graphic::opengl{
 		 * @brief Get the texture width
 		 * @return Width in pixels
 		 */
-		[[nodiscard]] inline auto get_width() const -> int { return m_Width; }
+		[[nodiscard]] inline auto get_width() const -> int { return m_width; }
 
 		/**
 		 * @brief Get the texture height
 		 * @return Height in pixels
 		 */
-		[[nodiscard]] inline auto get_height() const -> int { return m_Height; }
+		[[nodiscard]] inline auto get_height() const -> int { return m_height; }
 
 		/**
 		 * @brief Get the Render ID object
 		 * @return ID
 		 */
-		[[nodiscard]] inline auto get_render_id() const -> uint32_t { return m_RendererID; }
+		[[nodiscard]] inline auto get_render_id() const -> uint32_t { return m_renderer_id; }
 
 	private:
 		/**

@@ -64,8 +64,8 @@ namespace gkit::graphic::opengl {
 		auto unbind() const -> void;
 
 	private:
-		uint32_t m_RendererID;      	///< OpenGL vertex array ID
-		uint32_t m_AttribIndex = 0;     ///< Current attribute index for adding new attributes
+		uint32_t m_renderer_id;      	///< OpenGL vertex array ID
+		uint32_t m_attribIndex = 0;     ///< Current attribute index for adding new attributes
 	};
 
 } // namespace gkit::graphic::opengl

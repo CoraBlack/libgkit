@@ -28,7 +28,7 @@ namespace gkit::graphic::opengl::buffer{
 		auto operator=(RenderBuffer&& other) noexcept -> RenderBuffer&;
 
 	private:
-		uint32_t m_RendererID;  ///< OpenGL renderbuffer ID
+		uint32_t m_renderer_id;  ///< OpenGL renderbuffer ID
 	public:
 		/**
 		 * @brief Construct a renderbuffer
@@ -50,7 +50,7 @@ namespace gkit::graphic::opengl::buffer{
 		 */
 		auto unbind() const -> void;
 
-		[[nodiscard]] auto get_render_id() const -> uint32_t { return m_RendererID; }
+		[[nodiscard]] auto get_render_id() const -> uint32_t { return m_renderer_id; }
 	};
 
 } // namespace gkit::graphic::opengl::buffer

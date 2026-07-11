@@ -29,11 +29,11 @@ namespace gkit::graphic::opengl::buffer{
 		auto operator=(FrameBuffer&& other) noexcept -> FrameBuffer&;
 
 	private:
-		uint32_t       m_RendererID;              ///< OpenGL framebuffer ID
+		uint32_t       m_renderer_id;              ///< OpenGL framebuffer ID
 		unsigned int   fb_height;                 ///< Framebuffer height
 		unsigned int   fb_width;                  ///< Framebuffer width
-		unsigned int   leftX      = 0;            ///< Left coordinate
-		unsigned int   bottomY    = 0;            ///< Bottom coordinate
+		unsigned int   left_x      = 0;            ///< Left coordinate
+		unsigned int   bottom_y    = 0;            ///< Bottom coordinate
 	public:
 		/**
 		 * @brief Construct a framebuffer

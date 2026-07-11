@@ -26,8 +26,8 @@ namespace gkit::graphic::opengl::buffer{
 		auto operator=(IndexBuffer&& other) noexcept -> IndexBuffer&;
 
 	private:
-		uint32_t m_RendererID;	///< OpenGL buffer ID
-		uint32_t m_Count;     	///< Number of indices in the buffer
+		uint32_t m_renderer_id;	///< OpenGL buffer ID
+		uint32_t m_count;     	///< Number of indices in the buffer
 	public:
 		/**
 		 * @brief Construct an index buffer
@@ -55,7 +55,7 @@ namespace gkit::graphic::opengl::buffer{
 		 * @brief Get the number of indices in this buffer
 		 * @return Number of indices
 		 */
-		[[nodiscard]] inline auto get_count() const -> uint32_t { return m_Count; }
+		[[nodiscard]] inline auto get_count() const -> uint32_t { return m_count; }
 	};
 
 } // namespace gkit::graphic::opengl::buffer
