@@ -4,7 +4,7 @@ set (LIBRARY_OUTPUT_PATH ${BIN_FOLDER}/third_party)
 add_subdirectory(glad/cmake)
 
 glad_add_library(glad_gl STATIC
-    API "gl:core=4.6"
+    API "gl:core=4.1"
     REPRODUCIBLE
     LOCATION "${CMAKE_SOURCE_DIR}/third_party/glad_generated"
 )
