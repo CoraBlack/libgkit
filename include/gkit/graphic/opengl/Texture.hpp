@@ -46,7 +46,7 @@ namespace gkit::graphic::opengl{
 		 * @param type Texture type (TEXTURE_2D, TEXTURE_CUBE_MAP, TEXTURE_FRAMEBUFFER)
 		 * @deprecated Use TextureType enum to specify texture type instead
 		 */
-		[[deprecated("Use TextureType to specify texture type")]]
+		[[deprecated("In the future, the texture resources provided by the resource management module will be used. Currently, they are merely serving as placeholders.")]]
 		Texture(const std::string& path, TextureType type = TextureType::TEXTURE_2D);
 
 		/**
