@@ -1,9 +1,9 @@
 #pragma once
 
-#include "opengl/IndexBuffer.hpp"
-#include "opengl/VertexArray.hpp"
-#include "Shader.hpp"
-#include "opengl/config.hpp"
+#include "gkit/graphic/opengl/IndexBuffer.hpp"
+#include "gkit/graphic/opengl/VertexArray.hpp"
+#include "gkit/graphic/Shader.hpp"
+#include "gkit/graphic/opengl/config.hpp"
 #include "gkit/core/scene/singleton.hpp"
 
 #include <cstdint>

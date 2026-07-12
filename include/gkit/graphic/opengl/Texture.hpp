@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config.hpp"
+#include "gkit/graphic/opengl/config.hpp"
 
 #include <vector>
 #include <string>

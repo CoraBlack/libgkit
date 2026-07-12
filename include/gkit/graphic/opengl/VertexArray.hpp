@@ -1,7 +1,7 @@
 #pragma once
 
-#include "VertexBufferLayout.hpp"
-#include "VertexBuffer.hpp"
+#include "gkit/graphic/opengl/VertexBufferLayout.hpp"
+#include "gkit/graphic/opengl/VertexBuffer.hpp"
 
 #include <cstdint>
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Texture.hpp"
-#include "RenderBuffer.hpp"
+#include "gkit/graphic/opengl/Texture.hpp"
+#include "gkit/graphic/opengl/RenderBuffer.hpp"
 
 /**
  * @brief Frame buffer wrapper for OpenGL framebuffer objects (FBO)

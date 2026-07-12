@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config.hpp"
+#include "gkit/graphic/opengl/config.hpp"
 #include "gkit/core/scene/singleton.hpp"
 
 #include <glad/gl.h>
