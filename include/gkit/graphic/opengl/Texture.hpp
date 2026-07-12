@@ -30,15 +30,6 @@ namespace gkit::graphic::opengl{
 		 */
 		auto operator=(Texture&& other) noexcept -> Texture&;
 
-	private:
-		uint32_t          m_renderer_id;   // OpenGL texture ID
-		std::string       m_filepath;      // Path to the texture file
-		unsigned char*    m_localbuffer;   // Local buffer for texture data
-		int               m_width;         // Texture width in pixels
-		int               m_height;        // Texture height in pixels
-		int               m_bpp;           // Bits per pixel
-		TextureType       m_type;          // Texture type (2D, CubeMap, FrameBuffer)
-
 	public:
 		/**
 		 * @brief Construct a texture (deprecated)
@@ -81,7 +72,7 @@ namespace gkit::graphic::opengl{
 		 * @brief Get the Render ID object
 		 * @return ID
 		 */
-		[[nodiscard]] inline auto get_render_id() const -> uint32_t { return m_renderer_id; }
+		[[nodiscard]] inline auto get_renderer_id() const -> uint32_t { return m_renderer_id; }
 
 	private:
 		/**
@@ -95,6 +86,15 @@ namespace gkit::graphic::opengl{
 			"front.jpg",
 			"back.jpg"
 		};
+		
+	private:
+		uint32_t          m_renderer_id;   // OpenGL texture ID
+		std::string       m_filepath;      // Path to the texture file
+		unsigned char*    m_localbuffer;   // Local buffer for texture data
+		int               m_width;         // Texture width in pixels
+		int               m_height;        // Texture height in pixels
+		int               m_bpp;           // Bits per pixel
+		TextureType       m_type;          // Texture type (2D, CubeMap, FrameBuffer)
 	};
 
 } // namespace gkit::graphic::opengl

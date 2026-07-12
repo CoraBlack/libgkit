@@ -42,7 +42,7 @@ auto gkit::graphic::opengl::buffer::FrameBuffer::operator=(FrameBuffer&& other) 
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::attach_color_texture(const gkit::graphic::opengl::Texture& texture, int slot) -> void {
 	bind();
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, texture.get_render_id(), 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, texture.get_renderer_id(), 0);
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::detach_color_texture(int slot) -> void {

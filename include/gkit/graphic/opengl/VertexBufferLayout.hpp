@@ -15,10 +15,6 @@
 namespace gkit::graphic::opengl::buffer {
 
 	struct VertexBufferElement {
-		uint32_t type;         	  // OpenGL data type (GL_FLOAT, GL_UNSIGNED_INT, etc.)
-		uint32_t count;       	  // Number of components in this element
-		unsigned char normalized; // Whether the data should be normalized
-
 		/**
 		 * @brief Get the size in bytes of an OpenGL data type
 		 * @param type OpenGL data type
@@ -32,6 +28,10 @@ namespace gkit::graphic::opengl::buffer {
 				default: assert(false && "Unknown vertex buffer element type"); return 0;
 			}
 		}
+
+		uint32_t type;         	  // OpenGL data type (GL_FLOAT, GL_UNSIGNED_INT, etc.)
+		uint32_t count;       	  // Number of components in this element
+		unsigned char normalized; // Whether the data should be normalized
 	};
 
 	/**
@@ -41,9 +41,6 @@ namespace gkit::graphic::opengl::buffer {
 	 * count of each attribute and the stride between consecutive vertices.
 	 */
 	class VertexBufferLayout {
-	private:
-		std::vector<VertexBufferElement> m_elements;  // List of vertex elements
-		uint32_t m_stride = 0;                        // Bytes between consecutive vertices
 	public:
 		VertexBufferLayout() = default;
 
@@ -68,6 +65,10 @@ namespace gkit::graphic::opengl::buffer {
 		 * @return Stride in bytes
 		 */
 		[[nodiscard]] inline auto get_stride() const -> uint32_t { return m_stride; }
+
+	private:
+		std::vector<VertexBufferElement> m_elements;  // List of vertex elements
+		uint32_t m_stride = 0;                        // Bytes between consecutive vertices
 	};
 
 	/**

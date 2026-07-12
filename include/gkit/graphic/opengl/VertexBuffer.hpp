@@ -26,9 +26,6 @@ namespace gkit::graphic::opengl::buffer {
 		 */
 		auto operator=(VertexBuffer&& other) noexcept -> VertexBuffer&;
 
-	private:
-		uint32_t m_renderer_id;	 // OpenGL buffer ID
-		uint32_t m_size;         // Buffer size in bytes
 	public:
 		/**
 		 * @brief Construct a vertex buffer
@@ -68,6 +65,9 @@ namespace gkit::graphic::opengl::buffer {
 		 */
 		auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void;
 
+	private:
+		uint32_t m_renderer_id;	 // OpenGL buffer ID
+		uint32_t m_size;         // Buffer size in bytes
 	};
 
 } // namespace gkit::graphic::opengl::buffer
