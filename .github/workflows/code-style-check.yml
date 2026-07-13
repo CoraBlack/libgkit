@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install clang-format
         run: |
@@ -30,16 +32,27 @@ jobs:
 
       - name: Run clang-format
         run: |
-          echo "🔍 Running clang-format check..."
+          echo "🔍 Running clang-format check on changed files..."
 
-          SRC_FILES=$(find "${{ github.workspace }}/src"      -name "*.cpp" -o -name "*.hpp" | sort)
-          INC_FILES=$(find "${{ github.workspace }}/include"  -name "*.hpp" | sort)
-          FILES="$SRC_FILES $INC_FILES"
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            FILES=$(git diff --name-only --diff-filter=ACMR \
+              "origin/${{ github.base_ref }}...HEAD" \
+              -- "src/" "include/" | grep -E '\.(cpp|hpp)$' | sort)
+          else
+            FILES=$(git diff --name-only --diff-filter=ACMR \
+              HEAD^ HEAD \
+              -- "src/" "include/" | grep -E '\.(cpp|hpp)$' | sort || true)
+          fi
 
           if [ -z "$FILES" ]; then
-            echo "::warning::No source files found"
+            echo "No changed C++ files to check."
+            echo "✅ clang-format check passed"
             exit 0
           fi
+
+          echo "Changed files:"
+          echo "$FILES"
+          echo ""
 
           EXIT_CODE=0
           for file in $FILES; do

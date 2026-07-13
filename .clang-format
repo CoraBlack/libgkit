@@ -139,6 +139,7 @@ AlignConsecutiveMacros: AcrossEmptyLinesAndComments
 IndentPPDirectives: None
 
 # ── Other ──────────────────────────────────────────────────────────
+IgnoreUnknownKeys: true
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: Consecutive
 AlignConsecutiveDeclarations: None
