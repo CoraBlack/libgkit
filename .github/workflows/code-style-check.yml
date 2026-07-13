@@ -30,7 +30,7 @@ jobs:
 
       - name: Run clang-format
         run: |
-          echo "🔍 Running clang-format check..."
+          echo "🔍 Running clang-format check (clang-format-20)..."
 
           SRC_FILES=$(find "${{ github.workspace }}/src"      -name "*.cpp" -o -name "*.hpp" | sort)
           INC_FILES=$(find "${{ github.workspace }}/include"  -name "*.hpp" | sort)
@@ -43,15 +43,21 @@ jobs:
 
           EXIT_CODE=0
           for file in $FILES; do
-            if ! clang-format --dry-run --Werror "$file" 2>&1; then
+            DIFF=$(clang-format "$file" 2>&1 | diff -u "$file" - 2>&1 || true)
+            if [ -n "$DIFF" ]; then
               EXIT_CODE=1
+              echo "--- $file ---"
+              echo "$DIFF"
             fi
           done
 
           if [ $EXIT_CODE -ne 0 ]; then
             echo ""
-            echo "::error::clang-format found formatting issues."
-            echo "Run 'clang-format -i <file>' locally to fix them."
+            echo "::error::clang-format found formatting issues (see diff above)."
+            echo "Run the following locally to fix:"
+            echo "  clang-format -i <file>"
+            echo ""
+            echo "NOTE: CI uses clang-format 20. Your local version must match."
             exit 1
           fi
 
