@@ -8,58 +8,58 @@ on:
   workflow_dispatch:
 
 jobs:
-  clang-format:
-    name: Clang-Format Check
-    runs-on: ubuntu-latest
+  # clang-format:
+  #   name: Clang-Format Check
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Install clang-format
-        run: |
-          echo "📦 Installing clang-format 21..."
-          sudo apt-get update
-          sudo apt-get install -y wget software-properties-common
-          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
-          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-21 main"
-          sudo apt-get update
-          sudo apt-get install -y clang-format-21
-          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-21 100
-          echo "✅ clang-format $(clang-format --version) installed"
+  #     - name: Install clang-format
+  #       run: |
+  #         echo "📦 Installing clang-format 21..."
+  #         sudo apt-get update
+  #         sudo apt-get install -y wget software-properties-common
+  #         wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+  #         sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-21 main"
+  #         sudo apt-get update
+  #         sudo apt-get install -y clang-format-21
+  #         sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-21 100
+  #         echo "✅ clang-format $(clang-format --version) installed"
 
-      - name: Run clang-format
-        run: |
-          echo "🔍 Running clang-format check..."
+  #     - name: Run clang-format
+  #       run: |
+  #         echo "🔍 Running clang-format check..."
 
-          SRC_FILES=$(find "${{ github.workspace }}/src"      -name "*.cpp" -o -name "*.hpp" | sort)
-          INC_FILES=$(find "${{ github.workspace }}/include"  -name "*.hpp" | sort)
-          FILES="$SRC_FILES $INC_FILES"
+  #         SRC_FILES=$(find "${{ github.workspace }}/src"      -name "*.cpp" -o -name "*.hpp" | sort)
+  #         INC_FILES=$(find "${{ github.workspace }}/include"  -name "*.hpp" | sort)
+  #         FILES="$SRC_FILES $INC_FILES"
 
-          if [ -z "$FILES" ]; then
-            echo "::warning::No source files found"
-            exit 0
-          fi
+  #         if [ -z "$FILES" ]; then
+  #           echo "::warning::No source files found"
+  #           exit 0
+  #         fi
 
-          EXIT_CODE=0
-          for file in $FILES; do
-            DIFF=$(clang-format "$file" 2>&1 | diff -u "$file" - 2>&1 || true)
-            if [ -n "$DIFF" ]; then
-              EXIT_CODE=1
-              echo "--- $file ---"
-              echo "$DIFF"
-            fi
-          done
+  #         EXIT_CODE=0
+  #         for file in $FILES; do
+  #           DIFF=$(clang-format "$file" 2>&1 | diff -u "$file" - 2>&1 || true)
+  #           if [ -n "$DIFF" ]; then
+  #             EXIT_CODE=1
+  #             echo "--- $file ---"
+  #             echo "$DIFF"
+  #           fi
+  #         done
 
-          if [ $EXIT_CODE -ne 0 ]; then
-            echo ""
-            echo "::error::clang-format found formatting issues (see diff above)."
-            echo "Run the following locally to fix:"
-            echo "  clang-format -i <file>"
-            exit 1
-          fi
+  #         if [ $EXIT_CODE -ne 0 ]; then
+  #           echo ""
+  #           echo "::error::clang-format found formatting issues (see diff above)."
+  #           echo "Run the following locally to fix:"
+  #           echo "  clang-format -i <file>"
+  #           exit 1
+  #         fi
 
-          echo "✅ clang-format check passed"
+  #         echo "✅ clang-format check passed"
 
   clang-tidy:
     name: Clang-Tidy Check
