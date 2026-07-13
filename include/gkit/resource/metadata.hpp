@@ -93,42 +93,42 @@ namespace gkit::resource::metadata {
 
     public: // Type checking
         [[nodiscard]] constexpr auto is_null() const noexcept -> bool {
-            return std::holds_alternative<Null>(storage_);
+            return std::holds_alternative<Null>(storage);
         }
         [[nodiscard]] constexpr auto is_bool() const noexcept -> bool {
-            return std::holds_alternative<bool>(storage_);
+            return std::holds_alternative<bool>(storage);
         }
         [[nodiscard]] constexpr auto is_number() const noexcept -> bool {
-            return std::holds_alternative<Number>(storage_);
+            return std::holds_alternative<Number>(storage);
         }
         [[nodiscard]] constexpr auto is_number_integer() const noexcept -> bool {
             if (!is_number()) return false;
-            return std::holds_alternative<std::int64_t>(std::get<Number>(storage_));
+            return std::holds_alternative<std::int64_t>(std::get<Number>(storage));
         }
         [[nodiscard]] constexpr auto is_number_float() const noexcept -> bool {
             if (!is_number()) return false;
-            return std::holds_alternative<double>(std::get<Number>(storage_));
+            return std::holds_alternative<double>(std::get<Number>(storage));
         }
         [[nodiscard]] constexpr auto is_string() const noexcept -> bool {
-            return std::holds_alternative<std::string>(storage_);
+            return std::holds_alternative<std::string>(storage);
         }
         [[nodiscard]] constexpr auto is_array() const noexcept -> bool {
-            return std::holds_alternative<Array>(storage_);
+            return std::holds_alternative<Array>(storage);
         }
         [[nodiscard]] constexpr auto is_object() const noexcept -> bool {
-            return std::holds_alternative<Object>(storage_);
+            return std::holds_alternative<Object>(storage);
         }
 
     public: // Value accessors (unchecked - behavior undefined if wrong type)
         [[nodiscard]] constexpr auto as_bool() const noexcept -> bool {
-            return std::get<bool>(storage_);
+            return std::get<bool>(storage);
         }
         [[nodiscard]] constexpr auto as_int64() const noexcept -> std::int64_t {
-            const auto& num = std::get<Number>(storage_);
+            const auto& num = std::get<Number>(storage);
             return std::get<std::int64_t>(num);
         }
         [[nodiscard]] constexpr auto as_double() const noexcept -> double {
-            const auto& num = std::get<Number>(storage_);
+            const auto& num = std::get<Number>(storage);
             if (std::holds_alternative<double>(num)) {
                 return std::get<double>(num);
             }
@@ -200,7 +200,7 @@ namespace gkit::resource::metadata {
                 if constexpr (std::is_same_v<T, Array>) return Type::Array;
                 if constexpr (std::is_same_v<T, Object>) return Type::Object;
                 return Type::Null; // unreachable
-            }, storage_);
+            }, storage);
         }
 
         /**
@@ -208,14 +208,14 @@ namespace gkit::resource::metadata {
          * @note For advanced use cases (visitation, etc.)
          */
         [[nodiscard]] constexpr auto raw() noexcept -> Storage& {
-            return storage_;
+            return storage;
         }
         [[nodiscard]] constexpr auto raw() const noexcept -> const Storage& {
-            return storage_;
+            return storage;
         }
 
     private:
-        Storage storage_ = Null{};
+        Storage storage = Null{};
     };
 
     /**
@@ -225,13 +225,13 @@ namespace gkit::resource::metadata {
     public:
         explicit ParseError(const std::string& message, std::size_t line = 0, std::size_t column = 0);
         [[nodiscard]] auto what() const noexcept -> const char* override;
-        [[nodiscard]] auto line() const noexcept -> std::size_t;
-        [[nodiscard]] auto column() const noexcept -> std::size_t;
+        [[nodiscard]] auto get_line() const noexcept -> std::size_t;
+        [[nodiscard]] auto get_column() const noexcept -> std::size_t;
 
     private:
-        std::string message_;
-        std::size_t line_;
-        std::size_t column_;
+        std::string message;
+        std::size_t line;
+        std::size_t column;
     };
 
     /**

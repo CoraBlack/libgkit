@@ -163,9 +163,9 @@ namespace gkit::core::scene {
          * @return the callable method's return value. 
          * If the index is out of range, return std::nullopt.
          */
-        template<IsUnitExtend Unit_T, typename F, typename... Args>
+        template<IsUnitExtend UnitT, typename F, typename... Args>
         auto with_child(uint32_t index, const F& func, Args&&... args)
-            -> std::invoke_result_t<F, Unit_T&, Args...>;
+            -> std::invoke_result_t<F, UnitT&, Args...>;
 
         /**
          * @brief Do something by a callable method.
@@ -179,9 +179,9 @@ namespace gkit::core::scene {
          * @throws std::out_of_range If child name is not found.
          * @throws std::invalid_argument If child type cast fails.
          */
-        template<IsUnitExtend Unit_T, typename F, typename... Args>
+        template<IsUnitExtend UnitT, typename F, typename... Args>
         auto with_child(const std::string& child_name, const F& func, Args&&... args)
-            -> std::invoke_result_t<F, Unit_T&, Args...>;
+            -> std::invoke_result_t<F, UnitT&, Args...>;
 
         /**
          * @brief Get the unit parent refernce.
@@ -210,7 +210,7 @@ namespace gkit::core::scene {
 
         // when (active_index_cache.size() / children.size() <= overload_factor)
         // children vector will realloc(call method @ref remap_children_and_cache())
-        static const constexpr float overload_factor = 0.5f;
+        static const constexpr float OVERLOAD_FACTOR = 0.5f;
 
         /**
          * @brief Get the available child pointer.
@@ -252,6 +252,7 @@ namespace gkit::core::scene {
 
     public:
         // iterator
+        // NOLINTBEGIN(readability-identifier-naming)
         class iterator {
         public:
             using iterator_category = std::bidirectional_iterator_tag;
@@ -308,6 +309,7 @@ namespace gkit::core::scene {
             const Unit* m_owner;
             size_t m_pos;
         };
+        // NOLINTEND(readability-identifier-naming)
 
         auto begin() const -> const_iterator;
         auto end() const -> const_iterator;
@@ -317,8 +319,8 @@ namespace gkit::core::scene {
 
     public:
         // This is a reverse iterator, implemented using std::reverse_iterator.
-        using reverse_iterator = std::reverse_iterator<iterator>;
-        using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+        using reverse_iterator = std::reverse_iterator<iterator>;               // NOLINT(readability-identifier-naming)
+        using const_reverse_iterator = std::reverse_iterator<const_iterator>;   // NOLINT(readability-identifier-naming)
 
         auto rbegin() -> reverse_iterator;
         auto rend() -> reverse_iterator;
@@ -342,30 +344,30 @@ namespace gkit::core::scene {
         }
     }
 
-    template<IsUnitExtend Unit_T, typename F, typename... Args>
+    template<IsUnitExtend UnitT, typename F, typename... Args>
     auto Unit::with_child(uint32_t index, const F& func, Args&&... args) 
-    -> std::invoke_result_t<F, Unit_T&, Args...> {
+    -> std::invoke_result_t<F, UnitT&, Args...> {
         auto* child_ptr = get_available_child(index);
         if (child_ptr == nullptr) {
             throw std::out_of_range("Child index is out of range");
         }
 
-        auto target_child_ptr = dynamic_cast<Unit_T*>(child_ptr);
+        auto target_child_ptr = dynamic_cast<UnitT*>(child_ptr);
         if (target_child_ptr == nullptr) {
             throw std::invalid_argument("Failed to cast child to requested type");
         }
         return std::invoke(func, *target_child_ptr, std::forward<Args>(args)...);
     } // Unit::with_child
 
-    template<IsUnitExtend Unit_T, typename F, typename... Args>
+    template<IsUnitExtend UnitT, typename F, typename... Args>
     auto Unit::with_child(const std::string& child_name, const F& func, Args&&... args)
-    -> std::invoke_result_t<F, Unit_T&, Args...> {
+    -> std::invoke_result_t<F, UnitT&, Args...> {
         auto child_ptr = get_child(child_name);
         if (child_ptr == nullptr) {
             throw std::out_of_range("Child name is not found");
         }
 
-        auto* child = dynamic_cast<Unit_T*>(child_ptr);
+        auto* child = dynamic_cast<UnitT*>(child_ptr);
         if (child == nullptr) {
             throw std::invalid_argument("Failed to cast child to requested type");
         }

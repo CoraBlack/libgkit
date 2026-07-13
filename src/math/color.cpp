@@ -47,7 +47,7 @@ namespace gkit::math {
         float x = c * (1.0f - std::abs(std::fmod(h / 60.0f, 2.0f) - 1.0f));
         float m = v - c;
 
-        float r, g, b;
+        float r = 0.f, g = 0.f, b = 0.f;
         if (h < 60.0f) { r = c; g = x; b = 0; }
         else if (h < 120.0f) { r = x; g = c; b = 0; }
         else if (h < 180.0f) { r = 0; g = c; b = x; }
@@ -55,13 +55,15 @@ namespace gkit::math {
         else if (h < 300.0f) { r = x; g = 0; b = c; }
         else { r = c; g = 0; b = x; }
 
-        uint8_t R = static_cast<uint8_t>((r + m) * 255.0f);
-        uint8_t G = static_cast<uint8_t>((g + m) * 255.0f);
-        uint8_t B = static_cast<uint8_t>((b + m) * 255.0f);
+        {
+            uint8_t r = static_cast<uint8_t>((r + m) * 255.0f);
+            uint8_t g = static_cast<uint8_t>((g + m) * 255.0f);
+            uint8_t b = static_cast<uint8_t>((b + m) * 255.0f);
 
-        return (static_cast<uint32_t>(R) << 16) |
-               (static_cast<uint32_t>(G) << 8) |
-               static_cast<uint32_t>(B);
+            return (static_cast<uint32_t>(r) << 16) |
+                (static_cast<uint32_t>(g) << 8) |
+                static_cast<uint32_t>(b);
+        }
     }
 
 
@@ -108,7 +110,7 @@ namespace gkit::math {
         float x = c * (1.0f - std::abs(std::fmod(h / 60.0f, 2.0f) - 1.0f));
         float m = l - c / 2.0f;
 
-        float r, g, b;
+        float r = 0.f, g = 0.f, b = 0.f;
         if (h < 60.0f) { r = c; g = x; b = 0; }
         else if (h < 120.0f) { r = x; g = c; b = 0; }
         else if (h < 180.0f) { r = 0; g = c; b = x; }
@@ -116,13 +118,15 @@ namespace gkit::math {
         else if (h < 300.0f) { r = x; g = 0; b = c; }
         else { r = c; g = 0; b = x; }
 
-        uint8_t R = static_cast<uint8_t>((r + m) * 255.0f);
-        uint8_t G = static_cast<uint8_t>((g + m) * 255.0f);
-        uint8_t B = static_cast<uint8_t>((b + m) * 255.0f);
+        {
+            uint8_t r = static_cast<uint8_t>((r + m) * 255.0f);
+            uint8_t g = static_cast<uint8_t>((g + m) * 255.0f);
+            uint8_t b = static_cast<uint8_t>((b + m) * 255.0f);
 
-        return (static_cast<uint32_t>(R) << 16) |
-               (static_cast<uint32_t>(G) << 8) |
-               static_cast<uint32_t>(B);
+            return (static_cast<uint32_t>(r) << 16) |
+                (static_cast<uint32_t>(g) << 8) |
+                static_cast<uint32_t>(b);
+        }
     }
 
 

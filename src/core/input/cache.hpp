@@ -42,24 +42,24 @@ namespace gkit::input {
         }
 
     private:
-        struct KeyCache_t {
+        struct KeyCache {
             std::unordered_set<Key> pressed_keys;
         };
 
-        struct MouseCache_t {
+        struct MouseCache {
             std::unordered_set<MouseButton> pressed_buttons;
             MouseWheel wheel;
             math::Vector2 offset;
         };
 
-        struct GamepadCache_t {
+        struct GamepadCache {
 
         };
 
         struct CacheData {
-            KeyCache_t key_cache = {};
-            MouseCache_t mouse_cache = {};
-            GamepadCache_t gamepad_button_cache = {};
+            KeyCache key_cache = {};
+            MouseCache mouse_cache = {};
+            GamepadCache gamepad_button_cache = {};
         };
 
     private:

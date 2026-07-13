@@ -3,7 +3,7 @@
 
 
 auto main() -> int {
-    using namespace gkit::math;
+    using namespace gkit::math; // NOLINT(google-build-using-namespace
     std::cout << "=== Color Format Conversion Test ===" << '\n';
 
     // Test: RGB -> RGBA
@@ -80,8 +80,8 @@ auto main() -> int {
 
     // Test: colors constants
     std::cout << "\n=== Color Constants Test ===" << '\n';
-    std::cout << "palette_8[0] = 0x" << std::hex << colors::palette_8[0] << std::dec << '\n';
-    std::cout << "palette_8[7] = 0x" << std::hex << colors::palette_8[7] << std::dec << '\n';
+    std::cout << "palette_8[0] = 0x" << std::hex << colors::PALETTE_8[0] << std::dec << '\n';
+    std::cout << "palette_8[7] = 0x" << std::hex << colors::PALETTE_8[7] << std::dec << '\n';
 
     std::cout << "\nAll tests completed!" << '\n';
     return 0;

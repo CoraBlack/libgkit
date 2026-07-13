@@ -135,7 +135,7 @@ auto gkit::core::scene::Unit::update_index_cache() -> void {
 
         auto cache_size = this->active_index_cache.size();
         auto children_size = this->children.size();
-        if (static_cast<float>(cache_size) / children_size < Unit::overload_factor) {
+        if (static_cast<float>(cache_size) / children_size < Unit::OVERLOAD_FACTOR) {
             need_remap = true;
         }
     }

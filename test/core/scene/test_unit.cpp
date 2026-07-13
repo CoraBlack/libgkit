@@ -1,8 +1,6 @@
 // NOLINTBEGIN(google-readability-avoid-underscore-in-googletest-name)
 #include <gkit/core/scene/unit.hpp>
 
-#include <cstdint>
-#include <exception>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -130,7 +128,7 @@ auto test_handlers_and_drop_flow() -> bool {
     root->add_child(std::move(keep));
     root->add_child(std::move(drop_later));
 
-    auto _cache_sync = root->with_child<TestUnit>(0, [](TestUnit& c) { return c.process_calls; });
+    auto cache_sync = root->with_child<TestUnit>(0, [](TestUnit& c) { return c.process_calls; });
 
     TestUnit::timeline.clear();
     root->ready_handler();
@@ -245,7 +243,7 @@ auto test_exit_handler_order() -> bool {
     root->add_child(std::move(child0));
     root->add_child(std::move(child1));
 
-    auto _cache_sync = root->with_child<TestUnit>(0, [](TestUnit& c) { return c.ready_calls; });
+    auto cache_sync = root->with_child<TestUnit>(0, [](TestUnit& c) { return c.ready_calls; });
 
     TestUnit::timeline.clear();
     root->exit_handler();

@@ -1,7 +1,7 @@
 #include <gkit/resource/resource_loader.hpp>
 
 
-auto gkit::resource::ResourceLoader::push_to_cache(std::shared_ptr<gkit::resource::Resource> res) -> void {
+auto gkit::resource::ResourceLoader::push_to_cache(const std::shared_ptr<gkit::resource::Resource>& res) -> void {
     if (res == nullptr && !res->available()) {
         return;
     }

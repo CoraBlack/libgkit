@@ -395,14 +395,14 @@ namespace gkit::math {
         float a = mat.m[0][0], b = mat.m[1][0], c = mat.m[2][0], d = mat.m[3][0];
         float e = mat.m[0][1], f = mat.m[1][1], g = mat.m[2][1], h = mat.m[3][1];
         float i = mat.m[0][2], j = mat.m[1][2], k = mat.m[2][2], l = mat.m[3][2];
-        float m_ = mat.m[0][3], n = mat.m[1][3], o = mat.m[2][3], p = mat.m[3][3];
+        float m = mat.m[0][3], n = mat.m[1][3], o = mat.m[2][3], p = mat.m[3][3];
 
-        float C00 = f * (k * p - l * o) - g * (j * p - l * n) + h * (j * o - k * n);
-        float C01 = e * (k * p - l * o) - g * (i * p - l * m_) + h * (i * o - k * m_);
-        float C02 = e * (j * p - l * n) - f * (i * p - l * m_) + h * (i * n - j * m_);
-        float C03 = e * (j * o - k * n) - f * (i * o - k * m_) + g * (i * n - j * m_);
+        float c00 = f * (k * p - l * o) - g * (j * p - l * n) + h * (j * o - k * n);
+        float c01 = e * (k * p - l * o) - g * (i * p - l * m) + h * (i * o - k * m);
+        float c02 = e * (j * p - l * n) - f * (i * p - l * m) + h * (i * n - j * m);
+        float c03 = e * (j * o - k * n) - f * (i * o - k * m) + g * (i * n - j * m);
 
-        return a * C00 - b * C01 + c * C02 - d * C03;
+        return a * c00 - b * c01 + c * c02 - d * c03;
     }
 
     auto Matrix4::minor(const Matrix4& mat, int row, int col) noexcept -> float {

@@ -10,16 +10,16 @@ namespace gkit::math {
     template<typename T>
     struct ScalarLimits {
         /// @brief Minimum value
-        static constexpr T min_v    = std::numeric_limits<T>::min();
+        static constexpr T MIN_V    = std::numeric_limits<T>::min();
 
         /// @brief Maximum value
-        static constexpr T max_v    = std::numeric_limits<T>::max();
+        static constexpr T MAX_V    = std::numeric_limits<T>::max();
 
         /// @brief Lowest value (most negative)
-        static constexpr T lowest_v = std::numeric_limits<T>::lowest();
+        static constexpr T LOWEST_V = std::numeric_limits<T>::lowest();
 
         /// @brief Machine epsilon
-        static constexpr T epsilon_v = std::numeric_limits<T>::epsilon();
+        static constexpr T EPSILON_V = std::numeric_limits<T>::epsilon();
     };
 
     // Floating-point special values (32-bit float)

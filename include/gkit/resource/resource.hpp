@@ -59,4 +59,4 @@ namespace gkit::resource {
         std::is_base_of_v<gkit::resource::Resource, T>;
         v.load_from_file();
     };
-}
+} // namespace gkit::resource

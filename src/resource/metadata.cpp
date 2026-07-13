@@ -10,56 +10,56 @@ namespace gkit::resource::metadata {
     // Value - Constructors
     // =========================================================================
 
-    Value::Value(Null) noexcept : storage_(Null{}) {}
-    Value::Value(bool value) noexcept : storage_(value) {}
-    Value::Value(std::int64_t value) noexcept : storage_(Number{value}) {}
-    Value::Value(double value) noexcept : storage_(Number{value}) {}
-    Value::Value(const char* value) : storage_(std::string(value)) {}
-    Value::Value(std::string value) : storage_(std::move(value)) {}
-    Value::Value(Array value) : storage_(std::move(value)) {}
-    Value::Value(Object value) : storage_(std::move(value)) {}
+    Value::Value(Null) noexcept : storage(Null{}) {}
+    Value::Value(bool value) noexcept : storage(value) {}
+    Value::Value(std::int64_t value) noexcept : storage(Number{value}) {}
+    Value::Value(double value) noexcept : storage(Number{value}) {}
+    Value::Value(const char* value) : storage(std::string(value)) {}
+    Value::Value(std::string value) : storage(std::move(value)) {}
+    Value::Value(Array value) : storage(std::move(value)) {}
+    Value::Value(Object value) : storage(std::move(value)) {}
 
     // =========================================================================
     // Value - Assignment Operators
     // =========================================================================
 
     auto Value::operator=(Null) noexcept -> Value& {
-        storage_ = Null{};
+        storage = Null{};
         return *this;
     }
 
     auto Value::operator=(bool value) noexcept -> Value& {
-        storage_ = value;
+        storage = value;
         return *this;
     }
 
     auto Value::operator=(std::int64_t value) noexcept -> Value& {
-        storage_ = Number{value};
+        storage = Number{value};
         return *this;
     }
 
     auto Value::operator=(double value) noexcept -> Value& {
-        storage_ = Number{value};
+        storage = Number{value};
         return *this;
     }
 
     auto Value::operator=(const char* value) -> Value& {
-        storage_ = std::string(value);
+        storage = std::string(value);
         return *this;
     }
 
     auto Value::operator=(std::string value) -> Value& {
-        storage_ = std::move(value);
+        storage = std::move(value);
         return *this;
     }
 
     auto Value::operator=(Array value) -> Value& {
-        storage_ = std::move(value);
+        storage = std::move(value);
         return *this;
     }
 
     auto Value::operator=(Object value) -> Value& {
-        storage_ = std::move(value);
+        storage = std::move(value);
         return *this;
     }
 
@@ -68,23 +68,23 @@ namespace gkit::resource::metadata {
     // =========================================================================
 
     auto Value::as_string() const noexcept -> const std::string& {
-        return std::get<std::string>(storage_);
+        return std::get<std::string>(storage);
     }
 
     auto Value::as_array() const noexcept -> const Array& {
-        return std::get<Array>(storage_);
+        return std::get<Array>(storage);
     }
 
     auto Value::as_object() const noexcept -> const Object& {
-        return std::get<Object>(storage_);
+        return std::get<Object>(storage);
     }
 
     auto Value::as_array() noexcept -> Array& {
-        return std::get<Array>(storage_);
+        return std::get<Array>(storage);
     }
 
     auto Value::as_object() noexcept -> Object& {
-        return std::get<Object>(storage_);
+        return std::get<Object>(storage);
     }
 
     // =========================================================================
@@ -145,19 +145,19 @@ namespace gkit::resource::metadata {
     // =========================================================================
 
     ParseError::ParseError(const std::string& message, std::size_t line, std::size_t column)
-        : message_(message), line_(line), column_(column) {
+        : message(message), line(line), column(column) {
     }
 
     auto ParseError::what() const noexcept -> const char* {
-        return message_.c_str();
+        return message.c_str();
     }
 
-    auto ParseError::line() const noexcept -> std::size_t {
-        return line_;
+    auto ParseError::get_line() const noexcept -> std::size_t {
+        return line;
     }
 
-    auto ParseError::column() const noexcept -> std::size_t {
-        return column_;
+    auto ParseError::get_column() const noexcept -> std::size_t {
+        return column;
     }
 
     // =========================================================================
@@ -168,48 +168,48 @@ namespace gkit::resource::metadata {
 
         class Parser {
         public:
-            explicit Parser(std::string_view input) : input_(input), pos_(0) {}
+            explicit Parser(std::string_view input) : input(input), pos(0) {}
 
             auto parse() -> Value {
                 skip_whitespace();
                 auto result = parse_value();
                 skip_whitespace();
                 if (!is_at_end()) {
-                    throw ParseError("Unexpected trailing content", line_, column());
+                    throw ParseError("Unexpected trailing content", line, column());
                 }
                 return result;
             }
 
         private:
-            std::string_view input_;
-            std::size_t pos_;
-            std::size_t line_ = 1;
-            std::size_t line_start_ = 0;
+            std::string_view input;
+            std::size_t pos;
+            std::size_t line = 1;
+            std::size_t linestart = 0;
 
             [[nodiscard]] auto peek() const -> char {
-                return is_at_end() ? '\0' : input_[pos_];
+                return is_at_end() ? '\0' : input[pos];
             }
 
             [[nodiscard]] auto peek_ahead(std::size_t offset) const -> char {
-                return pos_ + offset >= input_.size() ? '\0' : input_[pos_ + offset];
+                return pos + offset >= input.size() ? '\0' : input[pos + offset];
             }
 
             auto advance() -> char {
                 if (is_at_end()) return '\0';
-                char c = input_[pos_++];
+                char c = input[pos++];
                 if (c == '\n') {
-                    line_++;
-                    line_start_ = pos_;
+                    line++;
+                    linestart = pos;
                 }
                 return c;
             }
 
             [[nodiscard]] auto is_at_end() const -> bool {
-                return pos_ >= input_.size();
+                return pos >= input.size();
             }
 
             [[nodiscard]] auto column() const -> std::size_t {
-                return pos_ - line_start_ + 1;
+                return pos - linestart + 1;
             }
 
             auto skip_whitespace() -> void {
@@ -226,7 +226,7 @@ namespace gkit::resource::metadata {
                     msg += "' but found '";
                     msg += peek() ? std::string(1, peek()) : "EOF";
                     msg += "'";
-                    throw ParseError(msg, line_, column());
+                    throw ParseError(msg, line, column());
                 }
                 advance();
             }
@@ -234,7 +234,7 @@ namespace gkit::resource::metadata {
             auto parse_value() -> Value {
                 skip_whitespace();
                 if (is_at_end()) {
-                    throw ParseError("Unexpected end of input", line_, column());
+                    throw ParseError("Unexpected end of input", line, column());
                 }
 
                 char c = peek();
@@ -250,31 +250,31 @@ namespace gkit::resource::metadata {
                     case '5': case '6': case '7': case '8': case '9':
                         return Value(parse_number());
                     default:
-                        throw ParseError("Unexpected character", line_, column());
+                        throw ParseError("Unexpected character", line, column());
                 }
             }
 
             auto parse_null() -> Value {
-                if (input_.substr(pos_, 4) != "null") {
-                    throw ParseError("Invalid literal", line_, column());
+                if (input.substr(pos, 4) != "null") {
+                    throw ParseError("Invalid literal", line, column());
                 }
-                pos_ += 4;
+                pos += 4;
                 return Value(Null{});
             }
 
             auto parse_true() -> Value {
-                if (input_.substr(pos_, 4) != "true") {
-                    throw ParseError("Invalid literal", line_, column());
+                if (input.substr(pos, 4) != "true") {
+                    throw ParseError("Invalid literal", line, column());
                 }
-                pos_ += 4;
+                pos += 4;
                 return Value(true);
             }
 
             auto parse_false() -> Value {
-                if (input_.substr(pos_, 5) != "false") {
-                    throw ParseError("Invalid literal", line_, column());
+                if (input.substr(pos, 5) != "false") {
+                    throw ParseError("Invalid literal", line, column());
                 }
-                pos_ += 5;
+                pos += 5;
                 return Value(false);
             }
 
@@ -286,7 +286,7 @@ namespace gkit::resource::metadata {
                     char c = advance();
                     if (c == '\\') {
                         if (is_at_end()) {
-                            throw ParseError("Unterminated string escape", line_, column());
+                            throw ParseError("Unterminated string escape", line, column());
                         }
                         char esc = advance();
                         switch (esc) {
@@ -299,10 +299,10 @@ namespace gkit::resource::metadata {
                             case 'r':  result += '\r'; break;
                             case 't':  result += '\t'; break;
                             case 'u': {
-                                if (pos_ + 4 > input_.size()) {
-                                    throw ParseError("Invalid unicode escape", line_, column());
+                                if (pos + 4 > input.size()) {
+                                    throw ParseError("Invalid unicode escape", line, column());
                                 }
-                                auto hex = input_.substr(pos_, 4);
+                                auto hex = input.substr(pos, 4);
                                 unsigned int codepoint = 0;
                                 for (char h : hex) {
                                     codepoint *= 16;
@@ -313,10 +313,10 @@ namespace gkit::resource::metadata {
                                     } else if (h >= 'A' && h <= 'F') {
                                         codepoint += h - 'A' + 10;
                                     } else {
-                                        throw ParseError("Invalid unicode escape", line_, column());
+                                        throw ParseError("Invalid unicode escape", line, column());
                                     }
                                 }
-                                pos_ += 4;
+                                pos += 4;
                                 // Convert to UTF-8
                                 if (codepoint < 0x80) {
                                     result += static_cast<char>(codepoint);
@@ -331,10 +331,10 @@ namespace gkit::resource::metadata {
                                 break;
                             }
                             default:
-                                throw ParseError("Invalid escape sequence", line_, column());
+                                throw ParseError("Invalid escape sequence", line, column());
                         }
                     } else if (static_cast<unsigned char>(c) < 0x20) {
-                        throw ParseError("Unescaped control character", line_, column());
+                        throw ParseError("Unescaped control character", line, column());
                     } else {
                         result += c;
                     }
@@ -345,7 +345,7 @@ namespace gkit::resource::metadata {
             }
 
             auto parse_number() -> Value {
-                std::size_t start = pos_;
+                std::size_t start = pos;
 
                 if (peek() == '-') advance();
 
@@ -356,7 +356,7 @@ namespace gkit::resource::metadata {
                         advance();
                     }
                 } else {
-                    throw ParseError("Invalid number", line_, column());
+                    throw ParseError("Invalid number", line, column());
                 }
 
                 bool is_float = false;
@@ -365,7 +365,7 @@ namespace gkit::resource::metadata {
                     is_float = true;
                     advance();
                     if (peek() < '0' || peek() > '9') {
-                        throw ParseError("Invalid number fraction", line_, column());
+                        throw ParseError("Invalid number fraction", line, column());
                     }
                     while (!is_at_end() && peek() >= '0' && peek() <= '9') {
                         advance();
@@ -377,28 +377,28 @@ namespace gkit::resource::metadata {
                     advance();
                     if (peek() == '+' || peek() == '-') advance();
                     if (peek() < '0' || peek() > '9') {
-                        throw ParseError("Invalid number exponent", line_, column());
+                        throw ParseError("Invalid number exponent", line, column());
                     }
                     while (!is_at_end() && peek() >= '0' && peek() <= '9') {
                         advance();
                     }
                 }
 
-                std::string num_str(input_.substr(start, pos_ - start));
+                std::string num_str(input.substr(start, pos - start));
 
                 if (is_float) {
                     try {
                         double val = std::stod(num_str);
                         return Value(val);
                     } catch (...) {
-                        throw ParseError("Invalid floating point number", line_, column());
+                        throw ParseError("Invalid floating point number", line, column());
                     }
                 } else {
                     try {
                         std::int64_t val = std::stoll(num_str);
                         return Value(val);
                     } catch (...) {
-                        throw ParseError("Invalid integer number", line_, column());
+                        throw ParseError("Invalid integer number", line, column());
                     }
                 }
             }
@@ -440,7 +440,7 @@ namespace gkit::resource::metadata {
                 while (true) {
                     skip_whitespace();
                     if (peek() != '"') {
-                        throw ParseError("Expected string key", line_, column());
+                        throw ParseError("Expected string key", line, column());
                     }
                     std::string key = parse_string();
                     skip_whitespace();
@@ -486,94 +486,94 @@ namespace gkit::resource::metadata {
 
         class Serializer {
         public:
-            explicit Serializer(const FormatOptions& opts) : options_(opts) {}
+            explicit Serializer(const FormatOptions& opts) : options(opts) {}
 
             auto serialize(const Value& value) -> std::string {
                 serialize_value(value, 0);
-                return result_.str();
+                return result.str();
             }
 
         private:
-            const FormatOptions& options_;
-            std::ostringstream result_;
+            const FormatOptions& options;
+            std::ostringstream result;
 
             auto indent(std::size_t depth) -> void {
-                if (options_.pretty) {
-                    result_ << '\n';
-                    for (std::size_t i = 0; i < depth * options_.indent_size; ++i) {
-                        result_ << ' ';
+                if (options.pretty) {
+                    result << '\n';
+                    for (std::size_t i = 0; i < depth * options.indent_size; ++i) {
+                        result << ' ';
                     }
                 }
             }
 
             auto serialize_string(const std::string& str) -> void {
-                result_ << '"';
+                result << '"';
                 for (unsigned char c : str) {
                     switch (c) {
-                        case '"':  result_ << "\\\""; break;
-                        case '\\': result_ << "\\\\"; break;
-                        case '\b': result_ << "\\b";  break;
-                        case '\f': result_ << "\\f";  break;
-                        case '\n': result_ << "\\n";  break;
-                        case '\r': result_ << "\\r";  break;
-                        case '\t': result_ << "\\t";  break;
+                        case '"':  result << "\\\""; break;
+                        case '\\': result << "\\\\"; break;
+                        case '\b': result << "\\b";  break;
+                        case '\f': result << "\\f";  break;
+                        case '\n': result << "\\n";  break;
+                        case '\r': result << "\\r";  break;
+                        case '\t': result << "\\t";  break;
                         default:
-                            if (c < 0x20 || (options_.escape_unicode && c > 0x7F)) {
+                            if (c < 0x20 || (options.escape_unicode && c > 0x7F)) {
                                 char buf[7];
                                 std::snprintf(buf, sizeof(buf), "\\u%04x", c);
-                                result_ << buf;
+                                result << buf;
                             } else {
-                                result_ << c;
+                                result << c;
                             }
                     }
                 }
-                result_ << '"';
+                result << '"';
             }
 
             auto serialize_value(const Value& value, std::size_t depth) -> void {
                 std::visit([this, depth](const auto& v) {
                     using T = std::decay_t<decltype(v)>;
                     if constexpr (std::is_same_v<T, Null>) {
-                        result_ << "null";
+                        result << "null";
                     } else if constexpr (std::is_same_v<T, bool>) {
-                        result_ << (v ? "true" : "false");
+                        result << (v ? "true" : "false");
                     } else if constexpr (std::is_same_v<T, Number>) {
                         std::visit([this](const auto& n) {
                             if constexpr (std::is_same_v<std::decay_t<decltype(n)>, std::int64_t>) {
-                                result_ << n;
+                                result << n;
                             } else {
                                 std::ostringstream oss;
                                 oss << std::setprecision(17) << n;
-                                result_ << oss.str();
+                                result << oss.str();
                             }
                         }, v);
                     } else if constexpr (std::is_same_v<T, std::string>) {
                         serialize_string(v);
                     } else if constexpr (std::is_same_v<T, Array>) {
-                        result_ << '[';
+                        result << '[';
                         bool first = true;
                         for (const auto& elem : v) {
-                            if (!first) result_ << ',';
+                            if (!first) result << ',';
                             first = false;
                             indent(depth + 1);
                             serialize_value(elem, depth + 1);
                         }
                         if (!v.empty()) indent(depth);
-                        result_ << ']';
+                        result << ']';
                     } else if constexpr (std::is_same_v<T, Object>) {
-                        result_ << '{';
+                        result << '{';
                         bool first = true;
                         for (const auto& [key, val] : v) {
-                            if (!first) result_ << ',';
+                            if (!first) result << ',';
                             first = false;
                             indent(depth + 1);
                             serialize_string(key);
-                            result_ << ':';
-                            if (options_.pretty) result_ << ' ';
+                            result << ':';
+                            if (options.pretty) result << ' ';
                             serialize_value(val, depth + 1);
                         }
                         if (!v.empty()) indent(depth);
-                        result_ << '}';
+                        result << '}';
                     }
                 }, value.raw());
             }

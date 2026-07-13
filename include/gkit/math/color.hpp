@@ -11,7 +11,7 @@ namespace gkit::math {
     // ==========================================
     namespace colors {
         /// @brief 8-color basic palette (BGRA format: 0xAABBGGRR)
-        inline constexpr std::array<uint32_t, 8> palette_8 = {
+        inline constexpr std::array<uint32_t, 8> PALETTE_8 = {
             0xFF000000, // 0: Black
             0xFF0000FF, // 1: Red
             0xFF00FF00, // 2: Green

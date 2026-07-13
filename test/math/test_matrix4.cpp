@@ -44,7 +44,7 @@ auto vec4_str(const gkit::math::Vector4& v) -> std::string {
 }
 
 auto main() -> int {
-    using namespace gkit::math;
+    using namespace gkit::math; // NOLINT(google-build-using-namespace
     std::cout << "=== Matrix4 Test ===" << '\n';
 
     // Test 1: Identity matrix
@@ -138,8 +138,8 @@ auto main() -> int {
 
     // Test 17: Matrix multiplication
     std::cout << "\n17. Matrix multiplication (T * R * S):" << '\n';
-    auto TRS = translate * rot_x * scale;
-    std::cout << mat4_str(TRS) << '\n';
+    auto trs = translate * rot_x * scale;
+    std::cout << mat4_str(trs) << '\n';
 
     // Test 18: Inverse of identity
     std::cout << "\n18. Inverse test:" << '\n';
@@ -150,10 +150,10 @@ auto main() -> int {
 
     // Test 19: Inverse of TRS
     std::cout << "\n19. Inverse of TRS matrix:" << '\n';
-    auto inv_trs = Matrix4::inverse(TRS);
+    auto inv_trs = Matrix4::inverse(trs);
     if (inv_trs.has_value()) {
         std::cout << "inverse(TRS) exists" << '\n';
-        auto composed = TRS * inv_trs.value();
+        auto composed = trs * inv_trs.value();
         std::cout << "TRS * inverse(TRS):" << '\n';
         std::cout << mat4_str(composed) << '\n';
     } else {
@@ -169,23 +169,23 @@ auto main() -> int {
 
     // Test 21: Extract translation
     std::cout << "\n21. Extract translation from TRS:" << '\n';
-    auto extracted_trans = Matrix4::get_translation(TRS);
+    auto extracted_trans = Matrix4::get_translation(trs);
     std::cout << "Translation = " << vec3_str(extracted_trans) << " (expected: (2,3,4))" << '\n';
 
     // Test 22: Extract rotation
     std::cout << "\n22. Extract rotation from TRS:" << '\n';
-    auto extracted_rot = Matrix4::get_rotation(TRS);
+    auto extracted_rot = Matrix4::get_rotation(trs);
     std::cout << "Rotation:" << '\n';
     std::cout << mat3_str(extracted_rot) << '\n';
 
     // Test 23: Extract scale
     std::cout << "\n23. Extract scale from TRS:" << '\n';
-    auto extracted_scale = Matrix4::get_scale(TRS);
+    auto extracted_scale = Matrix4::get_scale(trs);
     std::cout << "Scale = " << vec3_str(extracted_scale) << '\n';
 
     // Test 24: Decompose
     std::cout << "\n24. Decompose TRS:" << '\n';
-    auto [t, r, s] = Matrix4::decompose(TRS);
+    auto [t, r, s] = Matrix4::decompose(trs);
     std::cout << "Translation = " << vec3_str(t) << '\n';
     std::cout << "Scale = " << vec3_str(s) << '\n';
 
