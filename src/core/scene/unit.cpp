@@ -1,4 +1,5 @@
 #include "gkit/core/scene/unit.hpp"
+
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -8,23 +9,17 @@
 #include <utility>
 #include <vector>
 
+gkit::core::scene::Unit::Unit() noexcept :
+    children(std::vector<std::unique_ptr<Unit>>()), active_index_cache(), children_rw_mutex() {}
 
-gkit::core::scene::Unit::Unit() noexcept : 
-    children(std::vector<std::unique_ptr<Unit>>()),
-    active_index_cache(),
-    children_rw_mutex() { }
-
-    
 gkit::core::scene::Unit::Unit(std::string&& name) noexcept : gkit::core::scene::Unit() {
     this->name = name;
 }
 
-
-auto gkit::core::scene::Unit::ready()            -> void { }
-auto gkit::core::scene::Unit::process()          -> void { }
-auto gkit::core::scene::Unit::physics_process()  -> void { }
-auto gkit::core::scene::Unit::exit()             -> void { }
-
+auto gkit::core::scene::Unit::ready() -> void {}
+auto gkit::core::scene::Unit::process() -> void {}
+auto gkit::core::scene::Unit::physics_process() -> void {}
+auto gkit::core::scene::Unit::exit() -> void {}
 
 auto gkit::core::scene::Unit::ready_handler() noexcept -> void {
     for (auto child_index : this->active_index_cache) {
@@ -33,7 +28,6 @@ auto gkit::core::scene::Unit::ready_handler() noexcept -> void {
     }
     this->ready();
 }
-
 
 auto gkit::core::scene::Unit::process_handler() noexcept -> void {
     this->update_index_cache();
@@ -46,11 +40,7 @@ auto gkit::core::scene::Unit::process_handler() noexcept -> void {
     this->drop_children();
 }
 
-
-auto gkit::core::scene::Unit::physics_process_handler() noexcept -> void {
-
-}
-
+auto gkit::core::scene::Unit::physics_process_handler() noexcept -> void {}
 
 auto gkit::core::scene::Unit::exit_handler() noexcept -> void {
     for (auto child_index : this->active_index_cache) {
@@ -58,7 +48,6 @@ auto gkit::core::scene::Unit::exit_handler() noexcept -> void {
     }
     this->exit();
 }
-
 
 auto gkit::core::scene::Unit::add_child(std::unique_ptr<Unit>&& child_ptr) -> void {
     if (child_ptr == nullptr) {
@@ -78,7 +67,7 @@ auto gkit::core::scene::Unit::add_child(std::unique_ptr<Unit>&& child_ptr) -> vo
     {
         std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
         std::unique_lock<std::shared_mutex> w_lock(this->name_map_cache_rw_mutex);
-        auto& child_name = this->children.back()->name;
+        auto& child_name    = this->children.back()->name;
         auto* new_child_ptr = this->children.back().get();
         if (this->name_map_cache.contains(child_name)) {
             throw std::invalid_argument("child_ptr name is already exist");
@@ -88,20 +77,17 @@ auto gkit::core::scene::Unit::add_child(std::unique_ptr<Unit>&& child_ptr) -> vo
     this->modified.store(true);
 }
 
-
 auto gkit::core::scene::Unit::remove_child(uint32_t index) noexcept -> void {
     auto child_ptr = this->get_available_child(index);
     if (child_ptr == nullptr) return;
     child_ptr->drop();
 }
 
-
 auto gkit::core::scene::Unit::remove_child(const std::string& child_name) noexcept -> void {
     auto child_ptr = this->get_child(child_name);
     if (child_ptr == nullptr) return;
     child_ptr->drop();
 }
-
 
 auto gkit::core::scene::Unit::get_available_child(uint32_t index) noexcept -> Unit* {
     // check modified flag and update cache
@@ -115,7 +101,6 @@ auto gkit::core::scene::Unit::get_available_child(uint32_t index) noexcept -> Un
     return this->children.at(raw_index).get();
 }
 
-
 auto gkit::core::scene::Unit::get_child(const std::string& child_name) noexcept -> Unit* {
     std::shared_lock<std::shared_mutex> r_lock(this->name_map_cache_rw_mutex);
     auto iter = this->name_map_cache.find(child_name);
@@ -125,7 +110,6 @@ auto gkit::core::scene::Unit::get_child(const std::string& child_name) noexcept 
     return iter->second;
 }
 
-
 auto gkit::core::scene::Unit::update_index_cache() -> void {
     bool need_remap = false;
     // overload factor calculation
@@ -133,7 +117,7 @@ auto gkit::core::scene::Unit::update_index_cache() -> void {
         std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
         std::shared_lock<std::shared_mutex> cache_r_lock(this->index_cache_rw_mutex);
 
-        auto cache_size = this->active_index_cache.size();
+        auto cache_size    = this->active_index_cache.size();
         auto children_size = this->children.size();
         if (static_cast<float>(cache_size) / children_size < Unit::OVERLOAD_FACTOR) {
             need_remap = true;
@@ -143,12 +127,12 @@ auto gkit::core::scene::Unit::update_index_cache() -> void {
     // remap children and cache and exit
     if (need_remap) {
         this->remap_children_and_cache();
-        return; 
+        return;
     }
 
     if (!this->modified) return;
     std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
-    std::unique_lock<std::shared_mutex> w_lock(this->index_cache_rw_mutex); 
+    std::unique_lock<std::shared_mutex> w_lock(this->index_cache_rw_mutex);
 
     this->active_index_cache.clear();
     for (auto i = 0u; i < this->children.size(); ++i) {
@@ -159,7 +143,6 @@ auto gkit::core::scene::Unit::update_index_cache() -> void {
 
     this->modified = false;
 }
-
 
 auto gkit::core::scene::Unit::remap_children_and_cache() -> void {
     std::unique_lock<std::shared_mutex> cache_w_lock(this->index_cache_rw_mutex);
@@ -182,7 +165,6 @@ auto gkit::core::scene::Unit::remap_children_and_cache() -> void {
     }
 }
 
-
 auto gkit::core::scene::Unit::drop_children() -> void {
     for (auto& active_index : this->active_index_cache) {
         auto& child_ptr = this->children[active_index];
@@ -199,18 +181,17 @@ auto gkit::core::scene::Unit::drop_children() -> void {
     }
 }
 
-
 template<>
-auto gkit::core::scene::Unit::get_parent<gkit::core::scene::Unit>() noexcept -> std::optional<std::reference_wrapper<Unit>> {
+auto gkit::core::scene::Unit::get_parent<gkit::core::scene::Unit>() noexcept
+    -> std::optional<std::reference_wrapper<Unit>> {
     if (parent == nullptr) return std::nullopt;
     return std::ref(*parent);
 }
 
-
 // iterator part use
 gkit::core::scene::Unit::iterator::iterator(Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
 auto gkit::core::scene::Unit::iterator::operator*() const -> reference {
-auto child_ptr = m_owner->get_available_child(static_cast<uint32_t>(m_pos));
+    auto child_ptr = m_owner->get_available_child(static_cast<uint32_t>(m_pos));
     return *child_ptr;
 }
 auto gkit::core::scene::Unit::iterator::operator->() const -> pointer {
@@ -235,8 +216,12 @@ auto gkit::core::scene::Unit::iterator::operator--(int) -> iterator {
     --(*this);
     return tmp;
 }
-auto gkit::core::scene::Unit::iterator::operator==(const iterator& other) const -> bool  { return m_owner == other.m_owner && m_pos == other.m_pos; }
-auto gkit::core::scene::Unit::iterator::operator!=(const iterator& other) const -> bool  { return !(*this == other); }
+auto gkit::core::scene::Unit::iterator::operator==(const iterator& other) const -> bool {
+    return m_owner == other.m_owner && m_pos == other.m_pos;
+}
+auto gkit::core::scene::Unit::iterator::operator!=(const iterator& other) const -> bool {
+    return !(*this == other);
+}
 
 auto gkit::core::scene::Unit::begin() -> iterator {
     return iterator(this, 0);
@@ -278,8 +263,12 @@ auto gkit::core::scene::Unit::const_iterator::operator--(int) -> const_iterator 
     return tmp;
 }
 
-auto gkit::core::scene::Unit::const_iterator::operator==(const const_iterator& other) const -> bool { return m_owner == other.m_owner && m_pos == other.m_pos; }
-auto gkit::core::scene::Unit::const_iterator::operator!=(const const_iterator& other) const -> bool { return !(*this == other); }
+auto gkit::core::scene::Unit::const_iterator::operator==(const const_iterator& other) const -> bool {
+    return m_owner == other.m_owner && m_pos == other.m_pos;
+}
+auto gkit::core::scene::Unit::const_iterator::operator!=(const const_iterator& other) const -> bool {
+    return !(*this == other);
+}
 
 auto gkit::core::scene::Unit::begin() const -> const_iterator {
     return const_iterator(const_cast<Unit*>(this), 0);
@@ -289,8 +278,12 @@ auto gkit::core::scene::Unit::end() const -> const_iterator {
     return const_iterator(const_cast<Unit*>(this), active_index_cache.size());
 }
 
-auto gkit::core::scene::Unit::cbegin() const -> const_iterator { return begin(); }
-auto gkit::core::scene::Unit::cend() const -> const_iterator { return end(); }
+auto gkit::core::scene::Unit::cbegin() const -> const_iterator {
+    return begin();
+}
+auto gkit::core::scene::Unit::cend() const -> const_iterator {
+    return end();
+}
 
 // This is a reverse iterator, implemented using std::reverse_iterator.
 // using at here maybe have some problem, just I guess,
@@ -299,9 +292,21 @@ auto gkit::core::scene::Unit::cend() const -> const_iterator { return end(); }
 // using reverse_iterator = std::reverse_iterator<gkit::core::scene::Unit::iterator>;
 // using const_reverse_iterator = std::reverse_iterator<gkit::core::scene::Unit::const_iterator>;
 
-auto gkit::core::scene::Unit::rbegin() -> reverse_iterator { return reverse_iterator(end()); }
-auto gkit::core::scene::Unit::rend() -> reverse_iterator { return reverse_iterator(begin()); }
-auto gkit::core::scene::Unit::rbegin() const -> const_reverse_iterator { return const_reverse_iterator(end()); }
-auto gkit::core::scene::Unit::rend() const -> const_reverse_iterator { return const_reverse_iterator(begin()); }
-auto gkit::core::scene::Unit::crbegin() const -> const_reverse_iterator { return rbegin(); }
-auto gkit::core::scene::Unit::crend() const -> const_reverse_iterator { return rend(); }
+auto gkit::core::scene::Unit::rbegin() -> reverse_iterator {
+    return reverse_iterator(end());
+}
+auto gkit::core::scene::Unit::rend() -> reverse_iterator {
+    return reverse_iterator(begin());
+}
+auto gkit::core::scene::Unit::rbegin() const -> const_reverse_iterator {
+    return const_reverse_iterator(end());
+}
+auto gkit::core::scene::Unit::rend() const -> const_reverse_iterator {
+    return const_reverse_iterator(begin());
+}
+auto gkit::core::scene::Unit::crbegin() const -> const_reverse_iterator {
+    return rbegin();
+}
+auto gkit::core::scene::Unit::crend() const -> const_reverse_iterator {
+    return rend();
+}

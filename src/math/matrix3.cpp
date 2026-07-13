@@ -16,11 +16,9 @@ namespace gkit::math {
     }
 
     auto Matrix3::operator*(const Vector3& v) const noexcept -> Vector3 {
-        return {
-            m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z,
-            m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z,
-            m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z
-        };
+        return {m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z,
+                m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z,
+                m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z};
     }
 
     auto Matrix3::transpose(const Matrix3& mat) noexcept -> Matrix3 {
@@ -38,9 +36,7 @@ namespace gkit::math {
         float d = mat.m[0][1], e = mat.m[1][1], f = mat.m[2][1];
         float g = mat.m[0][2], h = mat.m[1][2], i = mat.m[2][2];
 
-        return a * (e * i - f * h)
-             - b * (d * i - f * g)
-             + c * (d * h - e * g);
+        return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
     }
 
     auto Matrix3::inverse(const Matrix3& mat) noexcept -> std::optional<Matrix3> {
@@ -90,27 +86,45 @@ namespace gkit::math {
     auto Matrix3::rotation_x(float angle) noexcept -> Matrix3 {
         float c = std::cos(angle), s = std::sin(angle);
         Matrix3 result;
-        result.m[0][0] = 1.0f; result.m[0][1] = 0.0f; result.m[0][2] = 0.0f;
-        result.m[1][0] = 0.0f; result.m[1][1] = c;    result.m[1][2] = s;
-        result.m[2][0] = 0.0f; result.m[2][1] = -s;   result.m[2][2] = c;
+        result.m[0][0] = 1.0f;
+        result.m[0][1] = 0.0f;
+        result.m[0][2] = 0.0f;
+        result.m[1][0] = 0.0f;
+        result.m[1][1] = c;
+        result.m[1][2] = s;
+        result.m[2][0] = 0.0f;
+        result.m[2][1] = -s;
+        result.m[2][2] = c;
         return result;
     }
 
     auto Matrix3::rotation_y(float angle) noexcept -> Matrix3 {
         float c = std::cos(angle), s = std::sin(angle);
         Matrix3 result;
-        result.m[0][0] = c;    result.m[0][1] = 0.0f; result.m[0][2] = -s;
-        result.m[1][0] = 0.0f; result.m[1][1] = 1.0f; result.m[1][2] = 0.0f;
-        result.m[2][0] = s;    result.m[2][1] = 0.0f; result.m[2][2] = c;
+        result.m[0][0] = c;
+        result.m[0][1] = 0.0f;
+        result.m[0][2] = -s;
+        result.m[1][0] = 0.0f;
+        result.m[1][1] = 1.0f;
+        result.m[1][2] = 0.0f;
+        result.m[2][0] = s;
+        result.m[2][1] = 0.0f;
+        result.m[2][2] = c;
         return result;
     }
 
     auto Matrix3::rotation_z(float angle) noexcept -> Matrix3 {
         float c = std::cos(angle), s = std::sin(angle);
         Matrix3 result;
-        result.m[0][0] = c;    result.m[0][1] = s;    result.m[0][2] = 0.0f;
-        result.m[1][0] = -s;   result.m[1][1] = c;    result.m[1][2] = 0.0f;
-        result.m[2][0] = 0.0f; result.m[2][1] = 0.0f; result.m[2][2] = 1.0f;
+        result.m[0][0] = c;
+        result.m[0][1] = s;
+        result.m[0][2] = 0.0f;
+        result.m[1][0] = -s;
+        result.m[1][1] = c;
+        result.m[1][2] = 0.0f;
+        result.m[2][0] = 0.0f;
+        result.m[2][1] = 0.0f;
+        result.m[2][2] = 1.0f;
         return result;
     }
 
@@ -120,7 +134,9 @@ namespace gkit::math {
 
     auto Matrix3::scaling(float sx, float sy, float sz) noexcept -> Matrix3 {
         Matrix3 result;
-        result.m[0][0] = sx; result.m[1][1] = sy; result.m[2][2] = sz;
+        result.m[0][0] = sx;
+        result.m[1][1] = sy;
+        result.m[2][2] = sz;
         return result;
     }
 

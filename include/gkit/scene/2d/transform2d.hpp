@@ -5,7 +5,7 @@
 namespace gkit::scene {
     class Transform2D {
     public:
-        Transform2D() = default;
+        Transform2D()  = default;
         ~Transform2D() = default;
 
     public:
@@ -25,7 +25,7 @@ namespace gkit::scene {
 
     private:
         math::Vector2 position = {0.0f, 0.0f};
-        float rotation = 0.0f;
-        math::Vector2 scale {1.0f, 1.0f};
+        float rotation         = 0.0f;
+        math::Vector2 scale{1.0f, 1.0f};
     };
 } // namespace gkit::scene

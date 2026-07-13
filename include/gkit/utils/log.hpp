@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gkit/core/scene/singleton.hpp"
+
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -16,6 +17,7 @@
 namespace gkit::utils {
     class Log : public gkit::core::scene::Singleton<Log> {
         friend class gkit::core::scene::Singleton<Log>;
+
     public:
         enum class LogLevel : std::uint8_t {
             Info,
@@ -53,7 +55,7 @@ namespace gkit::utils {
         public:
             explicit MpscBoundedQueue(std::size_t capacity);
             // Non-blocking producer path. Returns false when queue is full.
-            [[nodiscard]] auto try_dequeue(Message& msg)  noexcept -> bool;
+            [[nodiscard]] auto try_dequeue(Message& msg) noexcept -> bool;
             [[nodiscard]] auto try_enqueue(Message&& msg) noexcept -> bool;
             // Single-consumer dequeue path.
             [[nodiscard]] auto empty() const noexcept -> bool;
@@ -97,7 +99,7 @@ namespace gkit::utils {
                       "LOG_QUEUE_CAPACITY must be a power of two");
         static constexpr std::chrono::milliseconds LOG_WAIT_TIMEOUT = std::chrono::milliseconds(2);
 
-        std::atomic<bool> log_enable {true};
+        std::atomic<bool> log_enable{true};
 
         std::filesystem::path log_file_path = "~/gkit/log.txt";
         MpscBoundedQueue log_msg_queue;
@@ -106,12 +108,12 @@ namespace gkit::utils {
         std::condition_variable log_thread_cv;
         std::mutex log_thread_wait_mutex;
 
-        std::mutex console_log_mutex {};
-        std::mutex file_log_mutex {};
-        std::ofstream log_file_stream {};
+        std::mutex console_log_mutex{};
+        std::mutex file_log_mutex{};
+        std::ofstream log_file_stream{};
 
-        std::atomic<std::uint64_t> enqueued_count {0};
-        std::atomic<std::uint64_t> dropped_full_count {0};
-        std::atomic<std::uint64_t> processed_count {0};
+        std::atomic<std::uint64_t> enqueued_count{0};
+        std::atomic<std::uint64_t> dropped_full_count{0};
+        std::atomic<std::uint64_t> processed_count{0};
     }; // class Log
 } // namespace gkit::utils

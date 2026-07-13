@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gkit/resource/resource.hpp"
+
 #include <filesystem>
 #include <memory>
 
@@ -8,12 +9,12 @@ namespace gkit::resource {
     class Texture : protected gkit::resource::Resource {
     public:
         Texture();
-        explicit Texture(std::filesystem::path   path);
+        explicit Texture(std::filesystem::path path);
         explicit Texture(std::filesystem::path&& path);
 
     protected:
         auto load_from_file() -> void override;
-    
+
     private:
         struct Data;
         std::unique_ptr<Data> data;

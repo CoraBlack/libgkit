@@ -61,10 +61,10 @@ namespace gkit::resource::metadata {
          */
         using Storage = std::variant<Null, bool, Number, std::string, Array, Object>;
 
-        Value() noexcept = default;
-        Value(const Value&) = default;
+        Value() noexcept        = default;
+        Value(const Value&)     = default;
         Value(Value&&) noexcept = default;
-        ~Value() = default;
+        ~Value()                = default;
 
         /** Convenience constructors for each JSON type **/
         explicit Value(Null) noexcept;
@@ -74,11 +74,11 @@ namespace gkit::resource::metadata {
         explicit Value(int value) noexcept : Value(static_cast<std::int64_t>(value)) {}
         explicit Value(const char* value);
         explicit Value(std::string value);
-        Value(Array value);  // NOLINT(google-explicit-constructor)
+        Value(Array value); // NOLINT(google-explicit-constructor)
         Value(Object value); // NOLINT(google-explicit-constructor)
 
         /** Assignment operators **/
-        auto operator=(const Value&) -> Value& = default;
+        auto operator=(const Value&) -> Value&     = default;
         auto operator=(Value&&) noexcept -> Value& = default;
 
         auto operator=(Null) noexcept -> Value&;
@@ -92,12 +92,8 @@ namespace gkit::resource::metadata {
         auto operator=(Object value) -> Value&;
 
     public: // Type checking
-        [[nodiscard]] constexpr auto is_null() const noexcept -> bool {
-            return std::holds_alternative<Null>(storage);
-        }
-        [[nodiscard]] constexpr auto is_bool() const noexcept -> bool {
-            return std::holds_alternative<bool>(storage);
-        }
+        [[nodiscard]] constexpr auto is_null() const noexcept -> bool { return std::holds_alternative<Null>(storage); }
+        [[nodiscard]] constexpr auto is_bool() const noexcept -> bool { return std::holds_alternative<bool>(storage); }
         [[nodiscard]] constexpr auto is_number() const noexcept -> bool {
             return std::holds_alternative<Number>(storage);
         }
@@ -120,9 +116,7 @@ namespace gkit::resource::metadata {
         }
 
     public: // Value accessors (unchecked - behavior undefined if wrong type)
-        [[nodiscard]] constexpr auto as_bool() const noexcept -> bool {
-            return std::get<bool>(storage);
-        }
+        [[nodiscard]] constexpr auto as_bool() const noexcept -> bool { return std::get<bool>(storage); }
         [[nodiscard]] constexpr auto as_int64() const noexcept -> std::int64_t {
             const auto& num = std::get<Number>(storage);
             return std::get<std::int64_t>(num);
@@ -179,7 +173,8 @@ namespace gkit::resource::metadata {
          * @brief Get object member if it exists
          * @return std::nullopt if not an object or key not found
          */
-        [[nodiscard]] auto at(const std::string& key) const noexcept -> std::optional<std::reference_wrapper<const Value>>;
+        [[nodiscard]] auto at(const std::string& key) const noexcept
+            -> std::optional<std::reference_wrapper<const Value>>;
         [[nodiscard]] auto at(std::size_t index) const noexcept -> std::optional<std::reference_wrapper<const Value>>;
 
     public: // Array/Object modification helpers
@@ -191,28 +186,26 @@ namespace gkit::resource::metadata {
 
     public:
         [[nodiscard]] constexpr auto type() const noexcept -> Type {
-            return std::visit([](const auto& v) -> Type {
-                using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, Null>) return Type::Null;
-                if constexpr (std::is_same_v<T, bool>) return Type::Boolean;
-                if constexpr (std::is_same_v<T, Number>) return Type::Number;
-                if constexpr (std::is_same_v<T, std::string>) return Type::String;
-                if constexpr (std::is_same_v<T, Array>) return Type::Array;
-                if constexpr (std::is_same_v<T, Object>) return Type::Object;
-                return Type::Null; // unreachable
-            }, storage);
+            return std::visit(
+                [](const auto& v) -> Type {
+                    using T = std::decay_t<decltype(v)>;
+                    if constexpr (std::is_same_v<T, Null>) return Type::Null;
+                    if constexpr (std::is_same_v<T, bool>) return Type::Boolean;
+                    if constexpr (std::is_same_v<T, Number>) return Type::Number;
+                    if constexpr (std::is_same_v<T, std::string>) return Type::String;
+                    if constexpr (std::is_same_v<T, Array>) return Type::Array;
+                    if constexpr (std::is_same_v<T, Object>) return Type::Object;
+                    return Type::Null; // unreachable
+                },
+                storage);
         }
 
         /**
          * @brief Direct access to underlying storage
          * @note For advanced use cases (visitation, etc.)
          */
-        [[nodiscard]] constexpr auto raw() noexcept -> Storage& {
-            return storage;
-        }
-        [[nodiscard]] constexpr auto raw() const noexcept -> const Storage& {
-            return storage;
-        }
+        [[nodiscard]] constexpr auto raw() noexcept -> Storage& { return storage; }
+        [[nodiscard]] constexpr auto raw() const noexcept -> const Storage& { return storage; }
 
     private:
         Storage storage = Null{};
@@ -238,9 +231,9 @@ namespace gkit::resource::metadata {
      * @brief Serialization format options
      */
     struct FormatOptions {
-        bool pretty = false;           ///< Pretty-print with indentation
-        std::uint8_t indent_size = 4;  ///< Number of spaces per indent level (when pretty)
-        bool escape_unicode = false;   ///< Escape non-ASCII characters as \uXXXX
+        bool pretty              = false; ///< Pretty-print with indentation
+        std::uint8_t indent_size = 4; ///< Number of spaces per indent level (when pretty)
+        bool escape_unicode      = false; ///< Escape non-ASCII characters as \uXXXX
     };
 
     /**

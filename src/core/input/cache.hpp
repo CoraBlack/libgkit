@@ -4,7 +4,9 @@
 #include "gkit/core/input/mouse.hpp"
 #include "gkit/core/scene/singleton.hpp"
 #include "gkit/math/vector2.hpp"
+
 #include <SDL3/SDL.h>
+
 #include <cstdint>
 #include <unordered_set>
 
@@ -29,11 +31,10 @@ namespace gkit::input {
          */
         inline auto modifiers_pressed(uint32_t mods) const -> bool {
             const auto& current_mods = static_cast<uint32_t>(SDL_GetModState());
-            static constexpr const uint32_t all_mods = static_cast<uint32_t>(Mod::Alt)
-                | static_cast<uint32_t>(Mod::Ctrl)
-                | static_cast<uint32_t>(Mod::Shift)
-                | static_cast<uint32_t>(Mod::Gui);
-            
+            static constexpr const uint32_t all_mods =
+                static_cast<uint32_t>(Mod::Alt) | static_cast<uint32_t>(Mod::Ctrl) | static_cast<uint32_t>(Mod::Shift) |
+                static_cast<uint32_t>(Mod::Gui);
+
             if (mods == static_cast<uint32_t>(Mod::None)) {
                 return (current_mods & all_mods) == 0u;
             }
@@ -52,13 +53,11 @@ namespace gkit::input {
             math::Vector2 offset;
         };
 
-        struct GamepadCache {
-
-        };
+        struct GamepadCache {};
 
         struct CacheData {
-            KeyCache key_cache = {};
-            MouseCache mouse_cache = {};
+            KeyCache key_cache                = {};
+            MouseCache mouse_cache            = {};
             GamepadCache gamepad_button_cache = {};
         };
 

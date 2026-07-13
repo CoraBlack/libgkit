@@ -124,7 +124,7 @@ namespace gkit::resource::metadata {
     auto Value::at(const std::string& key) const noexcept -> std::optional<std::reference_wrapper<const Value>> {
         if (!is_object()) return std::nullopt;
         const auto& obj = as_object();
-        auto it = obj.find(key);
+        auto it         = obj.find(key);
         if (it == obj.end()) return std::nullopt;
         return std::cref(it->second);
     }
@@ -144,9 +144,8 @@ namespace gkit::resource::metadata {
     // ParseError Implementation
     // =========================================================================
 
-    ParseError::ParseError(const std::string& message, std::size_t line, std::size_t column)
-        : message(message), line(line), column(column) {
-    }
+    ParseError::ParseError(const std::string& message, std::size_t line, std::size_t column) :
+        message(message), line(line), column(column) {}
 
     auto ParseError::what() const noexcept -> const char* {
         return message.c_str();
@@ -183,12 +182,10 @@ namespace gkit::resource::metadata {
         private:
             std::string_view input;
             std::size_t pos;
-            std::size_t line = 1;
+            std::size_t line      = 1;
             std::size_t linestart = 0;
 
-            [[nodiscard]] auto peek() const -> char {
-                return is_at_end() ? '\0' : input[pos];
-            }
+            [[nodiscard]] auto peek() const -> char { return is_at_end() ? '\0' : input[pos]; }
 
             [[nodiscard]] auto peek_ahead(std::size_t offset) const -> char {
                 return pos + offset >= input.size() ? '\0' : input[pos + offset];
@@ -204,17 +201,12 @@ namespace gkit::resource::metadata {
                 return c;
             }
 
-            [[nodiscard]] auto is_at_end() const -> bool {
-                return pos >= input.size();
-            }
+            [[nodiscard]] auto is_at_end() const -> bool { return pos >= input.size(); }
 
-            [[nodiscard]] auto column() const -> std::size_t {
-                return pos - linestart + 1;
-            }
+            [[nodiscard]] auto column() const -> std::size_t { return pos - linestart + 1; }
 
             auto skip_whitespace() -> void {
-                while (!is_at_end() && (peek() == ' ' || peek() == '\t' ||
-                                        peek() == '\n' || peek() == '\r')) {
+                while (!is_at_end() && (peek() == ' ' || peek() == '\t' || peek() == '\n' || peek() == '\r')) {
                     advance();
                 }
             }
@@ -239,18 +231,32 @@ namespace gkit::resource::metadata {
 
                 char c = peek();
                 switch (c) {
-                    case 'n': return Value(parse_null());
-                    case 't': return Value(parse_true());
-                    case 'f': return Value(parse_false());
-                    case '"': return Value(parse_string());
-                    case '[': return Value(parse_array());
-                    case '{': return Value(parse_object());
-                    case '-':
-                    case '0': case '1': case '2': case '3': case '4':
-                    case '5': case '6': case '7': case '8': case '9':
-                        return Value(parse_number());
-                    default:
-                        throw ParseError("Unexpected character", line, column());
+                case 'n':
+                    return Value(parse_null());
+                case 't':
+                    return Value(parse_true());
+                case 'f':
+                    return Value(parse_false());
+                case '"':
+                    return Value(parse_string());
+                case '[':
+                    return Value(parse_array());
+                case '{':
+                    return Value(parse_object());
+                case '-':
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    return Value(parse_number());
+                default:
+                    throw ParseError("Unexpected character", line, column());
                 }
             }
 
@@ -290,48 +296,64 @@ namespace gkit::resource::metadata {
                         }
                         char esc = advance();
                         switch (esc) {
-                            case '"':  result += '"';  break;
-                            case '\\': result += '\\'; break;
-                            case '/':  result += '/';  break;
-                            case 'b':  result += '\b'; break;
-                            case 'f':  result += '\f'; break;
-                            case 'n':  result += '\n'; break;
-                            case 'r':  result += '\r'; break;
-                            case 't':  result += '\t'; break;
-                            case 'u': {
-                                if (pos + 4 > input.size()) {
+                        case '"':
+                            result += '"';
+                            break;
+                        case '\\':
+                            result += '\\';
+                            break;
+                        case '/':
+                            result += '/';
+                            break;
+                        case 'b':
+                            result += '\b';
+                            break;
+                        case 'f':
+                            result += '\f';
+                            break;
+                        case 'n':
+                            result += '\n';
+                            break;
+                        case 'r':
+                            result += '\r';
+                            break;
+                        case 't':
+                            result += '\t';
+                            break;
+                        case 'u': {
+                            if (pos + 4 > input.size()) {
+                                throw ParseError("Invalid unicode escape", line, column());
+                            }
+                            auto hex               = input.substr(pos, 4);
+                            unsigned int codepoint = 0;
+                            for (char h : hex) {
+                                codepoint *= 16;
+                                if (h >= '0' && h <= '9') {
+                                    codepoint += h - '0';
+                                } else if (h >= 'a' && h <= 'f') {
+                                    codepoint += h - 'a' + 10;
+                                } else if (h >= 'A' && h <= 'F') {
+                                    codepoint += h - 'A' + 10;
+                                } else {
                                     throw ParseError("Invalid unicode escape", line, column());
                                 }
-                                auto hex = input.substr(pos, 4);
-                                unsigned int codepoint = 0;
-                                for (char h : hex) {
-                                    codepoint *= 16;
-                                    if (h >= '0' && h <= '9') {
-                                        codepoint += h - '0';
-                                    } else if (h >= 'a' && h <= 'f') {
-                                        codepoint += h - 'a' + 10;
-                                    } else if (h >= 'A' && h <= 'F') {
-                                        codepoint += h - 'A' + 10;
-                                    } else {
-                                        throw ParseError("Invalid unicode escape", line, column());
-                                    }
-                                }
-                                pos += 4;
-                                // Convert to UTF-8
-                                if (codepoint < 0x80) {
-                                    result += static_cast<char>(codepoint);
-                                } else if (codepoint < 0x800) {
-                                    result += static_cast<char>(0xC0 | (codepoint >> 6));
-                                    result += static_cast<char>(0x80 | (codepoint & 0x3F));
-                                } else {
-                                    result += static_cast<char>(0xE0 | (codepoint >> 12));
-                                    result += static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F));
-                                    result += static_cast<char>(0x80 | (codepoint & 0x3F));
-                                }
-                                break;
                             }
-                            default:
-                                throw ParseError("Invalid escape sequence", line, column());
+                            pos += 4;
+                            // Convert to UTF-8
+                            if (codepoint < 0x80) {
+                                result += static_cast<char>(codepoint);
+                            } else if (codepoint < 0x800) {
+                                result += static_cast<char>(0xC0 | (codepoint >> 6));
+                                result += static_cast<char>(0x80 | (codepoint & 0x3F));
+                            } else {
+                                result += static_cast<char>(0xE0 | (codepoint >> 12));
+                                result += static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F));
+                                result += static_cast<char>(0x80 | (codepoint & 0x3F));
+                            }
+                            break;
+                        }
+                        default:
+                            throw ParseError("Invalid escape sequence", line, column());
                         }
                     } else if (static_cast<unsigned char>(c) < 0x20) {
                         throw ParseError("Unescaped control character", line, column());
@@ -510,72 +532,90 @@ namespace gkit::resource::metadata {
                 result << '"';
                 for (unsigned char c : str) {
                     switch (c) {
-                        case '"':  result << "\\\""; break;
-                        case '\\': result << "\\\\"; break;
-                        case '\b': result << "\\b";  break;
-                        case '\f': result << "\\f";  break;
-                        case '\n': result << "\\n";  break;
-                        case '\r': result << "\\r";  break;
-                        case '\t': result << "\\t";  break;
-                        default:
-                            if (c < 0x20 || (options.escape_unicode && c > 0x7F)) {
-                                char buf[7];
-                                std::snprintf(buf, sizeof(buf), "\\u%04x", c);
-                                result << buf;
-                            } else {
-                                result << c;
-                            }
+                    case '"':
+                        result << "\\\"";
+                        break;
+                    case '\\':
+                        result << "\\\\";
+                        break;
+                    case '\b':
+                        result << "\\b";
+                        break;
+                    case '\f':
+                        result << "\\f";
+                        break;
+                    case '\n':
+                        result << "\\n";
+                        break;
+                    case '\r':
+                        result << "\\r";
+                        break;
+                    case '\t':
+                        result << "\\t";
+                        break;
+                    default:
+                        if (c < 0x20 || (options.escape_unicode && c > 0x7F)) {
+                            char buf[7];
+                            std::snprintf(buf, sizeof(buf), "\\u%04x", c);
+                            result << buf;
+                        } else {
+                            result << c;
+                        }
                     }
                 }
                 result << '"';
             }
 
             auto serialize_value(const Value& value, std::size_t depth) -> void {
-                std::visit([this, depth](const auto& v) {
-                    using T = std::decay_t<decltype(v)>;
-                    if constexpr (std::is_same_v<T, Null>) {
-                        result << "null";
-                    } else if constexpr (std::is_same_v<T, bool>) {
-                        result << (v ? "true" : "false");
-                    } else if constexpr (std::is_same_v<T, Number>) {
-                        std::visit([this](const auto& n) {
-                            if constexpr (std::is_same_v<std::decay_t<decltype(n)>, std::int64_t>) {
-                                result << n;
-                            } else {
-                                std::ostringstream oss;
-                                oss << std::setprecision(17) << n;
-                                result << oss.str();
+                std::visit(
+                    [this, depth](const auto& v) {
+                        using T = std::decay_t<decltype(v)>;
+                        if constexpr (std::is_same_v<T, Null>) {
+                            result << "null";
+                        } else if constexpr (std::is_same_v<T, bool>) {
+                            result << (v ? "true" : "false");
+                        } else if constexpr (std::is_same_v<T, Number>) {
+                            std::visit(
+                                [this](const auto& n) {
+                                    if constexpr (std::is_same_v<std::decay_t<decltype(n)>, std::int64_t>) {
+                                        result << n;
+                                    } else {
+                                        std::ostringstream oss;
+                                        oss << std::setprecision(17) << n;
+                                        result << oss.str();
+                                    }
+                                },
+                                v);
+                        } else if constexpr (std::is_same_v<T, std::string>) {
+                            serialize_string(v);
+                        } else if constexpr (std::is_same_v<T, Array>) {
+                            result << '[';
+                            bool first = true;
+                            for (const auto& elem : v) {
+                                if (!first) result << ',';
+                                first = false;
+                                indent(depth + 1);
+                                serialize_value(elem, depth + 1);
                             }
-                        }, v);
-                    } else if constexpr (std::is_same_v<T, std::string>) {
-                        serialize_string(v);
-                    } else if constexpr (std::is_same_v<T, Array>) {
-                        result << '[';
-                        bool first = true;
-                        for (const auto& elem : v) {
-                            if (!first) result << ',';
-                            first = false;
-                            indent(depth + 1);
-                            serialize_value(elem, depth + 1);
+                            if (!v.empty()) indent(depth);
+                            result << ']';
+                        } else if constexpr (std::is_same_v<T, Object>) {
+                            result << '{';
+                            bool first = true;
+                            for (const auto& [key, val] : v) {
+                                if (!first) result << ',';
+                                first = false;
+                                indent(depth + 1);
+                                serialize_string(key);
+                                result << ':';
+                                if (options.pretty) result << ' ';
+                                serialize_value(val, depth + 1);
+                            }
+                            if (!v.empty()) indent(depth);
+                            result << '}';
                         }
-                        if (!v.empty()) indent(depth);
-                        result << ']';
-                    } else if constexpr (std::is_same_v<T, Object>) {
-                        result << '{';
-                        bool first = true;
-                        for (const auto& [key, val] : v) {
-                            if (!first) result << ',';
-                            first = false;
-                            indent(depth + 1);
-                            serialize_string(key);
-                            result << ':';
-                            if (options.pretty) result << ' ';
-                            serialize_value(val, depth + 1);
-                        }
-                        if (!v.empty()) indent(depth);
-                        result << '}';
-                    }
-                }, value.raw());
+                    },
+                    value.raw());
             }
         };
 
@@ -592,7 +632,7 @@ namespace gkit::resource::metadata {
 
     auto serialize_pretty(const Value& value, std::uint8_t indent_size) -> std::string {
         FormatOptions opts;
-        opts.pretty = true;
+        opts.pretty      = true;
         opts.indent_size = indent_size;
         return serialize(value, opts);
     }

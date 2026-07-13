@@ -2,18 +2,19 @@
 
 #include "gkit/core/scene/singleton.hpp"
 #include "gkit/resource/resource.hpp"
-#include <unordered_map>
-#include <shared_mutex>
-#include <optional>
+
 #include <filesystem>
 #include <memory>
+#include <optional>
+#include <shared_mutex>
+#include <unordered_map>
 
 namespace gkit::resource {
     class ResourceLoader : core::scene::Singleton<ResourceLoader> {
     public:
         ResourceLoader() = default;
 
-    public: 
+    public:
         template<IsResource T>
         auto load(const std::filesystem::path& path) -> std::optional<std::shared_ptr<T>> {
             auto cached_res = get_cache(path);
@@ -32,9 +33,10 @@ namespace gkit::resource {
                 return std::nullopt;
             }
         };
+
     private:
-        std::shared_mutex cache_rw_mutex {};
-        std::unordered_map<std::filesystem::path, std::shared_ptr<gkit::resource::Resource>> resource_cache {};
+        std::shared_mutex cache_rw_mutex{};
+        std::unordered_map<std::filesystem::path, std::shared_ptr<gkit::resource::Resource>> resource_cache{};
 
         auto push_to_cache(const std::shared_ptr<gkit::resource::Resource>& res) -> void;
         auto get_cache(const std::filesystem::path& path) -> std::optional<std::shared_ptr<gkit::resource::Resource>>;

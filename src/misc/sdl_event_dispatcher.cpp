@@ -1,6 +1,5 @@
 #include "sdl_event_dispatcher.hpp"
 
-
 auto gkit::misc::SDLEventDispatcher::register_handler_before_frame(std::function<void(void)> handler) -> void {
     // Ignore empty callbacks to avoid extra checks at call sites.
     if (!handler) {
@@ -9,7 +8,6 @@ auto gkit::misc::SDLEventDispatcher::register_handler_before_frame(std::function
 
     this->before_frame_callbacks.push_back(std::move(handler));
 }
-
 
 auto gkit::misc::SDLEventDispatcher::register_handler_after_frame(std::function<void(void)> handler) -> void {
     // Ignore empty callbacks to avoid extra checks at call sites.
@@ -20,11 +18,8 @@ auto gkit::misc::SDLEventDispatcher::register_handler_after_frame(std::function<
     this->after_frame_callbacks.push_back(std::move(handler));
 }
 
-
-auto gkit::misc::SDLEventDispatcher::register_event_handler(
-    SDL_EventType event_type,
-    std::function<void(const SDL_Event&)> handler
-) -> void {
+auto gkit::misc::SDLEventDispatcher::register_event_handler(SDL_EventType event_type,
+                                                            std::function<void(const SDL_Event&)> handler) -> void {
     // Ignore empty callbacks to keep dispatch loop simple.
     if (!handler) {
         return;
@@ -33,12 +28,10 @@ auto gkit::misc::SDLEventDispatcher::register_event_handler(
     this->event_handlers[event_type].push_back(std::move(handler));
 }
 
-
 auto gkit::misc::SDLEventDispatcher::unregister_event_handler(SDL_EventType event_type) -> void {
     // Remove the whole callback chain for this event type.
     this->event_handlers.erase(event_type);
 }
-
 
 auto gkit::misc::SDLEventDispatcher::dispatch_events() -> void {
     // 1) Run frame-begin callbacks before consuming SDL events.

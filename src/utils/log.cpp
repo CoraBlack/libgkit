@@ -1,7 +1,8 @@
 #include "gkit/utils/log.hpp"
+
 #include <chrono>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <thread>
 
 static constexpr const char* INFO_LOG_TIP    = "[INFO]";
@@ -33,13 +34,8 @@ namespace {
     }
 } // namespace
 
-gkit::utils::Log::MpscBoundedQueue::MpscBoundedQueue(std::size_t requested_capacity)
-    : capacity(1),
-      mask(0),
-      buffer(),
-      enqueue_pos(0),
-      dequeue_pos(0) 
-{
+gkit::utils::Log::MpscBoundedQueue::MpscBoundedQueue(std::size_t requested_capacity) :
+    capacity(1), mask(0), buffer(), enqueue_pos(0), dequeue_pos(0) {
     // Normalize to power-of-two so (index & mask) is equivalent to modulo.
     while (capacity < requested_capacity) {
         capacity <<= 1u;
@@ -55,7 +51,7 @@ gkit::utils::Log::MpscBoundedQueue::MpscBoundedQueue(std::size_t requested_capac
 auto gkit::utils::Log::MpscBoundedQueue::try_enqueue(Message&& msg) noexcept -> bool {
     std::size_t pos = enqueue_pos.load(std::memory_order_relaxed);
     for (;;) {
-        auto& slot = buffer[pos & mask];
+        auto& slot            = buffer[pos & mask];
         const std::size_t seq = slot.sequence.load(std::memory_order_acquire);
         // diff == 0: slot is available for this producer position.
         // diff < 0: queue is full from this producer's view.
@@ -76,9 +72,9 @@ auto gkit::utils::Log::MpscBoundedQueue::try_enqueue(Message&& msg) noexcept -> 
 }
 
 auto gkit::utils::Log::MpscBoundedQueue::try_dequeue(Message& msg) noexcept -> bool {
-    const std::size_t pos = dequeue_pos.load(std::memory_order_relaxed);
-    auto& slot = buffer[pos & mask];
-    const std::size_t seq = slot.sequence.load(std::memory_order_acquire);
+    const std::size_t pos    = dequeue_pos.load(std::memory_order_relaxed);
+    auto& slot               = buffer[pos & mask];
+    const std::size_t seq    = slot.sequence.load(std::memory_order_acquire);
     const std::intptr_t diff = static_cast<std::intptr_t>(seq) - static_cast<std::intptr_t>(pos + 1u);
 
     if (diff == 0) {
@@ -95,14 +91,12 @@ auto gkit::utils::Log::MpscBoundedQueue::try_dequeue(Message& msg) noexcept -> b
 
 auto gkit::utils::Log::MpscBoundedQueue::empty() const noexcept -> bool {
     const std::size_t pos = dequeue_pos.load(std::memory_order_relaxed);
-    const auto& slot = buffer[pos & mask];
+    const auto& slot      = buffer[pos & mask];
     const std::size_t seq = slot.sequence.load(std::memory_order_acquire);
     return static_cast<std::intptr_t>(seq) - static_cast<std::intptr_t>(pos + 1u) < 0;
 }
 
-
 gkit::utils::Log::Log() : log_msg_queue(LOG_QUEUE_CAPACITY), log_thread(&Log::log_handler, this) {}
-
 
 gkit::utils::Log::~Log() {
     this->log_enable.store(false, std::memory_order_release);
@@ -113,11 +107,9 @@ gkit::utils::Log::~Log() {
     }
 }
 
-
 auto gkit::utils::Log::log(Message msg) -> void {
     (void)try_log(std::move(msg));
 }
-
 
 auto gkit::utils::Log::try_log(Message&& msg) noexcept -> bool {
     if (!this->log_enable.load(std::memory_order_acquire)) {
@@ -135,7 +127,6 @@ auto gkit::utils::Log::try_log(Message&& msg) noexcept -> bool {
     return false;
 }
 
-
 auto gkit::utils::Log::flush(std::chrono::milliseconds timeout) -> void {
     // Best-effort drain wait for shutdown/testing; no producer synchronization.
     const auto deadline = std::chrono::steady_clock::now() + timeout;
@@ -147,15 +138,11 @@ auto gkit::utils::Log::flush(std::chrono::milliseconds timeout) -> void {
     }
 }
 
-
 auto gkit::utils::Log::stats() const noexcept -> Stats {
-    return {
-        .enqueued = enqueued_count.load(std::memory_order_relaxed),
-        .dropped_full = dropped_full_count.load(std::memory_order_relaxed),
-        .processed = processed_count.load(std::memory_order_relaxed)
-    };
+    return {.enqueued     = enqueued_count.load(std::memory_order_relaxed),
+            .dropped_full = dropped_full_count.load(std::memory_order_relaxed),
+            .processed    = processed_count.load(std::memory_order_relaxed)};
 }
-
 
 auto gkit::utils::Log::set_log_file_path(const std::filesystem::path& path) -> bool {
     if (path.empty()) {
@@ -172,13 +159,11 @@ auto gkit::utils::Log::set_log_file_path(const std::filesystem::path& path) -> b
     return true;
 }
 
-
 auto gkit::utils::Log::log_to_console(const std::string& msg, LogLevel level) -> void {
     const char* log_tip = level_tip(level);
     std::lock_guard<std::mutex> lck(console_log_mutex);
     std::printf("%s %s\n", log_tip, msg.c_str());
 }
-
 
 auto gkit::utils::Log::log_to_file(const std::string& msg, LogLevel level) -> void {
     std::lock_guard<std::mutex> lck(file_log_mutex);
@@ -204,7 +189,6 @@ auto gkit::utils::Log::log_to_file(const std::string& msg, LogLevel level) -> vo
     log_file_stream << level_tip(level) << ' ' << msg << '\n';
     log_file_stream.flush();
 }
-
 
 auto gkit::utils::Log::log_handler() -> void {
     Message msg;

@@ -5,7 +5,6 @@
 #include <cmath>
 #include <tuple>
 
-
 namespace gkit::math {
 
     /// @brief 4D vector (x, y, z, w)
@@ -56,34 +55,70 @@ namespace gkit::math {
         inline auto operator=(const Vector4& other) noexcept -> Vector4& = default;
 
         /// @brief Equality operator
-        inline auto operator==(const Vector4& other) noexcept -> bool { return (this->x == other.x) && (this->y == other.y) && (this->z == other.z) && (this->w == other.w); }
+        inline auto operator==(const Vector4& other) noexcept -> bool {
+            return (this->x == other.x) && (this->y == other.y) && (this->z == other.z) && (this->w == other.w);
+        }
 
         /// @brief Inequality operator
-        inline auto operator!=(const Vector4& other) noexcept -> bool { return (this->x != other.x) || (this->y != other.y) || (this->z != other.z) || (this->w != other.w); }
+        inline auto operator!=(const Vector4& other) noexcept -> bool {
+            return (this->x != other.x) || (this->y != other.y) || (this->z != other.z) || (this->w != other.w);
+        }
 
         /// @brief Addition operator
-        inline auto operator+(const Vector4& other) const noexcept -> Vector4 { return Vector4(this->x + other.x, this->y + other.y, this->z + other.z, this->w + other.w); }
+        inline auto operator+(const Vector4& other) const noexcept -> Vector4 {
+            return Vector4(this->x + other.x, this->y + other.y, this->z + other.z, this->w + other.w);
+        }
 
         /// @brief Subtraction operator
-        inline auto operator-(const Vector4& other) const noexcept -> Vector4 { return Vector4(this->x - other.x, this->y - other.y, this->z - other.z, this->w - other.w); }
+        inline auto operator-(const Vector4& other) const noexcept -> Vector4 {
+            return Vector4(this->x - other.x, this->y - other.y, this->z - other.z, this->w - other.w);
+        }
 
         /// @brief Compound addition
-        inline auto operator+=(const Vector4& other) noexcept -> const Vector4& { this->x += other.x; this->y += other.y; this->z += other.z; this->w += other.w; return *this; }
+        inline auto operator+=(const Vector4& other) noexcept -> const Vector4& {
+            this->x += other.x;
+            this->y += other.y;
+            this->z += other.z;
+            this->w += other.w;
+            return *this;
+        }
 
         /// @brief Compound subtraction
-        inline auto operator-=(const Vector4& other) noexcept -> const Vector4& { this->x -= other.x; this->y -= other.y; this->z -= other.z; this->w -= other.w; return *this; }
+        inline auto operator-=(const Vector4& other) noexcept -> const Vector4& {
+            this->x -= other.x;
+            this->y -= other.y;
+            this->z -= other.z;
+            this->w -= other.w;
+            return *this;
+        }
 
         /// @brief Scalar multiplication
-        inline auto operator*(float s) noexcept -> Vector4 { return {this->x * s, this->y * s, this->z * s, this->w * s}; }
+        inline auto operator*(float s) noexcept -> Vector4 {
+            return {this->x * s, this->y * s, this->z * s, this->w * s};
+        }
 
         /// @brief Scalar division
-        inline auto operator/(float s) noexcept -> Vector4 { return {this->x / s, this->y / s, this->z / s, this->w / s}; }
+        inline auto operator/(float s) noexcept -> Vector4 {
+            return {this->x / s, this->y / s, this->z / s, this->w / s};
+        }
 
         /// @brief Compound scalar multiplication
-        inline auto operator*=(float s) noexcept -> const Vector4& { this->x *= s; this->y *= s; this->z *= s; this->w *= s; return *this; }
+        inline auto operator*=(float s) noexcept -> const Vector4& {
+            this->x *= s;
+            this->y *= s;
+            this->z *= s;
+            this->w *= s;
+            return *this;
+        }
 
         /// @brief Compound scalar division
-        inline auto operator/=(float s) noexcept -> const Vector4& { this->x /= s; this->y /= s; this->z /= s; this->w /= s; return *this; }
+        inline auto operator/=(float s) noexcept -> const Vector4& {
+            this->x /= s;
+            this->y /= s;
+            this->z /= s;
+            this->w /= s;
+            return *this;
+        }
 
         /// @brief Negation operator
         inline auto operator-() noexcept -> Vector4 { return {-this->x, -this->y, -this->z, -this->w}; }
@@ -110,14 +145,17 @@ namespace gkit::math {
         /// @brief Normalize to unit vector
         [[nodiscard]] inline auto normalize() const noexcept -> Vector4 {
             float len = this->length();
-            return (len > NORMALIZE_TOLERANCE_32) ? Vector4{x / len, y / len, z / len, w / len} : Vector4{0.0f, 0.0f, 0.0f, 0.0f};
+            return (len > NORMALIZE_TOLERANCE_32) ? Vector4{x / len, y / len, z / len, w / len}
+                                                  : Vector4{0.0f, 0.0f, 0.0f, 0.0f};
         }
 
     public: // Operations
         /// @brief Dot product
         /// @param a First vector
         /// @param b Second vector
-        static inline auto dot(const Vector4& a, const Vector4& b) noexcept -> float { return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w; }
+        static inline auto dot(const Vector4& a, const Vector4& b) noexcept -> float {
+            return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+        }
 
         /// @brief Linear interpolation
         /// @param a First vector

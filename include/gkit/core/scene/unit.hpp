@@ -3,6 +3,7 @@
 #include <atomic>
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <shared_mutex>
 #include <stdexcept>
@@ -11,7 +12,6 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <memory>
 
 namespace gkit {
     class Processer;
@@ -20,8 +20,8 @@ namespace gkit {
 namespace gkit::core::scene {
     class Unit;
 
-    template <typename T>
-    concept IsUnitExtend = requires (T v) {
+    template<typename T>
+    concept IsUnitExtend = requires(T v) {
         { std::is_base_of_v<Unit, T> } -> std::convertible_to<bool>;
     };
 
@@ -46,12 +46,12 @@ namespace gkit::core::scene {
          * @return A unique pointer to the instance. If the type can't be created, return nullptr.
          * @note It will throw error if the type is not a class which is based of class Unit.
          */
-        template <IsUnitExtend T>
+        template<IsUnitExtend T>
         static auto create(std::string&& name) noexcept -> std::unique_ptr<T>;
         virtual ~Unit() = default;
 
     public: // virtual methods
-        virtual auto ready()   -> void;
+        virtual auto ready() -> void;
         virtual auto process() -> void;
         virtual auto physics_process() -> void;
         virtual auto exit() -> void;
@@ -135,7 +135,7 @@ namespace gkit::core::scene {
         /**
          * It is not use in the current version.
          */
-        // auto remove_child(std::unique_ptr<gkit::core::scene::Unit>& child_ptr) noexcept -> void; 
+        // auto remove_child(std::unique_ptr<gkit::core::scene::Unit>& child_ptr) noexcept -> void;
 
         /**
          * @brief Get the number of children
@@ -149,7 +149,7 @@ namespace gkit::core::scene {
          * @return void
          * @note The unit will be dropped after the end of @ref process_handler().
          */
-        inline auto drop() -> void {this->ready_to_drop.store(true);};
+        inline auto drop() -> void { this->ready_to_drop.store(true); };
 
     public: // cross-unit methods
         /**
@@ -164,8 +164,7 @@ namespace gkit::core::scene {
          * If the index is out of range, return std::nullopt.
          */
         template<IsUnitExtend UnitT, typename F, typename... Args>
-        auto with_child(uint32_t index, const F& func, Args&&... args)
-            -> std::invoke_result_t<F, UnitT&, Args...>;
+        auto with_child(uint32_t index, const F& func, Args&&... args) -> std::invoke_result_t<F, UnitT&, Args...>;
 
         /**
          * @brief Do something by a callable method.
@@ -189,13 +188,13 @@ namespace gkit::core::scene {
          * @return std::optional<std::reference_wrapper<T>>
          * If the parent is not the target type, return std::nullopt.
          */
-        template<IsUnitExtend T> 
+        template<IsUnitExtend T>
         auto get_parent() noexcept -> std::optional<std::reference_wrapper<T>>;
 
     protected: // propertries
         std::string name;
         Unit* parent = nullptr;
-        
+
     private: // children management
         std::atomic<bool> modified = false;
 
@@ -204,7 +203,7 @@ namespace gkit::core::scene {
 
         std::vector<uint32_t> active_index_cache;
         mutable std::shared_mutex index_cache_rw_mutex;
-        
+
         std::vector<std::unique_ptr<Unit>> children;
         mutable std::shared_mutex children_rw_mutex;
 
@@ -248,7 +247,7 @@ namespace gkit::core::scene {
 
     private:
         std::atomic<bool> process_enabled = true; // process enabled flag
-        std::atomic<bool> ready_to_drop = false;  // drop flag(mark as dead)
+        std::atomic<bool> ready_to_drop   = false; // drop flag(mark as dead)
 
     public:
         // iterator
@@ -256,10 +255,10 @@ namespace gkit::core::scene {
         class iterator {
         public:
             using iterator_category = std::bidirectional_iterator_tag;
-            using value_type = Unit;
-            using difference_type = std::ptrdiff_t;
-            using pointer = Unit*;
-            using reference = Unit&;
+            using value_type        = Unit;
+            using difference_type   = std::ptrdiff_t;
+            using pointer           = Unit*;
+            using reference         = Unit&;
 
         public:
             // Constructor and operators
@@ -279,7 +278,6 @@ namespace gkit::core::scene {
             friend class Unit;
         };
 
-
         auto begin() -> iterator;
         auto end() -> iterator;
 
@@ -288,10 +286,10 @@ namespace gkit::core::scene {
         class const_iterator {
         public:
             using iterator_category = std::bidirectional_iterator_tag;
-            using value_type = const Unit;
-            using difference_type = std::ptrdiff_t;
-            using pointer = const Unit*;
-            using reference = const Unit&;
+            using value_type        = const Unit;
+            using difference_type   = std::ptrdiff_t;
+            using pointer           = const Unit*;
+            using reference         = const Unit&;
 
         public:
             // Constructor and operators
@@ -319,8 +317,8 @@ namespace gkit::core::scene {
 
     public:
         // This is a reverse iterator, implemented using std::reverse_iterator.
-        using reverse_iterator = std::reverse_iterator<iterator>;               // NOLINT(readability-identifier-naming)
-        using const_reverse_iterator = std::reverse_iterator<const_iterator>;   // NOLINT(readability-identifier-naming)
+        using reverse_iterator       = std::reverse_iterator<iterator>; // NOLINT(readability-identifier-naming)
+        using const_reverse_iterator = std::reverse_iterator<const_iterator>; // NOLINT(readability-identifier-naming)
 
         auto rbegin() -> reverse_iterator;
         auto rend() -> reverse_iterator;
@@ -333,20 +331,19 @@ namespace gkit::core::scene {
 
     }; // class Unit
 
-    template <IsUnitExtend T>
+    template<IsUnitExtend T>
     auto Unit::create(std::string&& name) noexcept -> std::unique_ptr<T> {
         static_assert(std::is_base_of_v<Unit, T>, "T is not derived from Unit");
         try {
             auto ptr = std::unique_ptr<T>(new T(std::move(name)));
             return ptr;
-        } catch(...) {
+        } catch (...) {
             return nullptr;
         }
     }
 
     template<IsUnitExtend UnitT, typename F, typename... Args>
-    auto Unit::with_child(uint32_t index, const F& func, Args&&... args) 
-    -> std::invoke_result_t<F, UnitT&, Args...> {
+    auto Unit::with_child(uint32_t index, const F& func, Args&&... args) -> std::invoke_result_t<F, UnitT&, Args...> {
         auto* child_ptr = get_available_child(index);
         if (child_ptr == nullptr) {
             throw std::out_of_range("Child index is out of range");
@@ -361,7 +358,7 @@ namespace gkit::core::scene {
 
     template<IsUnitExtend UnitT, typename F, typename... Args>
     auto Unit::with_child(const std::string& child_name, const F& func, Args&&... args)
-    -> std::invoke_result_t<F, UnitT&, Args...> {
+        -> std::invoke_result_t<F, UnitT&, Args...> {
         auto child_ptr = get_child(child_name);
         if (child_ptr == nullptr) {
             throw std::out_of_range("Child name is not found");

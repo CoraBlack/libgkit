@@ -2,6 +2,7 @@
 
 #include "gkit/core/input/keys.hpp"
 #include "gkit/core/input/mouse.hpp"
+
 #include <string>
 #include <variant>
 
@@ -42,17 +43,13 @@ namespace gkit::input {
          * @param chord The input chord to set for this action.
          * The type of chord can be @ref KeyChord or @ref MouseChord
          */
-        inline auto set_action(const InputChord& chord) -> void {
-            this->chord = chord;
-        }
+        inline auto set_action(const InputChord& chord) -> void { this->chord = chord; }
 
         /**
          * @brief Get the name of the action
          * @return The name of the action
          */
-        [[nodiscard]] inline auto get_name() const -> const std::string& {
-            return this->name;
-        }
+        [[nodiscard]] inline auto get_name() const -> const std::string& { return this->name; }
 
     private:
         std::string name;

@@ -1,7 +1,8 @@
 #include "core/input/cache.hpp"
-#include "misc/sdl_event_dispatcher.hpp"
-#include <SDL3/SDL.h>
 
+#include "misc/sdl_event_dispatcher.hpp"
+
+#include <SDL3/SDL.h>
 
 gkit::input::Cache::Cache() {
     auto& event_dispatcher = gkit::misc::SDLEventDispatcher::instance();
@@ -17,13 +18,13 @@ gkit::input::Cache::Cache() {
      ************************************/
     event_dispatcher.register_event_handler(SDL_EVENT_KEY_DOWN, [this](const SDL_Event& e) {
         auto& frame = this->current_cache;
-        auto key = static_cast<Key>(e.key.scancode);
+        auto key    = static_cast<Key>(e.key.scancode);
         frame.key_cache.pressed_keys.insert(key);
     });
 
     event_dispatcher.register_event_handler(SDL_EVENT_KEY_UP, [this](const SDL_Event& e) {
         auto& frame = this->current_cache;
-        auto key = static_cast<Key>(e.key.scancode);
+        auto key    = static_cast<Key>(e.key.scancode);
         frame.key_cache.pressed_keys.erase(key);
     });
 
@@ -42,27 +43,23 @@ gkit::input::Cache::Cache() {
         frame.mouse_cache.pressed_buttons.erase(button);
     });
 
-
     /************************************
      * Mouse Motion and Wheel Events
      ************************************/
     event_dispatcher.register_event_handler(SDL_EVENT_MOUSE_MOTION, [this](const SDL_Event& e) {
         auto& frame = this->current_cache;
         auto [x, y] = frame.mouse_cache.offset.properties();
-        x = e.motion.xrel;
-        y = e.motion.yrel;
+        x           = e.motion.xrel;
+        y           = e.motion.yrel;
     });
-
 
     event_dispatcher.register_event_handler(SDL_EVENT_MOUSE_WHEEL, [this](const SDL_Event& e) {
         auto& frame = this->current_cache;
         auto [x, y] = frame.mouse_cache.wheel.properties();
-        x = e.wheel.x;
-        y = e.wheel.y;
+        x           = e.wheel.x;
+        y           = e.wheel.y;
     });
 }
-
-
 
 gkit::input::Cache::~Cache() {
     auto& event_dispatcher = gkit::misc::SDLEventDispatcher::instance();
