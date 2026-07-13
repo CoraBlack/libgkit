@@ -1,0 +1,170 @@
+# clang-format configuration for libgkit
+# Requires: clang-format >= 20 (for C++20 support and modern options)
+
+BasedOnStyle: LLVM
+
+# ── Language Standard ──────────────────────────────────────────────
+Standard: c++20
+
+# ── Indentation ────────────────────────────────────────────────────
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+IndentCaseLabels: false
+IndentAccessModifiers: false
+AccessModifierOffset: -4
+NamespaceIndentation: All
+
+# ── Column Limit ───────────────────────────────────────────────────
+ColumnLimit: 120
+
+# ── Braces ─────────────────────────────────────────────────────────
+BreakBeforeBraces: Attach
+BraceWrapping:
+  AfterCaseLabel:  false
+  AfterClass:      false
+  AfterControlStatement: Never
+  AfterEnum:       false
+  AfterFunction:   false
+  AfterNamespace:  false
+  AfterStruct:     false
+  AfterUnion:      false
+  AfterExternBlock: false
+  BeforeCatch:     false
+  BeforeElse:      false
+  BeforeLambdaBody: false
+  BeforeWhile:     false
+  IndentBraces:    false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
+
+# ── Pointer & Reference Alignment ──────────────────────────────────
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# ── Spacing ────────────────────────────────────────────────────────
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatementsExceptControlMacros
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceInEmptyBlock: false
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles: Never
+SpacesInConditionalStatement: false
+SpacesInContainerLiterals: false
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# ── Line Breaks ────────────────────────────────────────────────────
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLambdasOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterReturnType: None
+AlwaysBreakTemplateDeclarations: Yes
+BreakConstructorInitializers: AfterColon
+ConstructorInitializerIndentWidth: 4
+BreakAfterJavaFieldAnnotations: false
+BreakStringLiterals: true
+MaxEmptyLinesToKeep: 1
+
+# ── Includes ───────────────────────────────────────────────────────
+SortIncludes: CaseSensitive
+IncludeBlocks: Regroup
+IncludeIsMainRegex: "(gkit/.*)?"
+IncludeCategories:
+  # Main header for .cpp files (matched by filename)
+  - Regex:           '^".*\.hpp"'
+    Priority:        1
+    SortPriority:    1
+    CaseSensitive:   true
+  # Internal project headers (src/ private headers)
+  - Regex:           '^"core/.*"'
+    Priority:        1
+    SortPriority:    1
+    CaseSensitive:   true
+  - Regex:           '^"math/.*"'
+    Priority:        1
+    SortPriority:    1
+    CaseSensitive:   true
+  - Regex:           '^"resource/.*"'
+    Priority:        1
+    SortPriority:    1
+    CaseSensitive:   true
+  - Regex:           '^"scene/.*"'
+    Priority:        1
+    SortPriority:    1
+    CaseSensitive:   true
+  - Regex:           '^"utils/.*"'
+    Priority:        1
+    SortPriority:    1
+    CaseSensitive:   true
+  - Regex:           '^"misc/.*"'
+    Priority:        1
+    SortPriority:    1
+    CaseSensitive:   true
+  # Third-party SDL headers
+  - Regex:           '^<(SDL3|SDL_image)/.*'
+    Priority:        3
+    SortPriority:    3
+    CaseSensitive:   true
+  # Standard library headers
+  - Regex:           '^<[a-z_]+>'
+    Priority:        4
+    SortPriority:    4
+    CaseSensitive:   true
+  # C standard library headers
+  - Regex:           '^<c.*>'
+    Priority:        4
+    SortPriority:    4
+    CaseSensitive:   true
+  # Everything else
+  - Regex:           '.*'
+    Priority:        5
+    SortPriority:    5
+    CaseSensitive:   true
+
+# ── Macros & Preprocessor ──────────────────────────────────────────
+AlignConsecutiveMacros: AcrossEmptyLinesAndComments
+IndentPPDirectives: None
+
+# ── Other ──────────────────────────────────────────────────────────
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveDeclarations: None
+AlignEscapedNewlines: Left
+AlignOperands: Align
+AlignTrailingComments: false
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
+BinPackArguments: false
+BinPackParameters: false
+CompactNamespaces: false
+Cpp11BracedListStyle: true
+DerivePointerAlignment: false
+FixNamespaceComments: true
+IndentCaseBlocks: false
+IndentGotoLabels: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+PenaltyBreakAssignment: 2
+PenaltyBreakBeforeFirstCallParameter: 19
+PenaltyBreakComment: 300
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakString: 1000
+PenaltyBreakTemplateDeclaration: 10
+PenaltyExcessCharacter: 1000000
+PenaltyReturnTypeOnItsOwnLine: 120
+ReflowComments: false
+SortUsingDeclarations: true
+SpaceAfterTemplateKeyword: false

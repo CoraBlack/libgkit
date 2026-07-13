@@ -7,11 +7,11 @@ namespace gkit::resource {
     class Resource {
     public:
         Resource() = default;
-        Resource(std::filesystem::path path);
-        Resource(std::filesystem::path&& path);
-        virtual ~Resource() = default;
-        Resource  operator=(Resource&)  = delete;
-        Resource  operator=(Resource&&) = delete;
+        explicit Resource(std::filesystem::path path);
+        explicit Resource(std::filesystem::path&& path);
+        virtual ~Resource()            = default;
+        Resource operator=(Resource&)  = delete;
+        Resource operator=(Resource&&) = delete;
 
     protected:
         friend class ResourceLoader;
@@ -41,22 +41,18 @@ namespace gkit::resource {
         virtual auto load_from_file() -> void = 0;
 
     public:
-        inline auto get_path() -> std::filesystem::path {
-            return res_path;
-        }
+        inline auto get_path() -> std::filesystem::path { return res_path; }
 
     protected:
-        bool is_available = false;
+        bool is_available              = false;
         std::filesystem::path res_path = std::filesystem::path();
 
-        inline auto available() -> bool {
-            return is_available;
-        }
+        inline auto available() -> bool { return is_available; }
     };
 
-    template <typename T>
+    template<typename T>
     concept IsResource = requires(T v) {
         std::is_base_of_v<gkit::resource::Resource, T>;
         v.load_from_file();
     };
-}
+} // namespace gkit::resource

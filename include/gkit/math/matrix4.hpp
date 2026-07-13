@@ -1,13 +1,12 @@
 #pragma once
 
+#include "gkit/math/matrix3.hpp"
 #include "gkit/math/vector3.hpp"
 #include "gkit/math/vector4.hpp"
-#include "gkit/math/matrix3.hpp"
 
-#include <tuple>
 #include <optional>
 #include <string>
-
+#include <tuple>
 
 namespace gkit::math {
 
@@ -20,10 +19,14 @@ namespace gkit::math {
     /// | m[0][3] m[1][3] m[2][3] m[3][3] |
     class Matrix4 {
     public:
-        float m[4][4] = { {0.0f, 0.0f, 0.0f, 0.0f},
-                          {0.0f, 0.0f, 0.0f, 0.0f},
-                          {0.0f, 0.0f, 0.0f, 0.0f},
-                          {0.0f, 0.0f, 0.0f, 0.0f} };
+        // clang-format off
+        float m[4][4] = {
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 0.0f}
+        };
+        // clang-format on
 
     public: // Constructors
         /// @brief Default constructor (zero-initialized)
@@ -45,15 +48,15 @@ namespace gkit::math {
         /// @brief Create identity matrix (1.0 on diagonal)
         static inline auto identity() noexcept -> Matrix4 {
             Matrix4 result;
-            result.m[0][0] = 1.0f; result.m[1][1] = 1.0f;
-            result.m[2][2] = 1.0f; result.m[3][3] = 1.0f;
+            result.m[0][0] = 1.0f;
+            result.m[1][1] = 1.0f;
+            result.m[2][2] = 1.0f;
+            result.m[3][3] = 1.0f;
             return result;
         }
 
         /// @brief Create zero matrix (all elements zero)
-        static inline auto zero() noexcept -> Matrix4 {
-            return {};
-        }
+        static inline auto zero() noexcept -> Matrix4 { return {}; }
 
     public: // Factory methods - Transformation
         /// @brief Translation matrix: moves points by the given translation vector
@@ -96,7 +99,8 @@ namespace gkit::math {
         /// @param top Top clipping plane
         /// @param near Near clipping plane
         /// @param far Far clipping plane
-        static auto orthographic(float left, float right, float bottom, float top, float near, float far) noexcept -> Matrix4;
+        static auto orthographic(float left, float right, float bottom, float top, float near, float far) noexcept
+            -> Matrix4;
 
         /// @brief Look-at view matrix (camera at eye, looking at target)
         /// @param eye Camera position
@@ -110,14 +114,18 @@ namespace gkit::math {
         /// @param row1 Second row
         /// @param row2 Third row
         /// @param row3 Fourth row
-        static auto from_rows(const Vector4& row0, const Vector4& row1, const Vector4& row2, const Vector4& row3) noexcept -> Matrix4;
+        static auto
+        from_rows(const Vector4& row0, const Vector4& row1, const Vector4& row2, const Vector4& row3) noexcept
+            -> Matrix4;
 
         /// @brief Create matrix from column vectors
         /// @param col0 First column (x, y, z, w)
         /// @param col1 Second column
         /// @param col2 Third column
         /// @param col3 Fourth column
-        static auto from_columns(const Vector4& col0, const Vector4& col1, const Vector4& col2, const Vector4& col3) noexcept -> Matrix4;
+        static auto
+        from_columns(const Vector4& col0, const Vector4& col1, const Vector4& col2, const Vector4& col3) noexcept
+            -> Matrix4;
 
         /// @brief Rotation matrix that rotates 'from' vector to 'to' vector
         /// @param from Source direction vector (will be normalized)
@@ -144,7 +152,8 @@ namespace gkit::math {
         /// @param translation Translation vector
         /// @param rotation Rotation matrix (3x3)
         /// @param scale Scale vector
-        static auto compose(const Vector3& translation, const Matrix3& rotation, const Vector3& scale) noexcept -> Matrix4;
+        static auto compose(const Vector3& translation, const Matrix3& rotation, const Vector3& scale) noexcept
+            -> Matrix4;
 
         /// @brief Compose TR (Translation * Rotation) matrix
         /// @param translation Translation vector
@@ -159,9 +168,7 @@ namespace gkit::math {
 
         /// @brief Get row i as Vector4
         /// @param i Row index (0-3)
-        [[nodiscard]] inline auto row(int i) const noexcept -> Vector4 {
-            return {m[0][i], m[1][i], m[2][i], m[3][i]};
-        }
+        [[nodiscard]] inline auto row(int i) const noexcept -> Vector4 { return {m[0][i], m[1][i], m[2][i], m[3][i]}; }
 
         /// @brief Get column j as Vector4
         /// @param j Column index (0-3)
@@ -234,9 +241,7 @@ namespace gkit::math {
         static auto inverse(const Matrix4& mat) noexcept -> std::optional<Matrix4>;
 
         /// @brief Sum of diagonal elements
-        [[nodiscard]] inline auto trace() const noexcept -> float {
-            return m[0][0] + m[1][1] + m[2][2] + m[3][3];
-        }
+        [[nodiscard]] inline auto trace() const noexcept -> float { return m[0][0] + m[1][1] + m[2][2] + m[3][3]; }
 
         /// @brief Minor: determinant of 3x3 submatrix obtained by removing row and column
         /// @param mat Source matrix
@@ -307,11 +312,9 @@ namespace gkit::math {
         /// @brief Extract scale vector (length of each column)
         /// @param mat Source matrix
         static inline auto get_scale(const Matrix4& mat) noexcept -> Vector3 {
-            return {
-                Vector3{mat.m[0][0], mat.m[0][1], mat.m[0][2]}.length(),
-                Vector3{mat.m[1][0], mat.m[1][1], mat.m[1][2]}.length(),
-                Vector3{mat.m[2][0], mat.m[2][1], mat.m[2][2]}.length()
-            };
+            return {Vector3{mat.m[0][0], mat.m[0][1], mat.m[0][2]}.length(),
+                    Vector3{mat.m[1][0], mat.m[1][1], mat.m[1][2]}.length(),
+                    Vector3{mat.m[2][0], mat.m[2][1], mat.m[2][2]}.length()};
         }
 
         /// @brief Decompose matrix into translation, rotation, and scale

@@ -10,11 +10,11 @@ namespace gkit::core::scene {
         friend T;
 
     protected:
-        Singleton() = default;
+        Singleton()          = default;
         virtual ~Singleton() = default;
 
-        Singleton(const Singleton&)  = delete;
-        Singleton(const Singleton&&) = delete;
+        Singleton(const Singleton&)            = delete;
+        Singleton(const Singleton&&)           = delete;
         Singleton operator=(const Singleton&)  = delete;
         Singleton operator=(const Singleton&&) = delete;
 
@@ -24,4 +24,4 @@ namespace gkit::core::scene {
             return instance;
         }
     }; // class Singleton
-} // namespace gkit::scene
+} // namespace gkit::core::scene

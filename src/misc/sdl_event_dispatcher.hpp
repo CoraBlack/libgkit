@@ -1,7 +1,9 @@
 #pragma once
 
 #include "gkit/core/scene/singleton.hpp"
+
 #include <SDL3/SDL.h>
+
 #include <functional>
 #include <unordered_map>
 #include <vector>
@@ -12,6 +14,7 @@ namespace gkit::misc {
      */
     class SDLEventDispatcher : public gkit::core::scene::Singleton<SDLEventDispatcher> {
         friend class gkit::core::scene::Singleton<SDLEventDispatcher>;
+
     public:
         /**
          * @brief Registers a callback executed once before polling SDL events in each dispatch cycle.

@@ -1,7 +1,6 @@
+// NOLINTBEGIN(google-readability-avoid-underscore-in-googletest-name)
 #include <gkit/core/scene/unit.hpp>
 
-#include <cstdint>
-#include <exception>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -11,12 +10,12 @@ using gkit::core::scene::Unit;
 
 #define TEST(cond, msg) do { \
     if (!(cond)) { \
-        std::cerr << "FAIL: " << msg << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
+        std::cerr << "FAIL: " << msg << " (" << __FILE__ << ":" << __LINE__ << ")\n"; \
         return false; \
     } else { \
-        std::cout << "PASS: " << msg << std::endl; \
+        std::cout << "PASS: " << msg << '\n'; \
     } \
-} while(0)
+} while(0) 
 
 class OtherUnit : public Unit {
 public:
@@ -30,11 +29,7 @@ public:
     using Unit::physics_process_handler;
     using Unit::exit_handler;
 
-    explicit TestUnit(const std::string& unit_name) : Unit(unit_name), id(unit_name) {}
-
-    static auto create(const std::string& name) -> std::unique_ptr<TestUnit> {
-        return Unit::create<TestUnit>(name);
-    }
+    explicit TestUnit(std::string&& unit_name) : Unit(std::move(unit_name)), id(unit_name) {}
 
     auto ready() -> void override {
         ++ready_calls;
@@ -76,16 +71,16 @@ std::vector<std::string> TestUnit::timeline;
 auto test_create_and_with_child() -> bool {
     std::cout << "\n=== test_create_and_with_child ===\n";
 
-    auto parent = TestUnit::create("parent");
+    auto parent = Unit::create<TestUnit>("parent");
     TEST(parent != nullptr, "create<TestUnit> returns non-null");
 
-    auto child = TestUnit::create("child");
+    auto child = Unit::create<TestUnit>("child");
     auto* child_ptr = child.get();
     parent->add_child(std::move(child));
 
     TEST(child_ptr->ready_calls == 1, "add_child triggers child ready once");
 
-    auto value_opt = parent->with_child<TestUnit>(0, [](TestUnit& c) { return c.value; });
+    auto value_opt = parent->with_child<TestUnit>(0, [](TestUnit& c) -> int { return c.value; });
     TEST(value_opt == 0, "with_child(index) returns callable result");
 
     auto value_by_name = parent->with_child<TestUnit>("child", [](TestUnit& c) { return c.value; });
@@ -121,9 +116,9 @@ auto test_create_and_with_child() -> bool {
 auto test_handlers_and_drop_flow() -> bool {
     std::cout << "\n=== test_handlers_and_drop_flow ===\n";
 
-    auto root = TestUnit::create("root");
-    auto keep = TestUnit::create("keep");
-    auto drop_later = TestUnit::create("drop_later");
+    auto root =  Unit::create<TestUnit>("root");
+    auto keep =  Unit::create<TestUnit>("keep");
+    auto drop_later =  Unit::create<TestUnit>("drop_later");
 
     auto* keep_ptr = keep.get();
     auto* drop_ptr = drop_later.get();
@@ -133,7 +128,7 @@ auto test_handlers_and_drop_flow() -> bool {
     root->add_child(std::move(keep));
     root->add_child(std::move(drop_later));
 
-    auto _cache_sync = root->with_child<TestUnit>(0, [](TestUnit& c) { return c.process_calls; });
+    auto cache_sync = root->with_child<TestUnit>(0, [](TestUnit& c) { return c.process_calls; });
 
     TestUnit::timeline.clear();
     root->ready_handler();
@@ -178,11 +173,11 @@ auto test_handlers_and_drop_flow() -> bool {
 auto test_remove_child_and_iterators() -> bool {
     std::cout << "\n=== test_remove_child_and_iterators ===\n";
 
-    auto root = TestUnit::create("root");
+    auto root =  Unit::create<TestUnit>("root");
     std::vector<TestUnit*> children;
 
     for (int i = 0; i < 3; ++i) {
-        auto child = TestUnit::create("child" + std::to_string(i));
+        auto child =  Unit::create<TestUnit>("child" + std::to_string(i));
         children.push_back(child.get());
         root->add_child(std::move(child));
     }
@@ -241,14 +236,14 @@ auto test_remove_child_and_iterators() -> bool {
 auto test_exit_handler_order() -> bool {
     std::cout << "\n=== test_exit_handler_order ===\n";
 
-    auto root = TestUnit::create("root");
-    auto child0 = TestUnit::create("child0");
-    auto child1 = TestUnit::create("child1");
+    auto root =  Unit::create<TestUnit>("root");
+    auto child0 =  Unit::create<TestUnit>("child0");
+    auto child1 =  Unit::create<TestUnit>("child1");
 
     root->add_child(std::move(child0));
     root->add_child(std::move(child1));
 
-    auto _cache_sync = root->with_child<TestUnit>(0, [](TestUnit& c) { return c.ready_calls; });
+    auto cache_sync = root->with_child<TestUnit>(0, [](TestUnit& c) { return c.ready_calls; });
 
     TestUnit::timeline.clear();
     root->exit_handler();
@@ -270,10 +265,12 @@ auto main() -> int {
     all_passed &= test_exit_handler_order();
 
     if (all_passed) {
-        std::cout << "\nAll tests passed!" << std::endl;
+        std::cout << "\nAll tests passed!\n";
         return 0;
     }
 
-    std::cerr << "\nSome tests failed." << std::endl;
+    std::cerr << "\nSome tests failed.\n";
     return 1;
 }
+
+// NOLINTEND(google-readability-avoid-underscore-in-googletest-name)

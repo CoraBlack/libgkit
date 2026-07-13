@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <gkit/gkit.hpp>
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 #include <iterator>
 
@@ -9,10 +11,10 @@ using gkit::core::scene::Unit;
 
 #define TEST(cond, msg) do { \
     if (!(cond)) { \
-        std::cerr << "FAIL: " << msg << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
+        std::cerr << "FAIL: " << msg << " (" << __FILE__ << ":" << __LINE__ << ")\n"; \
         return false; \
     } else { \
-        std::cout << "PASS: " << msg << std::endl; \
+        std::cout << "PASS: " << msg << '\n'; \
     } \
 } while(0)
 
@@ -35,7 +37,7 @@ public:
     std::string name_storage;
 
     // Custom constructor
-    TestUnit(const std::string& name) : Unit(name), name_storage(name) {}
+    explicit TestUnit(std::string&& name) : Unit(std::move(name)), name_storage(name) {}
 
     void ready() override {
         ready_calls++;

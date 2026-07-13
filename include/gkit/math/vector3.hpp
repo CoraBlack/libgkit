@@ -5,7 +5,6 @@
 #include <cmath>
 #include <tuple>
 
-
 namespace gkit::math {
 
     /// @brief 3D vector (x, y, z)
@@ -48,22 +47,40 @@ namespace gkit::math {
         inline auto operator=(const Vector3& other) noexcept -> Vector3& = default;
 
         /// @brief Equality operator
-        inline auto operator==(const Vector3& other) noexcept -> bool { return (this->x == other.x) && (this->y == other.y) && (this->z == other.z); }
+        inline auto operator==(const Vector3& other) noexcept -> bool {
+            return (this->x == other.x) && (this->y == other.y) && (this->z == other.z);
+        }
 
         /// @brief Inequality operator
-        inline auto operator!=(const Vector3& other) noexcept -> bool { return (this->x != other.x) || (this->y != other.y) || (this->z != other.z); }
+        inline auto operator!=(const Vector3& other) noexcept -> bool {
+            return (this->x != other.x) || (this->y != other.y) || (this->z != other.z);
+        }
 
         /// @brief Addition operator
-        inline auto operator+(const Vector3& other) const noexcept -> Vector3 { return Vector3(this->x + other.x, this->y + other.y, this->z + other.z); }
+        inline auto operator+(const Vector3& other) const noexcept -> Vector3 {
+            return Vector3(this->x + other.x, this->y + other.y, this->z + other.z);
+        }
 
         /// @brief Subtraction operator
-        inline auto operator-(const Vector3& other) const noexcept -> Vector3 { return Vector3(this->x - other.x, this->y - other.y, this->z - other.z); }
+        inline auto operator-(const Vector3& other) const noexcept -> Vector3 {
+            return Vector3(this->x - other.x, this->y - other.y, this->z - other.z);
+        }
 
         /// @brief Compound addition
-        inline auto operator+=(const Vector3& other) noexcept -> const Vector3& { this->x += other.x; this->y += other.y; this->z += other.z; return *this; }
+        inline auto operator+=(const Vector3& other) noexcept -> const Vector3& {
+            this->x += other.x;
+            this->y += other.y;
+            this->z += other.z;
+            return *this;
+        }
 
         /// @brief Compound subtraction
-        inline auto operator-=(const Vector3& other) noexcept -> const Vector3& { this->x -= other.x; this->y -= other.y; this->z -= other.z; return *this; }
+        inline auto operator-=(const Vector3& other) noexcept -> const Vector3& {
+            this->x -= other.x;
+            this->y -= other.y;
+            this->z -= other.z;
+            return *this;
+        }
 
         /// @brief Scalar multiplication
         inline auto operator*(float s) noexcept -> Vector3 { return {this->x * s, this->y * s, this->z * s}; }
@@ -72,10 +89,20 @@ namespace gkit::math {
         inline auto operator/(float s) noexcept -> Vector3 { return {this->x / s, this->y / s, this->z / s}; }
 
         /// @brief Compound scalar multiplication
-        inline auto operator*=(float s) noexcept -> const Vector3& { this->x *= s; this->y *= s; this->z *= s; return *this; }
+        inline auto operator*=(float s) noexcept -> const Vector3& {
+            this->x *= s;
+            this->y *= s;
+            this->z *= s;
+            return *this;
+        }
 
         /// @brief Compound scalar division
-        inline auto operator/=(float s) noexcept -> const Vector3& { this->x /= s; this->y /= s; this->z /= s; return *this; }
+        inline auto operator/=(float s) noexcept -> const Vector3& {
+            this->x /= s;
+            this->y /= s;
+            this->z /= s;
+            return *this;
+        }
 
         /// @brief Negation operator
         inline auto operator-() noexcept -> Vector3 { return {-this->x, -this->y, -this->z}; }
@@ -109,17 +136,15 @@ namespace gkit::math {
         /// @brief Dot product
         /// @param a First vector
         /// @param b Second vector
-        static inline auto dot(const Vector3& a, const Vector3& b) noexcept -> float { return a.x * b.x + a.y * b.y + a.z * b.z; }
+        static inline auto dot(const Vector3& a, const Vector3& b) noexcept -> float {
+            return a.x * b.x + a.y * b.y + a.z * b.z;
+        }
 
         /// @brief Cross product
         /// @param a First vector
         /// @param b Second vector
         static inline auto cross(const Vector3& a, const Vector3& b) noexcept -> Vector3 {
-            return {
-                a.y * b.z - a.z * b.y,
-                a.z * b.x - a.x * b.z,
-                a.x * b.y - a.y * b.x
-            };
+            return {a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x};
         }
 
         /// @brief Linear interpolation
@@ -162,7 +187,7 @@ namespace gkit::math {
         /// @param a First vector
         /// @param b Second vector
         static inline auto angle(const Vector3& a, const Vector3& b) noexcept -> float {
-            float d = Vector3::dot(a, b);
+            float d     = Vector3::dot(a, b);
             float len_a = a.length();
             float len_b = b.length();
             return (len_a * len_b > 0.0f) ? std::acos(d / (len_a * len_b)) : 0.0f;

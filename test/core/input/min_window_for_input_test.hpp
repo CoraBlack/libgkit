@@ -11,13 +11,13 @@ namespace gkit::test {
 
             win_ptr = SDL_CreateWindow("Window for input test", 640, 480, SDL_WINDOW_RESIZABLE);
             if (!win_ptr) {
-                std::cerr << "Failed to create SDL window: " << SDL_GetError() << std::endl;
+                std::cerr << "Failed to create SDL window: " << SDL_GetError() << '\n';
                 std::exit(1);
             }
 
             renderer = SDL_CreateRenderer(win_ptr, nullptr);
             if (!renderer) {
-                std::cerr << "Failed to create SDL renderer: " << SDL_GetError() << std::endl;
+                std::cerr << "Failed to create SDL renderer: " << SDL_GetError() << '\n';
                 std::exit(1);
             }
 
@@ -38,4 +38,4 @@ namespace gkit::test {
         SDL_Window* win_ptr = nullptr;
         SDL_Renderer* renderer = nullptr;
     };
-}
+} // namespace gkit::test

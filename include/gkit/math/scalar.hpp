@@ -10,16 +10,16 @@ namespace gkit::math {
     template<typename T>
     struct ScalarLimits {
         /// @brief Minimum value
-        static constexpr T min_v    = std::numeric_limits<T>::min();
+        static constexpr T MIN_V = std::numeric_limits<T>::min();
 
         /// @brief Maximum value
-        static constexpr T max_v    = std::numeric_limits<T>::max();
+        static constexpr T MAX_V = std::numeric_limits<T>::max();
 
         /// @brief Lowest value (most negative)
-        static constexpr T lowest_v = std::numeric_limits<T>::lowest();
+        static constexpr T LOWEST_V = std::numeric_limits<T>::lowest();
 
         /// @brief Machine epsilon
-        static constexpr T epsilon_v = std::numeric_limits<T>::epsilon();
+        static constexpr T EPSILON_V = std::numeric_limits<T>::epsilon();
     };
 
     // Floating-point special values (32-bit float)
@@ -27,27 +27,27 @@ namespace gkit::math {
     constexpr float EPSILON32 = std::numeric_limits<float>::epsilon();
 
     /// @brief Float minimum positive value
-    constexpr float MIN32     = std::numeric_limits<float>::min();
+    constexpr float MIN32 = std::numeric_limits<float>::min();
 
     /// @brief Float maximum value
-    constexpr float MAX32     = std::numeric_limits<float>::max();
+    constexpr float MAX32 = std::numeric_limits<float>::max();
 
     // Floating-point special values (64-bit double)
     /// @brief Double epsilon (machine epsilon for double)
     constexpr float EPSILON64 = std::numeric_limits<float>::epsilon();
 
     /// @brief Double minimum positive value
-    constexpr float MIN64     = std::numeric_limits<float>::min();
+    constexpr float MIN64 = std::numeric_limits<float>::min();
 
     /// @brief Double maximum value
-    constexpr float MAX64     = std::numeric_limits<float>::max();
+    constexpr float MAX64 = std::numeric_limits<float>::max();
 
     // Integer special values (8-bit)
     /// @brief 8-bit signed minimum (-128)
-    constexpr int8_t  I8_MIN  = std::numeric_limits<int8_t>::min();
+    constexpr int8_t I8_MIN = std::numeric_limits<int8_t>::min();
 
     /// @brief 8-bit signed maximum (127)
-    constexpr int8_t  I8_MAX  = std::numeric_limits<int8_t>::max();
+    constexpr int8_t I8_MAX = std::numeric_limits<int8_t>::max();
 
     /// @brief 8-bit unsigned maximum (255)
     constexpr uint8_t U8_MAX = std::numeric_limits<uint8_t>::max();

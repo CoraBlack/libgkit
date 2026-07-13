@@ -10,4 +10,4 @@ namespace gkit::core::scene {
         Object() = default;
         virtual ~Object();
     };
-}
+} // namespace gkit::core::scene
