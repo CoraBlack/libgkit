@@ -18,19 +18,22 @@ jobs:
 
       - name: Install clang-format
         run: |
-          echo "📦 Installing clang-format (LLVM 20)..."
+          echo "📦 Installing latest clang-format from LLVM apt..."
           sudo apt-get update
           sudo apt-get install -y wget software-properties-common
           wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
-          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main"
+          LLVM_LATEST=$(wget -qO- https://apt.llvm.org/noble/dists/llvm-toolchain-noble/ \
+            | grep -oP 'href="llvm-toolchain-noble-\K[0-9]+' | sort -n | tail -1)
+          echo "Latest LLVM version: ${LLVM_LATEST}"
+          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-${LLVM_LATEST} main"
           sudo apt-get update
-          sudo apt-get install -y clang-format-20
-          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-20 100
+          sudo apt-get install -y clang-format-${LLVM_LATEST}
+          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-${LLVM_LATEST} 100
           echo "✅ clang-format $(clang-format --version) installed"
 
       - name: Run clang-format
         run: |
-          echo "🔍 Running clang-format check (clang-format-20)..."
+          echo "🔍 Running clang-format check (clang-format $(clang-format --version | awk '{print $3}'))..."
 
           SRC_FILES=$(find "${{ github.workspace }}/src"      -name "*.cpp" -o -name "*.hpp" | sort)
           INC_FILES=$(find "${{ github.workspace }}/include"  -name "*.hpp" | sort)
@@ -57,7 +60,8 @@ jobs:
             echo "Run the following locally to fix:"
             echo "  clang-format -i <file>"
             echo ""
-            echo "NOTE: CI uses clang-format 20. Your local version must match."
+            echo "NOTE: Ensure your local clang-format version matches CI."
+            echo "      CI version: $(clang-format --version)"
             exit 1
           fi
 
@@ -85,15 +89,19 @@ jobs:
             libgbm-dev libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev \
             libdbus-1-dev libibus-1.0-dev libudev-dev
 
-          echo "📦 Installing clang-20 toolchain..."
+          echo "📦 Installing latest clang toolchain from LLVM apt..."
           wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
-          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main"
+          LLVM_LATEST=$(wget -qO- https://apt.llvm.org/noble/dists/llvm-toolchain-noble/ \
+            | grep -oP 'href="llvm-toolchain-noble-\K[0-9]+' | sort -n | tail -1)
+          echo "Latest LLVM version: ${LLVM_LATEST}"
+          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-${LLVM_LATEST} main"
           sudo apt-get update
-          sudo apt-get install -y clang-20 clang-tidy-20
-          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-20 100
-          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-20 100
-          sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-20 100
-          echo "✅ clang-20 toolchain installed"
+          sudo apt-get install -y clang-${LLVM_LATEST} clang-tidy-${LLVM_LATEST}
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${LLVM_LATEST} 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${LLVM_LATEST} 100
+          sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-${LLVM_LATEST} 100
+          echo "✅ clang $(clang --version | head -n1) installed"
+          echo "✅ clang-tidy $(clang-tidy --version | head -n1) installed"
 
       - name: Configure CMake (LLVM)
         run: |
