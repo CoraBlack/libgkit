@@ -1,4 +1,4 @@
-name: gkit-tidy-check
+name: gkit-code-style-check
 
 on:
   push:
@@ -8,6 +8,50 @@ on:
   workflow_dispatch:
 
 jobs:
+  clang-format:
+    name: Clang-Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: |
+          echo "📦 Installing clang-format..."
+          sudo apt-get update
+          sudo apt-get install -y clang-format
+          echo "✅ clang-format $(clang-format --version) installed"
+
+      - name: Run clang-format
+        run: |
+          echo "🔍 Running clang-format check..."
+
+          SRC_FILES=$(find "${{ github.workspace }}/src"      -name "*.cpp" -o -name "*.hpp" | sort)
+          INC_FILES=$(find "${{ github.workspace }}/include"  -name "*.hpp" | sort)
+          FILES="$SRC_FILES $INC_FILES"
+
+          if [ -z "$FILES" ]; then
+            echo "::warning::No source files found"
+            exit 0
+          fi
+
+          EXIT_CODE=0
+          for file in $FILES; do
+            if ! clang-format --dry-run --Werror "$file" 2>&1; then
+              EXIT_CODE=1
+            fi
+          done
+
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo ""
+            echo "::error::clang-format found formatting issues."
+            echo "Run 'clang-format -i <file>' locally to fix them."
+            exit 1
+          fi
+
+          echo "✅ clang-format check passed"
+
   clang-tidy:
     name: Clang-Tidy Check
     runs-on: ubuntu-latest
@@ -47,9 +91,7 @@ jobs:
             exit 1
           fi
 
-          # Collect all .cpp source files
-          SRC_DIR="${{ github.workspace }}/src"
-          FILES=$(find "$SRC_DIR" -name "*.cpp" | sort)
+          FILES=$(find "${{ github.workspace }}/src" -name "*.cpp" | sort)
 
           EXIT_CODE=0
           for file in $FILES; do
