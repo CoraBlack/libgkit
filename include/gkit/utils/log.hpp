@@ -53,10 +53,10 @@ namespace gkit::utils {
         public:
             explicit MpscBoundedQueue(std::size_t capacity);
             // Non-blocking producer path. Returns false when queue is full.
-            auto try_enqueue(Message&& msg) noexcept -> bool;
+            [[nodiscard]] auto try_dequeue(Message& msg)  noexcept -> bool;
+            [[nodiscard]] auto try_enqueue(Message&& msg) noexcept -> bool;
             // Single-consumer dequeue path.
-            auto try_dequeue(Message& msg) noexcept -> bool;
-            auto empty() const noexcept -> bool;
+            [[nodiscard]] auto empty() const noexcept -> bool;
 
         private:
             struct Slot {

@@ -67,15 +67,15 @@ namespace gkit::resource::metadata {
         ~Value() = default;
 
         /** Convenience constructors for each JSON type **/
-        Value(Null) noexcept;
-        Value(bool value) noexcept;
-        Value(std::int64_t value) noexcept;
-        Value(double value) noexcept;
-        Value(int value) noexcept : Value(static_cast<std::int64_t>(value)) {}
-        Value(const char* value);
-        Value(std::string value);
-        Value(Array value);
-        Value(Object value);
+        explicit Value(Null) noexcept;
+        explicit Value(bool value) noexcept;
+        explicit Value(std::int64_t value) noexcept;
+        explicit Value(double value) noexcept;
+        explicit Value(int value) noexcept : Value(static_cast<std::int64_t>(value)) {}
+        explicit Value(const char* value);
+        explicit Value(std::string value);
+        Value(Array value);  // NOLINT(google-explicit-constructor)
+        Value(Object value); // NOLINT(google-explicit-constructor)
 
         /** Assignment operators **/
         auto operator=(const Value&) -> Value& = default;

@@ -16,11 +16,11 @@ namespace gkit::input {
     class Cache : public gkit::core::scene::Singleton<Cache> {
         friend class gkit::Input;
         friend class gkit::core::scene::Singleton<Cache>;
-
         Cache();
-        virtual ~Cache();
 
     public:
+        virtual ~Cache();
+
         /**
          * @brief Check if the specified modifiers are currently pressed.
          * @param mods The modifier bitmask to check
@@ -66,4 +66,4 @@ namespace gkit::input {
         CacheData current_cache;
         CacheData previous_cache;
     };
-}
+} // namespace gkit::input

@@ -24,4 +24,4 @@ namespace gkit::core::scene {
             return instance;
         }
     }; // class Singleton
-} // namespace gkit::scene
+} // namespace gkit::core::scene

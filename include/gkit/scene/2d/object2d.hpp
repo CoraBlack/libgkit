@@ -25,4 +25,4 @@ namespace gkit::scene {
     private:
         Transform2D transform;
     };
-}
+} // namespace gkit::scene

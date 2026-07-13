@@ -1,7 +1,6 @@
 Checks: >
     # 先禁用所有，然后精确开启
     -*,
-    cppcoreguidelines-*,
     modernize-*,
     performance-*,
     google-*

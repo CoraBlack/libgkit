@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace gkit::input {
-    enum class MouseButton : std::uint32_t {
+    enum class MouseButton : std::uint8_t {
         Unknown = 0,
         Left    = 1,
         Middle  = 2,

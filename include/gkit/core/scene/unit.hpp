@@ -9,6 +9,7 @@
 #include <string>
 #include <type_traits>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 #include <memory>
 
@@ -35,7 +36,8 @@ namespace gkit::core::scene {
     class Unit {
     protected:
         Unit() noexcept;
-        Unit(std::string name) noexcept;
+        explicit Unit(std::string&& name) noexcept;
+
     public:
         /**
          * @brief Create a instance of the type which is based of class Unit.
@@ -162,7 +164,7 @@ namespace gkit::core::scene {
          * If the index is out of range, return std::nullopt.
          */
         template<IsUnitExtend Unit_T, typename F, typename... Args>
-        auto with_child(uint32_t index, F&& func, Args&&... args)
+        auto with_child(uint32_t index, const F& func, Args&&... args)
             -> std::invoke_result_t<F, Unit_T&, Args...>;
 
         /**
@@ -178,7 +180,7 @@ namespace gkit::core::scene {
          * @throws std::invalid_argument If child type cast fails.
          */
         template<IsUnitExtend Unit_T, typename F, typename... Args>
-        auto with_child(const std::string& child_name, F&& func, Args&&... args)
+        auto with_child(const std::string& child_name, const F& func, Args&&... args)
             -> std::invoke_result_t<F, Unit_T&, Args...>;
 
         /**
@@ -341,7 +343,7 @@ namespace gkit::core::scene {
     }
 
     template<IsUnitExtend Unit_T, typename F, typename... Args>
-    auto Unit::with_child(uint32_t index, F&& func, Args&&... args) 
+    auto Unit::with_child(uint32_t index, const F& func, Args&&... args) 
     -> std::invoke_result_t<F, Unit_T&, Args...> {
         auto* child_ptr = get_available_child(index);
         if (child_ptr == nullptr) {
@@ -356,7 +358,7 @@ namespace gkit::core::scene {
     } // Unit::with_child
 
     template<IsUnitExtend Unit_T, typename F, typename... Args>
-    auto Unit::with_child(const std::string& child_name, F&& func, Args&&... args)
+    auto Unit::with_child(const std::string& child_name, const F& func, Args&&... args)
     -> std::invoke_result_t<F, Unit_T&, Args...> {
         auto child_ptr = get_child(child_name);
         if (child_ptr == nullptr) {

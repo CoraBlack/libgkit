@@ -10,7 +10,7 @@
 gkit::Input::Input() {
     SDL_Init(SDL_INIT_EVENTS);
     if (!SDL_EventEnabled(SDL_EVENT_MOUSE_BUTTON_DOWN)) {
-        std::cerr << "Failed to enable SDL mouse button events: " << SDL_GetError() << std::endl;
+        std::cerr << "Failed to enable SDL mouse button events: " << SDL_GetError() << '\n';
     }
 }
 
@@ -28,68 +28,68 @@ auto gkit::Input::unregister_action(const std::string& name) -> void {
 }
 
 
-auto gkit::Input::is_key_pressed(gkit::input::Key key) -> bool {
+auto gkit::Input::is_key_pressed(gkit::input::Key key) const -> bool {
     return gkit::input::Cache::instance().current_cache.key_cache.pressed_keys.contains(key);
 }
 
 
-auto gkit::Input::is_key_released(gkit::input::Key key) -> bool {
+auto gkit::Input::is_key_released(gkit::input::Key key) const -> bool {
     return !gkit::input::Cache::instance().current_cache.key_cache.pressed_keys.contains(key);
 }
 
 
-auto gkit::Input::is_key_just_pressed(gkit::input::Key key) -> bool {
+auto gkit::Input::is_key_just_pressed(gkit::input::Key key) const -> bool {
     auto& cache = gkit::input::Cache::instance();
     return cache.current_cache.key_cache.pressed_keys.contains(key) &&
          !cache.previous_cache.key_cache.pressed_keys.contains(key);
 }
 
 
-auto gkit::Input::is_key_just_released(gkit::input::Key key) -> bool {
+auto gkit::Input::is_key_just_released(gkit::input::Key key) const -> bool {
     auto& cache = gkit::input::Cache::instance();
     return !cache.current_cache.key_cache.pressed_keys.contains(key) &&
            cache.previous_cache.key_cache.pressed_keys.contains(key);
 }
 
 
-auto gkit::Input::is_mouse_button_pressed(input::MouseButton button) -> bool {
+auto gkit::Input::is_mouse_button_pressed(input::MouseButton button) const -> bool {
     return gkit::input::Cache::instance().current_cache.mouse_cache.pressed_buttons.contains(button);
 }
 
 
-auto gkit::Input::is_mouse_button_released(input::MouseButton button) -> bool {
+auto gkit::Input::is_mouse_button_released(input::MouseButton button) const -> bool {
     return !gkit::input::Cache::instance().current_cache.mouse_cache.pressed_buttons.contains(button);
 }
 
 
-auto gkit::Input::is_mouse_button_just_pressed(input::MouseButton button) -> bool {
+auto gkit::Input::is_mouse_button_just_pressed(input::MouseButton button) const -> bool {
     auto& cache = gkit::input::Cache::instance();
     return cache.current_cache.mouse_cache.pressed_buttons.contains(button) &&
          !cache.previous_cache.mouse_cache.pressed_buttons.contains(button);
 }
 
 
-auto gkit::Input::is_mouse_button_just_released(input::MouseButton button) -> bool {
+auto gkit::Input::is_mouse_button_just_released(input::MouseButton button) const -> bool {
     auto& cache = gkit::input::Cache::instance();
     return !cache.current_cache.mouse_cache.pressed_buttons.contains(button) &&
            cache.previous_cache.mouse_cache.pressed_buttons.contains(button);
 }
 
 
-auto gkit::Input::get_mouse_move() -> input::MouseMove {
+auto gkit::Input::get_mouse_move() const -> input::MouseMove {
     auto& cache = gkit::input::Cache::instance();
     return cache.current_cache.mouse_cache.offset;
 }
 
 
 
-auto gkit::Input::get_mouse_wheel() -> input::MouseWheel {
+auto gkit::Input::get_mouse_wheel() const -> input::MouseWheel {
     auto& cache = gkit::input::Cache::instance();
     return cache.current_cache.mouse_cache.wheel;
 }
 
 
-auto gkit::Input::is_action_pressed(std::string name) -> bool {
+auto gkit::Input::is_action_pressed(const std::string& name) const -> bool {
     auto action_it = this->action_map.find(name);
     if (action_it == this->action_map.end()) {
         return false;
@@ -132,7 +132,7 @@ auto gkit::Input::is_action_pressed(std::string name) -> bool {
 }
 
 
-auto gkit::Input::is_action_just_pressed(std::string name) -> bool {
+auto gkit::Input::is_action_just_pressed(const std::string& name) const -> bool {
     auto action_it = this->action_map.find(name);
     if (action_it == this->action_map.end()) {
         return false;

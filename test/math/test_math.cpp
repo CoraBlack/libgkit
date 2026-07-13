@@ -3,9 +3,8 @@
 #include "gkit/math/constants.hpp"
 #include "gkit/math/scalar.hpp"
 
-using namespace gkit::math;
-
 int main() {
+    using namespace gkit::math;
     // ====== test scalar.hpp ======
 
     // ScalarLimits tests

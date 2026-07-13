@@ -28,7 +28,7 @@ namespace gkit::math {
         Vector2(float x, float y) noexcept;
 
         /// @brief Copy constructor
-        Vector2(const Vector2& other) noexcept;
+        Vector2(const Vector2& other) noexcept = default;
 
         /// @brief Move constructor
         Vector2(const Vector2&& other) noexcept;
@@ -41,7 +41,7 @@ namespace gkit::math {
         inline auto operator=(const Vector2& other) noexcept -> Vector2& { this->x = other.x; this->y = other.y; return *this; }
 
         /// @brief Move assignment operator
-        inline auto operator=(const Vector2&& other) noexcept -> Vector2& { this->x = other.x; this->y = other.y; return *this; }
+        inline auto operator=(Vector2&& other) noexcept -> Vector2& { this->x = other.x; this->y = other.y; return *this; }
 
         /// @brief Equality operator
         inline auto operator==(const Vector2& other) noexcept -> bool { return this->x == other.x && this->y == other.y; }
@@ -138,7 +138,7 @@ namespace gkit::math {
         /// @param v Incident vector
         /// @param n Normal vector (must be normalized)
         static inline auto reflect(const Vector2& v, const Vector2& n) noexcept -> Vector2 {
-            float d = 2.0f * dot(v, n);
+            float d = 2 * dot(v, n);
             return {v.x - d * n.x, v.y - d * n.y};
         }
 

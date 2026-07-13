@@ -5,9 +5,9 @@
 #include <SDL3/SDL_log.h>
 
 gkit::Processer::Processer() noexcept : root() {
-    SDL_InitFlags flags = SDL_INIT_AUDIO |
-                          SDL_INIT_EVENTS |
-                          SDL_INIT_GAMEPAD |
+    SDL_InitFlags flags = SDL_INIT_AUDIO    |
+                          SDL_INIT_EVENTS   |
+                          SDL_INIT_GAMEPAD  |
                           SDL_INIT_JOYSTICK |
                           SDL_INIT_VIDEO ;
 

@@ -25,13 +25,17 @@ namespace gkit::math {
         // Hue
         float h = 0.0f;
         if (delta > 0.0f) {
-            if (max_val == r) h = 60.0f * std::fmod((g - b) / delta, 6.0f);
-            else if (max_val == g) h = 60.0f * ((b - r) / delta + 2.0f);
-            else h = 60.0f * ((r - g) / delta + 4.0f);
+            if (max_val == r) {
+                h = 60.0f * std::fmod((g - b) / delta, 6.0f);
+            } else if (max_val == g) {
+                h = 60.0f * ((b - r) / delta + 2.0f);
+            } else {
+                h = 60.0f * ((r - g) / delta + 4.0f);
+            }
         }
         if (h < 0.0f) h += 360.0f;
 
-        return { .h = h, .s = s, .v = v };
+        return HSV { .h = h, .s = s, .v = v };
     }
 
     auto hsv_to_rgb(const HSV& hsv) noexcept -> uint32_t {
@@ -82,13 +86,17 @@ namespace gkit::math {
 
         float h = 0.0f;
         if (delta > 0.0f) {
-            if (max_val == r) h = 60.0f * std::fmod((g - b) / delta, 6.0f);
-            else if (max_val == g) h = 60.0f * ((b - r) / delta + 2.0f);
-            else h = 60.0f * ((r - g) / delta + 4.0f);
+            if (max_val == r) {
+                h = 60.0f * std::fmod((g - b) / delta, 6.0f);
+            } else if (max_val == g) {
+                h = 60.0f * ((b - r) / delta + 2.0f);
+            } else {
+                h = 60.0f * ((r - g) / delta + 4.0f);
+            }
         }
         if (h < 0.0f) h += 360.0f;
 
-        return { .h = h, .s = s, .l = l };
+        return HSL { .h = h, .s = s, .l = l };
     }
 
     auto hsl_to_rgb(const HSL& hsl) noexcept -> uint32_t {

@@ -4,7 +4,7 @@
 #include <vector>
 
 namespace gkit::input {
-    enum class Key : std::uint32_t {
+    enum class Key : std::uint16_t {
         Unknown = 0,
 
         // Alphabet keys (4-29)
@@ -193,7 +193,7 @@ namespace gkit::input {
         KeyCount = 512
     }; // enum class Key
 
-    enum class Mod : std::uint32_t {
+    enum class Mod : std::uint16_t {
         None    = 0x0000,
         LShift  = 0x0001,
         RShift  = 0x0002,

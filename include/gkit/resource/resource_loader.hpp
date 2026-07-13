@@ -15,7 +15,7 @@ namespace gkit::resource {
 
     public: 
         template<IsResource T>
-        auto load(std::filesystem::path path) -> std::optional<std::shared_ptr<T>> {
+        auto load(const std::filesystem::path& path) -> std::optional<std::shared_ptr<T>> {
             auto cached_res = get_cache(path);
             if (cached_res.has_value()) {
                 auto target_res = std::dynamic_pointer_cast<T>(cached_res);
@@ -37,6 +37,6 @@ namespace gkit::resource {
         std::unordered_map<std::filesystem::path, std::shared_ptr<gkit::resource::Resource>> resource_cache {};
 
         auto push_to_cache(std::shared_ptr<gkit::resource::Resource> res) -> void;
-        auto get_cache(std::filesystem::path path) -> std::optional<std::shared_ptr<gkit::resource::Resource>>;
+        auto get_cache(const std::filesystem::path& path) -> std::optional<std::shared_ptr<gkit::resource::Resource>>;
     }; // class ResourceLoader
 } // namespace gkit::resource

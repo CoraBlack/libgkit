@@ -15,7 +15,7 @@ gkit::core::scene::Unit::Unit() noexcept :
     children_rw_mutex() { }
 
     
-gkit::core::scene::Unit::Unit(std::string name) noexcept : gkit::core::scene::Unit() {
+gkit::core::scene::Unit::Unit(std::string&& name) noexcept : gkit::core::scene::Unit() {
     this->name = name;
 }
 
@@ -135,7 +135,7 @@ auto gkit::core::scene::Unit::update_index_cache() -> void {
 
         auto cache_size = this->active_index_cache.size();
         auto children_size = this->children.size();
-        if ((float)cache_size / children_size < Unit::overload_factor) {
+        if (static_cast<float>(cache_size) / children_size < Unit::overload_factor) {
             need_remap = true;
         }
     }

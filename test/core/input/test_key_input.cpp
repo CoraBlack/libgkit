@@ -33,20 +33,20 @@ auto main() -> int {
         event_dispatcher.dispatch_events();
 
         if (input.is_key_pressed(Key::A)) {
-            std::cout << "Key A is pressed" << std::endl;
+            std::cout << "Key A is pressed" << '\n';
         }
 
         if (input.is_key_just_pressed(Key::Space)) {
-            std::cout << "Key Space is just pressed" << std::endl;
+            std::cout << "Key Space is just pressed" << '\n';
         }
 
         if (input.is_action_pressed("Quit")) {
-            std::cout << "Action Quit is pressed, exiting..." << std::endl;
+            std::cout << "Action Quit is pressed, exiting..." << '\n';
             break;
         }
 
         if (input.is_action_just_pressed("Save")) {
-            std::cout << "Action Save is just pressed" << std::endl;
+            std::cout << "Action Save is just pressed" << '\n';
         }
     }
 

@@ -23,7 +23,7 @@ namespace gkit::input {
          * @brief Construct a new Action object with a name
          * @param name The name of the action
          */
-        Action(std::string name);
+        explicit Action(std::string name);
 
         /**
          * @brief Construct a new Action object with a name and an input chord
@@ -33,7 +33,7 @@ namespace gkit::input {
          * @param auto_register If true, the action will be automatically registered to the 
          * Input system upon construction. Default is true.
          */
-        Action(std::string name, const InputChord& chord, bool auto_register = true);
+        Action(std::string name, const InputChord&& chord, bool auto_register = true);
         ~Action() = default;
 
     public:
@@ -50,12 +50,12 @@ namespace gkit::input {
          * @brief Get the name of the action
          * @return The name of the action
          */
-        inline auto get_name() const -> const std::string& {
+        [[nodiscard]] inline auto get_name() const -> const std::string& {
             return this->name;
         }
 
     private:
         std::string name;
-        InputChord chord = KeyChord{};
+        InputChord chord;
     }; // class Action
 } // namespace gkit::input

@@ -8,7 +8,7 @@ gkit::input::Cache::Cache() {
 
     // swap current and previous cache at the beginning of each frame
     // so that we can compare the two states to determine just pressed/released events.
-    event_dispatcher.register_handler_before_frame([this]() {
+    event_dispatcher.register_handler_before_frame([this]() -> void {
         this->previous_cache = this->current_cache;
     });
 

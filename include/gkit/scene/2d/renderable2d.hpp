@@ -11,4 +11,4 @@ namespace gkit::scene::object2d {
     public:
         virtual auto render() -> void = 0;
     };
-}
+} // namespace gkit::scene::object2d

@@ -1,3 +1,4 @@
+// NOLINTBEGIN(google-readability-avoid-underscore-in-googletest-name)
 #include <gkit/core/scene/unit.hpp>
 
 #include <cstdint>
@@ -11,12 +12,12 @@ using gkit::core::scene::Unit;
 
 #define TEST(cond, msg) do { \
     if (!(cond)) { \
-        std::cerr << "FAIL: " << msg << " (" << __FILE__ << ":" << __LINE__ << ")" << std::endl; \
+        std::cerr << "FAIL: " << msg << " (" << __FILE__ << ":" << __LINE__ << ")\n"; \
         return false; \
     } else { \
-        std::cout << "PASS: " << msg << std::endl; \
+        std::cout << "PASS: " << msg << '\n'; \
     } \
-} while(0)
+} while(0) 
 
 class OtherUnit : public Unit {
 public:
@@ -30,7 +31,7 @@ public:
     using Unit::physics_process_handler;
     using Unit::exit_handler;
 
-    explicit TestUnit(const std::string& unit_name) : Unit(unit_name), id(unit_name) {}
+    explicit TestUnit(std::string&& unit_name) : Unit(std::move(unit_name)), id(unit_name) {}
 
     static auto create(const std::string& name) -> std::unique_ptr<TestUnit> {
         return Unit::create<TestUnit>(name);
@@ -85,7 +86,7 @@ auto test_create_and_with_child() -> bool {
 
     TEST(child_ptr->ready_calls == 1, "add_child triggers child ready once");
 
-    auto value_opt = parent->with_child<TestUnit>(0, [](TestUnit& c) { return c.value; });
+    auto value_opt = parent->with_child<TestUnit>(0, [](TestUnit& c) -> int { return c.value; });
     TEST(value_opt == 0, "with_child(index) returns callable result");
 
     auto value_by_name = parent->with_child<TestUnit>("child", [](TestUnit& c) { return c.value; });
@@ -270,10 +271,12 @@ auto main() -> int {
     all_passed &= test_exit_handler_order();
 
     if (all_passed) {
-        std::cout << "\nAll tests passed!" << std::endl;
+        std::cout << "\nAll tests passed!\n";
         return 0;
     }
 
-    std::cerr << "\nSome tests failed." << std::endl;
+    std::cerr << "\nSome tests failed.\n";
     return 1;
 }
+
+// NOLINTEND(google-readability-avoid-underscore-in-googletest-name)

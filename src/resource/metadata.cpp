@@ -239,16 +239,16 @@ namespace gkit::resource::metadata {
 
                 char c = peek();
                 switch (c) {
-                    case 'n': return parse_null();
-                    case 't': return parse_true();
-                    case 'f': return parse_false();
-                    case '"': return parse_string();
-                    case '[': return parse_array();
-                    case '{': return parse_object();
+                    case 'n': return Value(parse_null());
+                    case 't': return Value(parse_true());
+                    case 'f': return Value(parse_false());
+                    case '"': return Value(parse_string());
+                    case '[': return Value(parse_array());
+                    case '{': return Value(parse_object());
                     case '-':
                     case '0': case '1': case '2': case '3': case '4':
                     case '5': case '6': case '7': case '8': case '9':
-                        return parse_number();
+                        return Value(parse_number());
                     default:
                         throw ParseError("Unexpected character", line_, column());
                 }
@@ -306,10 +306,15 @@ namespace gkit::resource::metadata {
                                 unsigned int codepoint = 0;
                                 for (char h : hex) {
                                     codepoint *= 16;
-                                    if (h >= '0' && h <= '9') codepoint += h - '0';
-                                    else if (h >= 'a' && h <= 'f') codepoint += h - 'a' + 10;
-                                    else if (h >= 'A' && h <= 'F') codepoint += h - 'A' + 10;
-                                    else throw ParseError("Invalid unicode escape", line_, column());
+                                    if (h >= '0' && h <= '9') {
+                                        codepoint += h - '0';
+                                    } else if (h >= 'a' && h <= 'f') {
+                                        codepoint += h - 'a' + 10;
+                                    } else if (h >= 'A' && h <= 'F') {
+                                        codepoint += h - 'A' + 10;
+                                    } else {
+                                        throw ParseError("Invalid unicode escape", line_, column());
+                                    }
                                 }
                                 pos_ += 4;
                                 // Convert to UTF-8

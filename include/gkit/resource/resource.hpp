@@ -7,8 +7,8 @@ namespace gkit::resource {
     class Resource {
     public:
         Resource() = default;
-        Resource(std::filesystem::path path);
-        Resource(std::filesystem::path&& path);
+        explicit Resource(std::filesystem::path path);
+        explicit Resource(std::filesystem::path&& path);
         virtual ~Resource() = default;
         Resource  operator=(Resource&)  = delete;
         Resource  operator=(Resource&&) = delete;
