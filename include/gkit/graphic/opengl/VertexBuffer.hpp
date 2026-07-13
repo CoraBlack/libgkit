@@ -10,64 +10,64 @@
  */
 namespace gkit::graphic::opengl::buffer {
 
-	class VertexBuffer {
-	public:
-		VertexBuffer(const VertexBuffer&) = delete;
-		VertexBuffer& operator=(const VertexBuffer&) = delete;
+    class VertexBuffer {
+    public:
+        VertexBuffer(const VertexBuffer&)            = delete;
+        VertexBuffer& operator=(const VertexBuffer&) = delete;
 
-		/** @brief Move constructor - transfers ownership of GL buffer
+        /** @brief Move constructor - transfers ownership of GL buffer
 		 *  @param other Source object to move from (will be invalidated)
 		 */
-		VertexBuffer(VertexBuffer&& other) noexcept;
+        VertexBuffer(VertexBuffer&& other) noexcept;
 
-		/** @brief Move assignment - transfers ownership of GL buffer
+        /** @brief Move assignment - transfers ownership of GL buffer
 		 *  @param other Source object to move from (will be invalidated)
 		 *  @note Releases any existing GL buffer before taking ownership
 		 */
-		auto operator=(VertexBuffer&& other) noexcept -> VertexBuffer&;
+        auto operator=(VertexBuffer&& other) noexcept -> VertexBuffer&;
 
-	public:
-		/**
+    public:
+        /**
 		 * @brief Construct a vertex buffer
 		 * @param data Pointer to vertex data
 		 * @param size Size of the data in bytes
-		 * @param Dynamic If true, the buffer will be updated frequently (GL_DYNAMIC_DRAW)
+		 * @param dynamic If true, the buffer will be updated frequently (GL_DYNAMIC_DRAW)
 		 */
-		VertexBuffer(const void* data, uint32_t size, bool Dynamic = false);
+        VertexBuffer(const void* data, uint32_t size, bool dynamic = false);
 
-		/**
+        /**
 		 * @brief Destructor - deletes the vertex buffer
 		 */
-		~VertexBuffer();
+        ~VertexBuffer();
 
-		/**
+        /**
 		 * @brief Bind this vertex buffer to the current OpenGL context
 		 */
-		auto bind() const -> void;
+        auto bind() const -> void;
 
-		/**
+        /**
 		 * @brief Unbind this vertex buffer from the current OpenGL context
 		 */
-		auto unbind() const -> void;
+        auto unbind() const -> void;
 
-		/**
+        /**
 		 * @brief Update all buffer data
 		 * @param data Pointer to the new data
 		 * @param size Size of the data in bytes (if size is same, uses SubData; if different, reallocates)
 		 */
-		auto update_data(const void* data, uint32_t size) -> void;
+        auto update_data(const void* data, uint32_t size) -> void;
 
-		/**
+        /**
 		 * @brief Update partial buffer data
 		 * @param offset Offset in bytes from the start of the buffer
 		 * @param data Pointer to the new data
 		 * @param size Size of the data in bytes
 		 */
-		auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void;
+        auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void;
 
-	private:
-		uint32_t renderer_id;    // OpenGL buffer ID
-		uint32_t size;           // Buffer size in bytes
-	};
+    private:
+        uint32_t renderer_id; // OpenGL buffer ID
+        uint32_t size; // Buffer size in bytes
+    };
 
 } // namespace gkit::graphic::opengl::buffer

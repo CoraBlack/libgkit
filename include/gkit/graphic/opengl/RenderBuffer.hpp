@@ -9,49 +9,49 @@
  * cannot be directly sampled by shaders. Typically used for depth and
  * stencil attachments in a FrameBuffer.
  */
-namespace gkit::graphic::opengl::buffer{
+namespace gkit::graphic::opengl::buffer {
 
-	class RenderBuffer {
-	public:
-		RenderBuffer(const RenderBuffer&) = delete;
-		RenderBuffer& operator=(const RenderBuffer&) = delete;
+    class RenderBuffer {
+    public:
+        RenderBuffer(const RenderBuffer&)            = delete;
+        RenderBuffer& operator=(const RenderBuffer&) = delete;
 
-		/** @brief Move constructor - transfers ownership of GL renderbuffer
+        /** @brief Move constructor - transfers ownership of GL renderbuffer
 		 *  @param other Source object to move from (will be invalidated)
 		 */
-		RenderBuffer(RenderBuffer&& other) noexcept;
+        RenderBuffer(RenderBuffer&& other) noexcept;
 
-		/** @brief Move assignment - transfers ownership of GL renderbuffer
+        /** @brief Move assignment - transfers ownership of GL renderbuffer
 		 *  @param other Source object to move from (will be invalidated)
 		 *  @note Releases any existing GL renderbuffer before taking ownership
 		 */
-		auto operator=(RenderBuffer&& other) noexcept -> RenderBuffer&;
+        auto operator=(RenderBuffer&& other) noexcept -> RenderBuffer&;
 
-	public:
-		/**
+    public:
+        /**
 		 * @brief Construct a renderbuffer
 		 */
-		RenderBuffer(int width, int height);
+        RenderBuffer(int width, int height);
 
-		/**
+        /**
 		 * @brief Destructor - deletes the renderbuffer
 		 */
-		~RenderBuffer();
+        ~RenderBuffer();
 
-		/**
+        /**
 		 * @brief Bind this renderbuffer to the current OpenGL context
 		 */
-		auto bind() const -> void;
+        auto bind() const -> void;
 
-		/**
+        /**
 		 * @brief Unbind this renderbuffer from the current OpenGL context
 		 */
-		auto unbind() const -> void;
+        auto unbind() const -> void;
 
-		[[nodiscard]] auto get_render_id() const -> uint32_t { return this->renderer_id; }
+        [[nodiscard]] auto get_render_id() const -> uint32_t { return this->renderer_id; }
 
-	private:
-		uint32_t renderer_id;  // OpenGL renderbuffer ID
-	};
+    private:
+        uint32_t renderer_id; // OpenGL renderbuffer ID
+    };
 
 } // namespace gkit::graphic::opengl::buffer

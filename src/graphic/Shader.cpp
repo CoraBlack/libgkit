@@ -1,43 +1,43 @@
 #include "gkit/graphic/Shader.hpp"
+
 #include "gkit/utils/log.hpp"
+
+#include <fstream>
+#include <sstream>
 
 #include <glad/gl.h>
 
-#include <sstream>
-#include <fstream>
-
-gkit::graphic::Shader::Shader(const std::string& filepath)
-	: file_path(filepath), renderer_id(0) {
+gkit::graphic::Shader::Shader(const std::string& filepath) : file_path(filepath), renderer_id(0) {
     ShaderProgramSource source = parse_shader(filepath);
-    this->renderer_id = create_shader(source.vertex_shader, source.fragment_shader);
+    this->renderer_id          = create_shader(source.vertex_shader, source.fragment_shader);
 }
 
 gkit::graphic::Shader::~Shader() {
     glDeleteProgram(this->renderer_id);
 }
 
-gkit::graphic::Shader::Shader(Shader&& other) noexcept
-    : renderer_id(other.renderer_id)
-    , file_path(std::move(other.file_path))
-    , uniform_location_cache(std::move(other.uniform_location_cache)) {
+gkit::graphic::Shader::Shader(Shader&& other) noexcept :
+    renderer_id(other.renderer_id), file_path(std::move(other.file_path)),
+    uniform_location_cache(std::move(other.uniform_location_cache)) {
     other.renderer_id = 0;
 }
 
 auto gkit::graphic::Shader::operator=(Shader&& other) noexcept -> Shader& {
     if (this != &other) {
         glDeleteProgram(this->renderer_id);
-        this->renderer_id = other.renderer_id;
-        this->file_path = std::move(other.file_path);
+        this->renderer_id            = other.renderer_id;
+        this->file_path              = std::move(other.file_path);
         this->uniform_location_cache = std::move(other.uniform_location_cache);
-        other.renderer_id = 0;
+        other.renderer_id            = 0;
     }
     return *this;
 }
 
-auto gkit::graphic::Shader::create_shader(const std::string& vertex_shader, const std::string& fragment_shader) -> uint32_t {
+auto gkit::graphic::Shader::create_shader(const std::string& vertex_shader, const std::string& fragment_shader)
+    -> uint32_t {
     uint32_t program = glCreateProgram();
-    uint32_t vs = compile_shader(GL_VERTEX_SHADER, vertex_shader);
-    uint32_t fs = compile_shader(GL_FRAGMENT_SHADER, fragment_shader);
+    uint32_t vs      = compile_shader(GL_VERTEX_SHADER, vertex_shader);
+    uint32_t fs      = compile_shader(GL_FRAGMENT_SHADER, fragment_shader);
 
     if (vs == 0 || fs == 0) {
         glDeleteProgram(program);
@@ -48,17 +48,17 @@ auto gkit::graphic::Shader::create_shader(const std::string& vertex_shader, cons
     glAttachShader(program, fs);
     glLinkProgram(program);
 
-    int linkResult;
-    glGetProgramiv(program, GL_LINK_STATUS, &linkResult);
-    if (linkResult == GL_FALSE) {
+    int link_result;
+    glGetProgramiv(program, GL_LINK_STATUS, &link_result);
+    if (link_result == GL_FALSE) {
         int length;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
-        char* message = (char*)alloca(length * sizeof(char));
+        char* message = static_cast<char*>(alloca(length * sizeof(char)));
         glGetProgramInfoLog(program, length, &length, message);
         gkit::utils::Log::Message msg;
-        msg.level = gkit::utils::Log::LogLevel::Error;
+        msg.level     = gkit::utils::Log::LogLevel::Error;
         msg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
-        msg.message = "Failed to link shader program: " + std::string(message);
+        msg.message   = "Failed to link shader program: " + std::string(message);
         gkit::utils::Log::instance().log(std::move(msg));
         glDeleteProgram(program);
         glDeleteShader(vs);
@@ -74,20 +74,20 @@ auto gkit::graphic::Shader::create_shader(const std::string& vertex_shader, cons
     return program;
 }
 
-auto gkit::graphic::Shader::parse_shader(const std::string& filePath) -> ShaderProgramSource {
-    gkit::utils::Log::Message pathMsg;
-    pathMsg.level = gkit::utils::Log::LogLevel::Info;
-    pathMsg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
-    pathMsg.message = "Parsing shader: " + filePath;
-    gkit::utils::Log::instance().log(std::move(pathMsg));
-    std::ifstream stream(filePath);
+auto gkit::graphic::Shader::parse_shader(const std::string& file_path) -> ShaderProgramSource {
+    gkit::utils::Log::Message path_msg;
+    path_msg.level     = gkit::utils::Log::LogLevel::Info;
+    path_msg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
+    path_msg.message   = "Parsing shader: " + file_path;
+    gkit::utils::Log::instance().log(std::move(path_msg));
+    std::ifstream stream(file_path);
 
     /**
      * @brief shader enum type
      */
-    enum class ShaderType {
-        NONE = -1,
-        VERTEX = 0,
+    enum class ShaderType : std::int8_t {
+        NONE     = -1,
+        VERTEX   = 0,
         FRAGMENT = 1
     };
 
@@ -96,47 +96,48 @@ auto gkit::graphic::Shader::parse_shader(const std::string& filePath) -> ShaderP
     ShaderType type = ShaderType::NONE;
     while (getline(stream, line)) {
         if (line.find("#shader") != std::string::npos) {
-            if (line.find("vertex") != std::string::npos)
+            if (line.find("vertex") != std::string::npos) {
                 type = ShaderType::VERTEX;
-            else if (line.find("fragment") != std::string::npos)
+            } else if (line.find("fragment") != std::string::npos) {
                 type = ShaderType::FRAGMENT;
+            }
         } else if (type != ShaderType::NONE) {
-            ss[(int)type] << line << '\n';
+            ss[static_cast<int>(type)] << line << '\n';
         }
     }
 
     if (ss[0].str().empty()) {
         gkit::utils::Log::Message msg;
-        msg.level = gkit::utils::Log::LogLevel::Error;
+        msg.level     = gkit::utils::Log::LogLevel::Error;
         msg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
-        msg.message = "No vertex shader found in: " + filePath;
+        msg.message   = "No vertex shader found in: " + file_path;
         gkit::utils::Log::instance().log(std::move(msg));
     }
     if (ss[1].str().empty()) {
         gkit::utils::Log::Message msg;
-        msg.level = gkit::utils::Log::LogLevel::Error;
+        msg.level     = gkit::utils::Log::LogLevel::Error;
         msg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
-        msg.message = "No fragment shader found in: " + filePath;
+        msg.message   = "No fragment shader found in: " + file_path;
         gkit::utils::Log::instance().log(std::move(msg));
     }
 
-    gkit::utils::Log::Message vsMsg;
-    vsMsg.level = gkit::utils::Log::LogLevel::Info;
-    vsMsg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
-    vsMsg.message = ss[0].str();
-    gkit::utils::Log::instance().log(std::move(vsMsg));
+    gkit::utils::Log::Message vs_msg;
+    vs_msg.level     = gkit::utils::Log::LogLevel::Info;
+    vs_msg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
+    vs_msg.message   = ss[0].str();
+    gkit::utils::Log::instance().log(std::move(vs_msg));
 
-    gkit::utils::Log::Message fsMsg;
-    fsMsg.level = gkit::utils::Log::LogLevel::Info;
-    fsMsg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
-    fsMsg.message = ss[1].str();
-    gkit::utils::Log::instance().log(std::move(fsMsg));
+    gkit::utils::Log::Message fs_msg;
+    fs_msg.level     = gkit::utils::Log::LogLevel::Info;
+    fs_msg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
+    fs_msg.message   = ss[1].str();
+    gkit::utils::Log::instance().log(std::move(fs_msg));
 
-    return { .vertex_shader=ss[0].str(), .fragment_shader=ss[1].str() };
+    return {.vertex_shader = ss[0].str(), .fragment_shader = ss[1].str()};
 }
 
 auto gkit::graphic::Shader::compile_shader(uint32_t type, const std::string& source) -> uint32_t {
-    uint32_t id = glCreateShader(type);
+    uint32_t id     = glCreateShader(type);
     const char* src = source.c_str();
     glShaderSource(id, 1, &src, nullptr);
     glCompileShader(id);
@@ -146,12 +147,13 @@ auto gkit::graphic::Shader::compile_shader(uint32_t type, const std::string& sou
     if (result == GL_FALSE) {
         int length;
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-        char* message = (char*)alloca(length * sizeof(char));
+        char* message = static_cast<char*>(alloca(length * sizeof(char)));
         glGetShaderInfoLog(id, length, &length, message);
         gkit::utils::Log::Message msg;
-        msg.level = gkit::utils::Log::LogLevel::Error;
+        msg.level     = gkit::utils::Log::LogLevel::Error;
         msg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
-        msg.message = "Failed to compile " + std::string(type == GL_VERTEX_SHADER ? "vertex" : "fragment") + " shader: " + message;
+        msg.message   = "Failed to compile " + std::string(type == GL_VERTEX_SHADER ? "vertex" : "fragment") +
+                        " shader: " + message;
         gkit::utils::Log::instance().log(std::move(msg));
         glDeleteShader(id);
         return 0;
@@ -200,14 +202,15 @@ auto gkit::graphic::Shader::set_uniform_1iv(const std::string& name, const int s
 }
 
 auto gkit::graphic::Shader::get_uniform_location(const std::string& name) -> int {
-    if (this->uniform_location_cache.find(name) != this->uniform_location_cache.end())
+    if (this->uniform_location_cache.find(name) != this->uniform_location_cache.end()) {
         return this->uniform_location_cache[name];
+    }
     int location = glGetUniformLocation(this->renderer_id, name.c_str());
     if (location == -1) {
         gkit::utils::Log::Message msg;
-        msg.level = gkit::utils::Log::LogLevel::Warning;
+        msg.level     = gkit::utils::Log::LogLevel::Warning;
         msg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
-        msg.message = "Warning: uniform '" + name + "' doesn't exist!";
+        msg.message   = "Warning: uniform '" + name + "' doesn't exist!";
         gkit::utils::Log::instance().log(std::move(msg));
     }
     this->uniform_location_cache[name] = location;
