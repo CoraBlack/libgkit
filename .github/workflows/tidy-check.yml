@@ -1,0 +1,67 @@
+name: gkit-tidy-check
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  clang-tidy:
+    name: Clang-Tidy Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+
+      - name: Install dependencies
+        run: |
+          echo "📦 Installing Ubuntu dependencies..."
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential clang clang-tidy cmake ninja-build \
+            libasound2-dev libpulse-dev libx11-dev libxext-dev \
+            libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev \
+            libxss-dev libxtst-dev libxkbcommon-dev libdrm-dev \
+            libgbm-dev libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev \
+            libdbus-1-dev libibus-1.0-dev libudev-dev
+          echo "✅ Dependencies installed"
+
+      - name: Configure CMake (LLVM)
+        run: |
+          echo "⚙️ Configuring CMake with LLVM preset..."
+          cmake --preset linux-x86_64-llvm-debug
+          echo "✅ CMake configuration completed"
+
+      - name: Run clang-tidy
+        run: |
+          echo "🔍 Running clang-tidy..."
+          COMPILE_DB="${{ github.workspace }}/build/linux-x86_64-llvm-debug/compile_commands.json"
+
+          if [ ! -f "$COMPILE_DB" ]; then
+            echo "::error::compile_commands.json not found at $COMPILE_DB"
+            exit 1
+          fi
+
+          # Collect all .cpp source files
+          SRC_DIR="${{ github.workspace }}/src"
+          FILES=$(find "$SRC_DIR" -name "*.cpp" | sort)
+
+          EXIT_CODE=0
+          for file in $FILES; do
+            echo "  Checking: $file"
+            if ! clang-tidy "$file" -p "$(dirname "$COMPILE_DB")" --quiet 2>&1; then
+              EXIT_CODE=1
+            fi
+          done
+
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "::error::clang-tidy found issues"
+            exit 1
+          fi
+
+          echo "✅ clang-tidy check passed"
