@@ -1,11 +1,12 @@
 #pragma once
 
 #include "gkit/math/vector2.hpp"
+
 #include <cstdint>
 #include <vector>
 
 namespace gkit::input {
-    enum class MouseButton : std::uint32_t {
+    enum class MouseButton : std::uint8_t {
         Unknown = 0,
         Left    = 1,
         Middle  = 2,
@@ -21,6 +22,6 @@ namespace gkit::input {
         uint32_t modifiers;
     }; // struct MouseChord
 
-    using MouseMove = gkit::math::Vector2;
+    using MouseMove  = gkit::math::Vector2;
     using MouseWheel = gkit::math::Vector2;
 } // namespace gkit::input

@@ -39,13 +39,13 @@ auto main() -> int {
               << " enqueued=" << s.enqueued
               << " dropped=" << s.dropped_full
               << " processed=" << s.processed
-              << std::endl;
+              << '\n';
 
     if (s.enqueued + s.dropped_full != total) {
-        std::cerr << "stats mismatch" << std::endl;
+        std::cerr << "stats mismatch" << '\n';
         return 1;
     }
 
-    std::cout << "Finished logging" << std::endl;
+    std::cout << "Finished logging" << '\n';
     return 0;
 }

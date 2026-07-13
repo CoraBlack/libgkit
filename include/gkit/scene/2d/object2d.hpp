@@ -1,12 +1,12 @@
 #pragma once
 
-#include "gkit/scene/2d/transform2d.hpp"
 #include "gkit/core/scene/object.hpp"
+#include "gkit/scene/2d/transform2d.hpp"
 
 namespace gkit::scene {
     class Object2D : public gkit::core::scene::Object {
     public:
-        Object2D() = default;
+        Object2D()          = default;
         virtual ~Object2D() = default;
 
     public:
@@ -25,4 +25,4 @@ namespace gkit::scene {
     private:
         Transform2D transform;
     };
-}
+} // namespace gkit::scene

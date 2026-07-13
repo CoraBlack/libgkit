@@ -2,9 +2,8 @@
 
 #include "gkit/math/vector3.hpp"
 
-#include <tuple>
 #include <optional>
-
+#include <tuple>
 
 namespace gkit::math {
 
@@ -16,9 +15,7 @@ namespace gkit::math {
     /// | m[0][2] m[1][2] m[2][2] |
     class Matrix3 {
     public:
-        float m[3][3] = { {0.0f, 0.0f, 0.0f},
-                          {0.0f, 0.0f, 0.0f},
-                          {0.0f, 0.0f, 0.0f} };
+        float m[3][3] = {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
 
     public: // Constructors
         /// @brief Default constructor (zero-initialized via in-class member initializer)
@@ -27,14 +24,14 @@ namespace gkit::math {
         /// @brief Create identity matrix (1.0 on diagonal)
         static inline auto identity() noexcept -> Matrix3 {
             Matrix3 result;
-            result.m[0][0] = 1.0f; result.m[1][1] = 1.0f; result.m[2][2] = 1.0f;
+            result.m[0][0] = 1.0f;
+            result.m[1][1] = 1.0f;
+            result.m[2][2] = 1.0f;
             return result;
         }
 
         /// @brief Create zero matrix (all elements zero)
-        static inline auto zero() noexcept -> Matrix3 {
-            return {};
-        }
+        static inline auto zero() noexcept -> Matrix3 { return {}; }
 
         /// @brief Create diagonal matrix with uniform value
         static inline auto from_diagonal(float v) noexcept -> Matrix3 {
@@ -74,9 +71,7 @@ namespace gkit::math {
     public: // Properties
         /// @brief Returns all elements as a tuple (column-major order)
         [[nodiscard]] inline auto properties() const noexcept -> auto {
-            return std::tie(m[0][0], m[1][0], m[2][0],
-                           m[0][1], m[1][1], m[2][1],
-                           m[0][2], m[1][2], m[2][2]);
+            return std::tie(m[0][0], m[1][0], m[2][0], m[0][1], m[1][1], m[2][1], m[0][2], m[1][2], m[2][2]);
         }
 
     public: // Static factory methods

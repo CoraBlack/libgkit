@@ -4,7 +4,7 @@
 #include <vector>
 
 namespace gkit::input {
-    enum class Key : std::uint32_t {
+    enum class Key : std::uint16_t {
         Unknown = 0,
 
         // Alphabet keys (4-29)
@@ -48,13 +48,13 @@ namespace gkit::input {
         Num0 = 39,
 
         // Control keys (40-57)
-        Return      = 40,
-        Escape      = 41,
-        Backspace   = 42,
-        Tab         = 43,
-        Space       = 44,
-        Minus       = 45,
-        Equals      = 46,
+        Return       = 40,
+        Escape       = 41,
+        Backspace    = 42,
+        Tab          = 43,
+        Space        = 44,
+        Minus        = 45,
+        Equals       = 46,
         LeftBracket  = 47,
         RightBracket = 48,
         Backslash    = 49,
@@ -112,24 +112,24 @@ namespace gkit::input {
         Up       = 82,
 
         // Numpad (83-103)
-        NumLock       = 83,
-        KpDivide      = 84,
-        KpMultiply    = 85,
-        KpMinus       = 86,
-        KpPlus        = 87,
-        KpEnter       = 88,
-        Kp1           = 89,
-        Kp2           = 90,
-        Kp3           = 91,
-        Kp4           = 92,
-        Kp5           = 93,
-        Kp6           = 94,
-        Kp7           = 95,
-        Kp8           = 96,
-        Kp9           = 97,
-        Kp0           = 98,
-        KpPeriod      = 99,
-        KpEquals      = 103,
+        NumLock    = 83,
+        KpDivide   = 84,
+        KpMultiply = 85,
+        KpMinus    = 86,
+        KpPlus     = 87,
+        KpEnter    = 88,
+        Kp1        = 89,
+        Kp2        = 90,
+        Kp3        = 91,
+        Kp4        = 92,
+        Kp5        = 93,
+        Kp6        = 94,
+        Kp7        = 95,
+        Kp8        = 96,
+        Kp9        = 97,
+        Kp0        = 98,
+        KpPeriod   = 99,
+        KpEquals   = 103,
 
         // Modifier keys (224-231)
         LCtrl  = 224,
@@ -142,12 +142,12 @@ namespace gkit::input {
         RGui   = 231,
 
         // Application / system (101-102, 118-129)
-        Application  = 101,
-        Power        = 102,
-        Menu         = 118,
-        Mute         = 127,
-        VolumeUp     = 128,
-        VolumeDown   = 129,
+        Application = 101,
+        Power       = 102,
+        Menu        = 118,
+        Mute        = 127,
+        VolumeUp    = 128,
+        VolumeDown  = 129,
 
         // International keys (135-139)
         International1 = 135,
@@ -164,17 +164,17 @@ namespace gkit::input {
         Lang5 = 148, // Zenkaku/Hankaku
 
         // Media keys (258-271)
-        Sleep                = 258,
-        Wake                 = 259,
-        MediaPlay            = 262,
-        MediaPause           = 263,
-        MediaRecord          = 264,
-        MediaFastForward     = 265,
-        MediaRewind          = 266,
-        MediaNextTrack       = 267,
-        MediaPreviousTrack   = 268,
-        MediaStop            = 269,
-        MediaPlayPause       = 271,
+        Sleep              = 258,
+        Wake               = 259,
+        MediaPlay          = 262,
+        MediaPause         = 263,
+        MediaRecord        = 264,
+        MediaFastForward   = 265,
+        MediaRewind        = 266,
+        MediaNextTrack     = 267,
+        MediaPreviousTrack = 268,
+        MediaStop          = 269,
+        MediaPlayPause     = 271,
 
         // Application control (273-290)
         AcNew     = 273,
@@ -193,43 +193,37 @@ namespace gkit::input {
         KeyCount = 512
     }; // enum class Key
 
-    enum class Mod : std::uint32_t {
-        None    = 0x0000,
-        LShift  = 0x0001,
-        RShift  = 0x0002,
-        LCtrl   = 0x0040,
-        RCtrl   = 0x0080,
-        LAlt    = 0x0100,
-        RAlt    = 0x0200,
-        LGui    = 0x0400,
-        RGui    = 0x0800,
-        Num     = 0x1000,
-        Caps    = 0x2000,
-        Mode    = 0x4000,
+    enum class Mod : std::uint16_t {
+        None   = 0x0000,
+        LShift = 0x0001,
+        RShift = 0x0002,
+        LCtrl  = 0x0040,
+        RCtrl  = 0x0080,
+        LAlt   = 0x0100,
+        RAlt   = 0x0200,
+        LGui   = 0x0400,
+        RGui   = 0x0800,
+        Num    = 0x1000,
+        Caps   = 0x2000,
+        Mode   = 0x4000,
 
         // Convenience combinations
-        Ctrl  = LCtrl  | RCtrl,
+        Ctrl  = LCtrl | RCtrl,
         Shift = LShift | RShift,
-        Alt   = LAlt   | RAlt,
-        Gui   = LGui   | RGui,
+        Alt   = LAlt | RAlt,
+        Gui   = LGui | RGui,
     }; // enum class Mod
 
     constexpr auto operator|(Mod lhs, Mod rhs) noexcept -> Mod {
-        return static_cast<Mod>(
-            static_cast<std::uint32_t>(lhs) | static_cast<std::uint32_t>(rhs)
-        );
+        return static_cast<Mod>(static_cast<std::uint32_t>(lhs) | static_cast<std::uint32_t>(rhs));
     }
 
     constexpr auto operator&(Mod lhs, Mod rhs) noexcept -> Mod {
-        return static_cast<Mod>(
-            static_cast<std::uint32_t>(lhs) & static_cast<std::uint32_t>(rhs)
-        );
+        return static_cast<Mod>(static_cast<std::uint32_t>(lhs) & static_cast<std::uint32_t>(rhs));
     }
 
     constexpr auto operator^(Mod lhs, Mod rhs) noexcept -> Mod {
-        return static_cast<Mod>(
-            static_cast<std::uint32_t>(lhs) ^ static_cast<std::uint32_t>(rhs)
-        );
+        return static_cast<Mod>(static_cast<std::uint32_t>(lhs) ^ static_cast<std::uint32_t>(rhs));
     }
 
     constexpr auto operator~(Mod val) noexcept -> Mod {
