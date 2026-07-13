@@ -47,7 +47,7 @@ namespace gkit::core::scene {
          * @note It will throw error if the type is not a class which is based of class Unit.
          */
         template <IsUnitExtend T>
-        static auto create(std::string name) noexcept -> std::unique_ptr<T>;
+        static auto create(std::string&& name) noexcept -> std::unique_ptr<T>;
         virtual ~Unit() = default;
 
     public: // virtual methods
@@ -332,10 +332,10 @@ namespace gkit::core::scene {
     }; // class Unit
 
     template <IsUnitExtend T>
-    auto Unit::create(std::string name) noexcept -> std::unique_ptr<T> {
+    auto Unit::create(std::string&& name) noexcept -> std::unique_ptr<T> {
         static_assert(std::is_base_of_v<Unit, T>, "T is not derived from Unit");
         try {
-            auto ptr = std::unique_ptr<T>(new T(name));
+            auto ptr = std::unique_ptr<T>(new T(std::move(name)));
             return ptr;
         } catch(...) {
             return nullptr;
