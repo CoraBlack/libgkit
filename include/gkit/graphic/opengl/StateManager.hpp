@@ -167,13 +167,13 @@ namespace gkit::graphic::opengl {
 			auto apply_stencil_state() -> void;
 
 			/// @brief Current shadow states
-			DepthState    m_DepthState;      // Current depth state
-			BlendState    m_BlendState;      // Current blend state
-			CullFaceState m_CullFaceState;   // Current cull face state
-			StencilState  m_StencilState;    // Current stencil state
+			DepthState    depth_state;       // Current depth state
+			BlendState    blend_state;       // Current blend state
+			CullFaceState cull_face_state;   // Current cull face state
+			StencilState  stencil_state;     // Current stencil state
 
 			/// @brief Dirty flags bitmask
-			uint8_t m_DirtyFlags = 0;       // Bitmask indicating which states need updating
+			uint8_t dirty_flags = 0;         // Bitmask indicating which states need updating
 
 			static constexpr uint8_t DIRTY_DEPTH   = 1 << 0;  // Dirty flag for depth state
 			static constexpr uint8_t DIRTY_BLEND   = 1 << 1;  // Dirty flag for blend state

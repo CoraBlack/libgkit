@@ -6,36 +6,36 @@
 
 gkit::graphic::opengl::buffer::FrameBuffer::FrameBuffer(int width, int height)
 	: fb_width(width), fb_height(height) {
-	glGenFramebuffers(1, &m_renderer_id);
+	glGenFramebuffers(1, &this->renderer_id);
 }
 
 gkit::graphic::opengl::buffer::FrameBuffer::~FrameBuffer() {
-	if(m_renderer_id != 0) {
-		glDeleteFramebuffers(1, &m_renderer_id);
-		m_renderer_id = 0;
+	if(this->renderer_id != 0) {
+		glDeleteFramebuffers(1, &this->renderer_id);
+		this->renderer_id = 0;
 	}
 }
 
 gkit::graphic::opengl::buffer::FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept
-    : m_renderer_id(other.m_renderer_id)
+    : renderer_id(other.renderer_id)
     , fb_height(other.fb_height)
     , fb_width(other.fb_width)
     , left_x(other.left_x)
     , bottom_y(other.bottom_y) {
-    other.m_renderer_id = 0;
+    other.renderer_id = 0;
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::operator=(FrameBuffer&& other) noexcept -> FrameBuffer& {
     if (this != &other) {
-        if (m_renderer_id != 0) {
-            glDeleteFramebuffers(1, &m_renderer_id);
+        if (this->renderer_id != 0) {
+            glDeleteFramebuffers(1, &this->renderer_id);
         }
-        m_renderer_id = other.m_renderer_id;
-        fb_height = other.fb_height;
-        fb_width = other.fb_width;
-        left_x = other.left_x;
-        bottom_y = other.bottom_y;
-        other.m_renderer_id = 0;
+        this->renderer_id = other.renderer_id;
+        this->fb_height = other.fb_height;
+        this->fb_width = other.fb_width;
+        this->left_x = other.left_x;
+        this->bottom_y = other.bottom_y;
+        other.renderer_id = 0;
     }
     return *this;
 }
@@ -52,7 +52,7 @@ auto gkit::graphic::opengl::buffer::FrameBuffer::detach_color_texture(int slot) 
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::attach_depth_stencil(const RenderBuffer& rbo) -> void {
 	bind();
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, 
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
 		GL_RENDERBUFFER, rbo.get_render_id());
 }
 
@@ -82,15 +82,15 @@ auto gkit::graphic::opengl::buffer::FrameBuffer::set_viewport(int x, int y, int 
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::set_viewport(int width, int height) -> void {
-	glViewport(left_x, bottom_y, width, height);
+	glViewport(this->left_x, this->bottom_y, width, height);
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::set_viewport() -> void {
-	glViewport(left_x, bottom_y, fb_width, fb_height);
+	glViewport(this->left_x, this->bottom_y, this->fb_width, this->fb_height);
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::bind() const -> void {
-	glBindFramebuffer(GL_FRAMEBUFFER, m_renderer_id);
+	glBindFramebuffer(GL_FRAMEBUFFER, this->renderer_id);
 }
 
 auto gkit::graphic::opengl::buffer::FrameBuffer::unbind() const -> void {

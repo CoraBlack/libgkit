@@ -12,7 +12,7 @@
  * associated buffers, binding them together for efficient rendering.
  */
 namespace gkit::graphic::opengl {
-	
+
 	class VertexArray {
 	public:
 		VertexArray(const VertexArray&) = delete;
@@ -64,8 +64,8 @@ namespace gkit::graphic::opengl {
 		auto unbind() const -> void;
 
 	private:
-		uint32_t m_renderer_id;       // OpenGL vertex array ID
-		uint32_t m_attribIndex = 0;   // Current attribute index for adding new attributes
+		uint32_t renderer_id;         // OpenGL vertex array ID
+		uint32_t attrib_index = 0;    // Current attribute index for adding new attributes
 	};
 
 } // namespace gkit::graphic::opengl

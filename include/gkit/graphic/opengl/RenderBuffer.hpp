@@ -48,10 +48,10 @@ namespace gkit::graphic::opengl::buffer{
 		 */
 		auto unbind() const -> void;
 
-		[[nodiscard]] auto get_render_id() const -> uint32_t { return m_renderer_id; }
-		
+		[[nodiscard]] auto get_render_id() const -> uint32_t { return this->renderer_id; }
+
 	private:
-		uint32_t m_renderer_id;  // OpenGL renderbuffer ID
+		uint32_t renderer_id;  // OpenGL renderbuffer ID
 	};
 
 } // namespace gkit::graphic::opengl::buffer

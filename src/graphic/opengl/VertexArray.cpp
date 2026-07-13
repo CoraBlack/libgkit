@@ -5,30 +5,30 @@
 #include "gkit/math/matrix4.hpp"
 
 gkit::graphic::opengl::VertexArray::VertexArray() {
-	glGenVertexArrays(1, &m_renderer_id);
+	glGenVertexArrays(1, &this->renderer_id);
 }
 
 gkit::graphic::opengl::VertexArray::~VertexArray() {
-	if(m_renderer_id != 0) {
-		glDeleteVertexArrays(1, &m_renderer_id);
-		m_renderer_id = 0;
+	if(this->renderer_id != 0) {
+		glDeleteVertexArrays(1, &this->renderer_id);
+		this->renderer_id = 0;
 	}
 }
 
 gkit::graphic::opengl::VertexArray::VertexArray(VertexArray&& other) noexcept
-    : m_renderer_id(other.m_renderer_id)
-    , m_attribIndex(other.m_attribIndex) {
-    other.m_renderer_id = 0;
+    : renderer_id(other.renderer_id)
+    , attrib_index(other.attrib_index) {
+    other.renderer_id = 0;
 }
 
 auto gkit::graphic::opengl::VertexArray::operator=(VertexArray&& other) noexcept -> VertexArray& {
     if (this != &other) {
-        if (m_renderer_id != 0) {
-            glDeleteVertexArrays(1, &m_renderer_id);
+        if (this->renderer_id != 0) {
+            glDeleteVertexArrays(1, &this->renderer_id);
         }
-        m_renderer_id = other.m_renderer_id;
-        m_attribIndex = other.m_attribIndex;
-        other.m_renderer_id = 0;
+        this->renderer_id = other.renderer_id;
+        this->attrib_index = other.attrib_index;
+        other.renderer_id = 0;
     }
     return *this;
 }
@@ -40,12 +40,12 @@ auto gkit::graphic::opengl::VertexArray::add_buffer(const buffer::VertexBuffer& 
 	size_t offset = 0;
 	for (int i = 0; i < elements.size(); i++) {
 		const auto& element = elements[i];
-		glEnableVertexAttribArray(m_attribIndex);
+		glEnableVertexAttribArray(this->attrib_index);
 		//Specify the reading rules for the incoming data, the meaning of the arrays (coordinates, textures, etc.)
-		glVertexAttribPointer(m_attribIndex, element.count, element.type,
+		glVertexAttribPointer(this->attrib_index, element.count, element.type,
 			element.normalized, layout.get_stride(), (const void*)offset);
 		offset += element.count * buffer::VertexBufferElement::get_size_of_type(element.type);
-		m_attribIndex++;
+		this->attrib_index++;
 	}
 
 }
@@ -57,22 +57,22 @@ auto gkit::graphic::opengl::VertexArray::add_instance_buffer(const buffer::Verte
     size_t vec4Size = sizeof(gkit::math::Vector4);
 
     for (uint32_t i = 0; i < 4; i++) {
-        glEnableVertexAttribArray(m_attribIndex);
+        glEnableVertexAttribArray(this->attrib_index);
         glVertexAttribPointer(
-			m_attribIndex,
+			this->attrib_index,
             4,
             GL_FLOAT,
             GL_FALSE,
             sizeof(gkit::math::Matrix4),
             (void*)(i * vec4Size)
         );
-        glVertexAttribDivisor(m_attribIndex, 1);
-		m_attribIndex++;
+        glVertexAttribDivisor(this->attrib_index, 1);
+		this->attrib_index++;
     }
 }
 
 auto gkit::graphic::opengl::VertexArray::bind() const -> void {
-	glBindVertexArray(m_renderer_id);
+	glBindVertexArray(this->renderer_id);
 }
 
 auto gkit::graphic::opengl::VertexArray::unbind() const -> void {

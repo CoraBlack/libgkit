@@ -7,29 +7,29 @@
 #include <fstream>
 
 gkit::graphic::Shader::Shader(const std::string& filepath)
-	: m_FilePath(filepath), m_renderer_id(0) {
+	: file_path(filepath), renderer_id(0) {
     ShaderProgramSource source = parse_shader(filepath);
-    m_renderer_id = create_shader(source.vertex_shader, source.fragment_shader);
+    this->renderer_id = create_shader(source.vertex_shader, source.fragment_shader);
 }
 
 gkit::graphic::Shader::~Shader() {
-    glDeleteProgram(m_renderer_id);
+    glDeleteProgram(this->renderer_id);
 }
 
 gkit::graphic::Shader::Shader(Shader&& other) noexcept
-    : m_renderer_id(other.m_renderer_id)
-    , m_FilePath(std::move(other.m_FilePath))
-    , m_UniformLocationCach(std::move(other.m_UniformLocationCach)) {
-    other.m_renderer_id = 0;
+    : renderer_id(other.renderer_id)
+    , file_path(std::move(other.file_path))
+    , uniform_location_cache(std::move(other.uniform_location_cache)) {
+    other.renderer_id = 0;
 }
 
 auto gkit::graphic::Shader::operator=(Shader&& other) noexcept -> Shader& {
     if (this != &other) {
-        glDeleteProgram(m_renderer_id);
-        m_renderer_id = other.m_renderer_id;
-        m_FilePath = std::move(other.m_FilePath);
-        m_UniformLocationCach = std::move(other.m_UniformLocationCach);
-        other.m_renderer_id = 0;
+        glDeleteProgram(this->renderer_id);
+        this->renderer_id = other.renderer_id;
+        this->file_path = std::move(other.file_path);
+        this->uniform_location_cache = std::move(other.uniform_location_cache);
+        other.renderer_id = 0;
     }
     return *this;
 }
@@ -161,7 +161,7 @@ auto gkit::graphic::Shader::compile_shader(uint32_t type, const std::string& sou
 }
 
 auto gkit::graphic::Shader::bind() const -> void {
-    glUseProgram(m_renderer_id);
+    glUseProgram(this->renderer_id);
 }
 auto gkit::graphic::Shader::unbind() const -> void {
     glUseProgram(0);
@@ -200,9 +200,9 @@ auto gkit::graphic::Shader::set_uniform_1iv(const std::string& name, const int s
 }
 
 auto gkit::graphic::Shader::get_uniform_location(const std::string& name) -> int {
-    if (m_UniformLocationCach.find(name) != m_UniformLocationCach.end())
-        return m_UniformLocationCach[name];
-    int location = glGetUniformLocation(m_renderer_id, name.c_str());
+    if (this->uniform_location_cache.find(name) != this->uniform_location_cache.end())
+        return this->uniform_location_cache[name];
+    int location = glGetUniformLocation(this->renderer_id, name.c_str());
     if (location == -1) {
         gkit::utils::Log::Message msg;
         msg.level = gkit::utils::Log::LogLevel::Warning;
@@ -210,6 +210,6 @@ auto gkit::graphic::Shader::get_uniform_location(const std::string& name) -> int
         msg.message = "Warning: uniform '" + name + "' doesn't exist!";
         gkit::utils::Log::instance().log(std::move(msg));
     }
-    m_UniformLocationCach[name] = location;
+    this->uniform_location_cache[name] = location;
     return location;
 }

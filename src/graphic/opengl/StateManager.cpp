@@ -3,188 +3,188 @@
 namespace gkit::graphic::opengl {
 
 	auto StateManager::set_depth_test(bool enable) -> void {
-		if (m_DepthState.enabled != enable) {
-			m_DepthState.enabled = enable;
-			m_DirtyFlags |= DIRTY_DEPTH;
+		if (this->depth_state.enabled != enable) {
+			this->depth_state.enabled = enable;
+			this->dirty_flags |= DIRTY_DEPTH;
 		}
 	}
 
 	auto StateManager::set_depth_func(CompareFunc func) -> void {
-		if (m_DepthState.compareFunc != func) {
-			m_DepthState.compareFunc = func;
-			m_DirtyFlags |= DIRTY_DEPTH;
+		if (this->depth_state.compareFunc != func) {
+			this->depth_state.compareFunc = func;
+			this->dirty_flags |= DIRTY_DEPTH;
 		}
 	}
 
 	auto StateManager::set_depth_mask(bool write) -> void {
-		if (m_DepthState.writeMask != write) {
-			m_DepthState.writeMask = write;
-			m_DirtyFlags |= DIRTY_DEPTH;
+		if (this->depth_state.writeMask != write) {
+			this->depth_state.writeMask = write;
+			this->dirty_flags |= DIRTY_DEPTH;
 		}
 	}
 
 	auto StateManager::set_blend(bool enable) -> void {
-		if (m_BlendState.enabled != enable) {
-			m_BlendState.enabled = enable;
-			m_DirtyFlags |= DIRTY_BLEND;
+		if (this->blend_state.enabled != enable) {
+			this->blend_state.enabled = enable;
+			this->dirty_flags |= DIRTY_BLEND;
 		}
 	}
 
 	auto StateManager::set_blend_func(BlendFunc srcRGB, BlendFunc dstRGB, BlendFunc srcAlpha, BlendFunc dstAlpha) -> void {
-		if (m_BlendState.srcRGB != srcRGB || m_BlendState.dstRGB != dstRGB ||
-			m_BlendState.srcAlpha != srcAlpha || m_BlendState.dstAlpha != dstAlpha) {
-			m_BlendState.srcRGB = srcRGB;
-			m_BlendState.dstRGB = dstRGB;
-			m_BlendState.srcAlpha = srcAlpha;
-			m_BlendState.dstAlpha = dstAlpha;
-			m_DirtyFlags |= DIRTY_BLEND;
+		if (this->blend_state.srcRGB != srcRGB || this->blend_state.dstRGB != dstRGB ||
+			this->blend_state.srcAlpha != srcAlpha || this->blend_state.dstAlpha != dstAlpha) {
+			this->blend_state.srcRGB = srcRGB;
+			this->blend_state.dstRGB = dstRGB;
+			this->blend_state.srcAlpha = srcAlpha;
+			this->blend_state.dstAlpha = dstAlpha;
+			this->dirty_flags |= DIRTY_BLEND;
 		}
 	}
 
 	auto StateManager::set_blend_equation(BlendEquation equation) -> void {
-		if (m_BlendState.equation != equation) {
-			m_BlendState.equation = equation;
-			m_DirtyFlags |= DIRTY_BLEND;
+		if (this->blend_state.equation != equation) {
+			this->blend_state.equation = equation;
+			this->dirty_flags |= DIRTY_BLEND;
 		}
 	}
 
 	auto StateManager::set_cull_face(bool enable) -> void {
-		if (m_CullFaceState.enabled != enable) {
-			m_CullFaceState.enabled = enable;
-			m_DirtyFlags |= DIRTY_CULL;
+		if (this->cull_face_state.enabled != enable) {
+			this->cull_face_state.enabled = enable;
+			this->dirty_flags |= DIRTY_CULL;
 		}
 	}
 
 	auto StateManager::set_cull_face_mode(CullFaceMode mode) -> void {
-		if (m_CullFaceState.mode != mode) {
-			m_CullFaceState.mode = mode;
-			m_DirtyFlags |= DIRTY_CULL;
+		if (this->cull_face_state.mode != mode) {
+			this->cull_face_state.mode = mode;
+			this->dirty_flags |= DIRTY_CULL;
 		}
 	}
 
 	auto StateManager::set_front_face(FrontFace frontFace) -> void {
-		if (m_CullFaceState.frontFace != frontFace) {
-			m_CullFaceState.frontFace = frontFace;
-			m_DirtyFlags |= DIRTY_CULL;
+		if (this->cull_face_state.frontFace != frontFace) {
+			this->cull_face_state.frontFace = frontFace;
+			this->dirty_flags |= DIRTY_CULL;
 		}
 	}
 
 	auto StateManager::set_stencil_test(bool enable) -> void {
-		if (m_StencilState.enabled != enable) {
-			m_StencilState.enabled = enable;
-			m_DirtyFlags |= DIRTY_STENCIL;
+		if (this->stencil_state.enabled != enable) {
+			this->stencil_state.enabled = enable;
+			this->dirty_flags |= DIRTY_STENCIL;
 		}
 	}
 
 	auto StateManager::set_stencil(CompareFunc func, uint32_t ref, uint32_t mask) -> void {
-		if (m_StencilState.compareFunc != func || m_StencilState.ref != ref || m_StencilState.readMask != mask) {
-			m_StencilState.compareFunc = func;
-			m_StencilState.ref = ref;
-			m_StencilState.readMask = mask;
-			m_DirtyFlags |= DIRTY_STENCIL;
+		if (this->stencil_state.compareFunc != func || this->stencil_state.ref != ref || this->stencil_state.readMask != mask) {
+			this->stencil_state.compareFunc = func;
+			this->stencil_state.ref = ref;
+			this->stencil_state.readMask = mask;
+			this->dirty_flags |= DIRTY_STENCIL;
 		}
 	}
 
 	auto StateManager::set_stencil_op(StencilOp fail, StencilOp zFail, StencilOp zPass) -> void {
-		if (m_StencilState.fail != fail || m_StencilState.zFail != zFail || m_StencilState.zPass != zPass) {
-			m_StencilState.fail = fail;
-			m_StencilState.zFail = zFail;
-			m_StencilState.zPass = zPass;
-			m_DirtyFlags |= DIRTY_STENCIL;
+		if (this->stencil_state.fail != fail || this->stencil_state.zFail != zFail || this->stencil_state.zPass != zPass) {
+			this->stencil_state.fail = fail;
+			this->stencil_state.zFail = zFail;
+			this->stencil_state.zPass = zPass;
+			this->dirty_flags |= DIRTY_STENCIL;
 		}
 	}
 
 	auto StateManager::set_stencil_mask(uint32_t mask) -> void {
-		if (m_StencilState.writeMask != mask) {
-			m_StencilState.writeMask = mask;
-			m_DirtyFlags |= DIRTY_STENCIL;
+		if (this->stencil_state.writeMask != mask) {
+			this->stencil_state.writeMask = mask;
+			this->dirty_flags |= DIRTY_STENCIL;
 		}
 	}
 
 	auto StateManager::apply() -> void {
-		if (m_DirtyFlags & DIRTY_DEPTH) {
+		if (this->dirty_flags & DIRTY_DEPTH) {
 			apply_depth_state();
 		}
-		if (m_DirtyFlags & DIRTY_BLEND) {
+		if (this->dirty_flags & DIRTY_BLEND) {
 			apply_blend_state();
 		}
-		if (m_DirtyFlags & DIRTY_CULL) {
+		if (this->dirty_flags & DIRTY_CULL) {
 			apply_cull_face_state();
 		}
-		if (m_DirtyFlags & DIRTY_STENCIL) {
+		if (this->dirty_flags & DIRTY_STENCIL) {
 			apply_stencil_state();
 		}
-		m_DirtyFlags = 0;
+		this->dirty_flags = 0;
 	}
 
 	auto StateManager::force_apply_all() -> void {
-		m_DirtyFlags = DIRTY_DEPTH | DIRTY_BLEND | DIRTY_CULL | DIRTY_STENCIL;
+		this->dirty_flags = DIRTY_DEPTH | DIRTY_BLEND | DIRTY_CULL | DIRTY_STENCIL;
 		apply();
 	}
 
 	auto StateManager::apply_depth_state() -> void {
-		if (m_DepthState.enabled) {
+		if (this->depth_state.enabled) {
 			glEnable(GL_DEPTH_TEST);
 		} else {
 			glDisable(GL_DEPTH_TEST);
 		}
-		glDepthFunc(static_cast<GLenum>(m_DepthState.compareFunc));
-		glDepthMask(m_DepthState.writeMask ? GL_TRUE : GL_FALSE);
+		glDepthFunc(static_cast<GLenum>(this->depth_state.compareFunc));
+		glDepthMask(this->depth_state.writeMask ? GL_TRUE : GL_FALSE);
 	}
 
 	auto StateManager::apply_blend_state() -> void {
-		if (m_BlendState.enabled) {
+		if (this->blend_state.enabled) {
 			glEnable(GL_BLEND);
 		} else {
 			glDisable(GL_BLEND);
 		}
 		glBlendFuncSeparate(
-			static_cast<GLenum>(m_BlendState.srcRGB), static_cast<GLenum>(m_BlendState.dstRGB),
-			static_cast<GLenum>(m_BlendState.srcAlpha), static_cast<GLenum>(m_BlendState.dstAlpha));
-		glBlendEquation(static_cast<GLenum>(m_BlendState.equation));
+			static_cast<GLenum>(this->blend_state.srcRGB), static_cast<GLenum>(this->blend_state.dstRGB),
+			static_cast<GLenum>(this->blend_state.srcAlpha), static_cast<GLenum>(this->blend_state.dstAlpha));
+		glBlendEquation(static_cast<GLenum>(this->blend_state.equation));
 	}
 
 	auto StateManager::apply_cull_face_state() -> void {
-		if (m_CullFaceState.enabled) {
+		if (this->cull_face_state.enabled) {
 			glEnable(GL_CULL_FACE);
 		} else {
 			glDisable(GL_CULL_FACE);
 		}
-		glCullFace(static_cast<GLenum>(m_CullFaceState.mode));
-		glFrontFace(static_cast<GLenum>(m_CullFaceState.frontFace));
+		glCullFace(static_cast<GLenum>(this->cull_face_state.mode));
+		glFrontFace(static_cast<GLenum>(this->cull_face_state.frontFace));
 	}
 
 	auto StateManager::apply_stencil_state() -> void {
-		if (m_StencilState.enabled) {
+		if (this->stencil_state.enabled) {
 			glEnable(GL_STENCIL_TEST);
 		} else {
 			glDisable(GL_STENCIL_TEST);
 		}
 		glStencilFunc(
-			static_cast<GLenum>(m_StencilState.compareFunc),
-			m_StencilState.ref,
-			m_StencilState.readMask);
+			static_cast<GLenum>(this->stencil_state.compareFunc),
+			this->stencil_state.ref,
+			this->stencil_state.readMask);
 		glStencilOp(
-			static_cast<GLenum>(m_StencilState.fail),
-			static_cast<GLenum>(m_StencilState.zFail),
-			static_cast<GLenum>(m_StencilState.zPass));
-		glStencilMask(m_StencilState.writeMask);
+			static_cast<GLenum>(this->stencil_state.fail),
+			static_cast<GLenum>(this->stencil_state.zFail),
+			static_cast<GLenum>(this->stencil_state.zPass));
+		glStencilMask(this->stencil_state.writeMask);
 	}
 
 	auto StateManager::get_depth_state() const -> const DepthState& {
-		return m_DepthState;
+		return this->depth_state;
 	}
 
 	auto StateManager::get_blend_state() const -> const BlendState& {
-		return m_BlendState;
+		return this->blend_state;
 	}
 
 	auto StateManager::get_cull_face_state() const -> const CullFaceState& {
-		return m_CullFaceState;
+		return this->cull_face_state;
 	}
 
 	auto StateManager::get_stencil_state() const -> const StencilState& {
-		return m_StencilState;
+		return this->stencil_state;
 	}
 
 } // namespace gkit::graphic::opengl

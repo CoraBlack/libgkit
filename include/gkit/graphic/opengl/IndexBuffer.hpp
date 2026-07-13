@@ -52,11 +52,11 @@ namespace gkit::graphic::opengl::buffer{
 		 * @brief Get the number of indices in this buffer
 		 * @return Number of indices
 		 */
-		[[nodiscard]] inline auto get_count() const -> uint32_t { return m_count; }
+		[[nodiscard]] inline auto get_count() const -> uint32_t { return this->count; }
 
 	private:
-		uint32_t m_renderer_id;	// OpenGL buffer ID
-		uint32_t m_count;     	// Number of indices in the buffer
+		uint32_t renderer_id;   // OpenGL buffer ID
+		uint32_t count;         // Number of indices in the buffer
 	};
 
 } // namespace gkit::graphic::opengl::buffer

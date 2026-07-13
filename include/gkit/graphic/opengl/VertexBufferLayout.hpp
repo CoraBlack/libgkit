@@ -58,17 +58,17 @@ namespace gkit::graphic::opengl::buffer {
 		 * @brief Get all elements in this layout (by const reference - zero copy)
 		 * @return Const reference to vector of vertex buffer elements
 		 */
-		[[nodiscard]] inline auto get_elements() const -> const std::vector<VertexBufferElement>& { return m_elements; }
+		[[nodiscard]] inline auto get_elements() const -> const std::vector<VertexBufferElement>& { return this->elements; }
 
 		/**
 		 * @brief Get the stride (bytes between vertices)
 		 * @return Stride in bytes
 		 */
-		[[nodiscard]] inline auto get_stride() const -> uint32_t { return m_stride; }
+		[[nodiscard]] inline auto get_stride() const -> uint32_t { return this->stride; }
 
 	private:
-		std::vector<VertexBufferElement> m_elements;  // List of vertex elements
-		uint32_t m_stride = 0;                        // Bytes between consecutive vertices
+		std::vector<VertexBufferElement> elements;  // List of vertex elements
+		uint32_t stride = 0;                        // Bytes between consecutive vertices
 	};
 
 	/**
@@ -78,8 +78,8 @@ namespace gkit::graphic::opengl::buffer {
 	template<>
 	inline void VertexBufferLayout::push<float>(uint32_t count) {
 		assert(count > 0 && "VertexBufferLayout::push count must be greater than 0");
-		m_elements.push_back({ .type = GL_FLOAT, .count = count, .normalized = GL_FALSE });
-		m_stride += VertexBufferElement::get_size_of_type(GL_FLOAT) * count;
+		this->elements.push_back({ .type = GL_FLOAT, .count = count, .normalized = GL_FALSE });
+		this->stride += VertexBufferElement::get_size_of_type(GL_FLOAT) * count;
 	}
 
 	/**
@@ -89,8 +89,8 @@ namespace gkit::graphic::opengl::buffer {
 	template<>
 	inline void VertexBufferLayout::push<uint32_t>(uint32_t count) {
 		assert(count > 0 && "VertexBufferLayout::push count must be greater than 0");
-		m_elements.push_back({ .type = GL_UNSIGNED_INT, .count = count, .normalized = GL_FALSE });
-		m_stride += VertexBufferElement::get_size_of_type(GL_UNSIGNED_INT) * count;
+		this->elements.push_back({ .type = GL_UNSIGNED_INT, .count = count, .normalized = GL_FALSE });
+		this->stride += VertexBufferElement::get_size_of_type(GL_UNSIGNED_INT) * count;
 	}
 
 	/**
@@ -100,8 +100,8 @@ namespace gkit::graphic::opengl::buffer {
 	template<>
 	inline void VertexBufferLayout::push<unsigned char>(uint32_t count) {
 		assert(count > 0 && "VertexBufferLayout::push count must be greater than 0");
-		m_elements.push_back({ .type = GL_UNSIGNED_BYTE, .count = count, .normalized = GL_TRUE });
-		m_stride += VertexBufferElement::get_size_of_type(GL_UNSIGNED_BYTE) * count;
+		this->elements.push_back({ .type = GL_UNSIGNED_BYTE, .count = count, .normalized = GL_TRUE });
+		this->stride += VertexBufferElement::get_size_of_type(GL_UNSIGNED_BYTE) * count;
 	}
 
 } // namespace gkit::graphic::opengl::buffer

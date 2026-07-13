@@ -66,8 +66,8 @@ namespace gkit::graphic::opengl::buffer {
 		auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void;
 
 	private:
-		uint32_t m_renderer_id;	 // OpenGL buffer ID
-		uint32_t m_size;         // Buffer size in bytes
+		uint32_t renderer_id;    // OpenGL buffer ID
+		uint32_t size;           // Buffer size in bytes
 	};
 
 } // namespace gkit::graphic::opengl::buffer

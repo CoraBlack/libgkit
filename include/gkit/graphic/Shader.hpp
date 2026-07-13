@@ -149,10 +149,10 @@ namespace gkit::graphic{
 		 * @return Location ID, or -1 if not found
 		 */
 		auto get_uniform_location(const std::string& name) -> int;
-		
+
 	private:
-		uint32_t m_renderer_id; // OpenGL shader program ID
-		std::string m_FilePath; // Path to the shader file
-		std::unordered_map<std::string, int> m_UniformLocationCach; // Cache for uniform locations
+		uint32_t renderer_id; // OpenGL shader program ID
+		std::string file_path; // Path to the shader file
+		std::unordered_map<std::string, int> uniform_location_cache; // Cache for uniform locations
 	};
 }
