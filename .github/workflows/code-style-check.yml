@@ -16,13 +16,50 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install clang-format
+        run: |
+          echo "📦 Installing clang-format 21..."
+          sudo apt-get update
+          sudo apt-get install -y wget software-properties-common
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-21 main"
+          sudo apt-get update
+          sudo apt-get install -y clang-format-21
+          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-21 100
+          echo "✅ clang-format $(clang-format --version) installed"
+
       - name: Run clang-format
-        uses: Jayllyz/clang-format-action@v1.3.0
-        with:
-          check: true
-          style: file
-          extensions: cpp,hpp
-          clang-version: latest
+        run: |
+          echo "🔍 Running clang-format check..."
+
+          SRC_FILES=$(find "${{ github.workspace }}/src"      -name "*.cpp" -o -name "*.hpp" | sort)
+          INC_FILES=$(find "${{ github.workspace }}/include"  -name "*.hpp" | sort)
+          FILES="$SRC_FILES $INC_FILES"
+
+          if [ -z "$FILES" ]; then
+            echo "::warning::No source files found"
+            exit 0
+          fi
+
+          EXIT_CODE=0
+          for file in $FILES; do
+            DIFF=$(clang-format "$file" 2>&1 | diff -u "$file" - 2>&1 || true)
+            if [ -n "$DIFF" ]; then
+              EXIT_CODE=1
+              echo "--- $file ---"
+              echo "$DIFF"
+            fi
+          done
+
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo ""
+            echo "::error::clang-format found formatting issues (see diff above)."
+            echo "Run the following locally to fix:"
+            echo "  clang-format -i <file>"
+            exit 1
+          fi
+
+          echo "✅ clang-format check passed"
 
   clang-tidy:
     name: Clang-Tidy Check
@@ -46,17 +83,14 @@ jobs:
             libgbm-dev libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev \
             libdbus-1-dev libibus-1.0-dev libudev-dev
 
-          echo "📦 Installing latest clang toolchain from LLVM apt..."
+          echo "📦 Installing clang-21 toolchain..."
           wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
-          LLVM_LATEST=$(curl -sL 'https://apt.llvm.org/noble/dists/llvm-toolchain-noble/' \
-            | grep -oE 'llvm-toolchain-noble-[0-9]+' | sed 's/.*-//' | sort -n | tail -1)
-          echo "Latest LLVM version: ${LLVM_LATEST}"
-          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-${LLVM_LATEST} main"
+          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-21 main"
           sudo apt-get update
-          sudo apt-get install -y clang-${LLVM_LATEST} clang-tidy-${LLVM_LATEST}
-          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${LLVM_LATEST} 100
-          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-${LLVM_LATEST} 100
-          sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-${LLVM_LATEST} 100
+          sudo apt-get install -y clang-21 clang-tidy-21
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-21 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-21 100
+          sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-21 100
           echo "✅ clang $(clang --version | head -n1) installed"
           echo "✅ clang-tidy $(clang-tidy --version | head -n1) installed"
 
