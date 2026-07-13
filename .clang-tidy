@@ -83,6 +83,10 @@ CheckOptions:
   - key:   readability-identifier-naming.GlobalFunctionCase
     value: lower_case
 
+  # ── Trailing return type ──────────────────────────────────────
+  - key:   modernize-use-trailing-return-type.IgnoreDestructors
+    value: true
+
   # ── Ignore patterns (standard library internals, etc.) ─────────
   - key:   readability-identifier-naming.IgnoreMainLikeFunctions
     value: true

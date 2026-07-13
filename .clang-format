@@ -12,7 +12,7 @@ TabWidth: 4
 UseTab: Never
 IndentCaseLabels: false
 IndentAccessModifiers: false
-AccessModifierOffset: 0
+AccessModifierOffset: -4
 NamespaceIndentation: All
 
 # ── Column Limit ───────────────────────────────────────────────────
@@ -67,12 +67,12 @@ AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLambdasOnASingleLine: Empty
-AllowShortLoopsOnASingleLine: false
+AllowShortLoopsOnASingleLine: true
 AlwaysBreakAfterReturnType: None
-AlwaysBreakTemplateDeclarations: MultiLine
-BreakConstructorInitializers: BeforeComma
+AlwaysBreakTemplateDeclarations: Yes
+BreakConstructorInitializers: AfterColon
 ConstructorInitializerIndentWidth: 4
 BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: true
@@ -140,13 +140,13 @@ IndentPPDirectives: None
 
 # ── Other ──────────────────────────────────────────────────────────
 AlignAfterOpenBracket: Align
-AlignConsecutiveAssignments: None
+AlignConsecutiveAssignments: Consecutive
 AlignConsecutiveDeclarations: None
 AlignEscapedNewlines: Left
 AlignOperands: Align
 AlignTrailingComments: false
 AllowAllArgumentsOnNextLine: true
-AllowAllConstructorInitializersOnNextLine: true
+AllowAllConstructorInitializersOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: true
 BinPackArguments: false
 BinPackParameters: false
@@ -167,4 +167,4 @@ PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 60
 ReflowComments: false
 SortUsingDeclarations: true
-SpaceAfterTemplateKeyword: true
+SpaceAfterTemplateKeyword: false
