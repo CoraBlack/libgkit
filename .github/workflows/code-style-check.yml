@@ -16,56 +16,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install clang-format
-        run: |
-          echo "📦 Installing latest clang-format from LLVM apt..."
-          sudo apt-get update
-          sudo apt-get install -y wget software-properties-common
-          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
-          LLVM_LATEST=$(curl -sL 'https://apt.llvm.org/noble/dists/llvm-toolchain-noble/' \
-            | grep -oE 'llvm-toolchain-noble-[0-9]+' | sed 's/.*-//' | sort -n | tail -1)
-          echo "Latest LLVM version: ${LLVM_LATEST}"
-          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-${LLVM_LATEST} main"
-          sudo apt-get update
-          sudo apt-get install -y clang-format-${LLVM_LATEST}
-          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-${LLVM_LATEST} 100
-          echo "✅ clang-format $(clang-format --version) installed"
-
       - name: Run clang-format
-        run: |
-          echo "🔍 Running clang-format check (clang-format $(clang-format --version | awk '{print $3}'))..."
-
-          SRC_FILES=$(find "${{ github.workspace }}/src"      -name "*.cpp" -o -name "*.hpp" | sort)
-          INC_FILES=$(find "${{ github.workspace }}/include"  -name "*.hpp" | sort)
-          FILES="$SRC_FILES $INC_FILES"
-
-          if [ -z "$FILES" ]; then
-            echo "::warning::No source files found"
-            exit 0
-          fi
-
-          EXIT_CODE=0
-          for file in $FILES; do
-            DIFF=$(clang-format "$file" 2>&1 | diff -u "$file" - 2>&1 || true)
-            if [ -n "$DIFF" ]; then
-              EXIT_CODE=1
-              echo "--- $file ---"
-              echo "$DIFF"
-            fi
-          done
-
-          if [ $EXIT_CODE -ne 0 ]; then
-            echo ""
-            echo "::error::clang-format found formatting issues (see diff above)."
-            echo "Run the following locally to fix:"
-            echo "  clang-format -i <file>"
-            echo ""
-            echo "NOTE: Ensure your local clang-format version matches CI."
-            echo "      CI version: $(clang-format --version)"
-            exit 1
-          fi
-
-          echo "✅ clang-format check passed"
+        uses: Jayllyz/clang-format-action@v1.3.0
+        with:
+          check: true
+          style: file
+          extensions: cpp,hpp
+          clang-version: latest
 
   clang-tidy:
     name: Clang-Tidy Check
