@@ -18,9 +18,14 @@ jobs:
 
       - name: Install clang-format
         run: |
-          echo "📦 Installing clang-format..."
+          echo "📦 Installing clang-format (LLVM 20)..."
           sudo apt-get update
-          sudo apt-get install -y clang-format
+          sudo apt-get install -y wget software-properties-common
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main"
+          sudo apt-get update
+          sudo apt-get install -y clang-format-20
+          sudo update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-20 100
           echo "✅ clang-format $(clang-format --version) installed"
 
       - name: Run clang-format
@@ -67,13 +72,22 @@ jobs:
           echo "📦 Installing Ubuntu dependencies..."
           sudo apt-get update
           sudo apt-get install -y \
-            build-essential clang clang-tidy cmake ninja-build \
+            build-essential cmake ninja-build wget software-properties-common \
             libasound2-dev libpulse-dev libx11-dev libxext-dev \
             libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev \
             libxss-dev libxtst-dev libxkbcommon-dev libdrm-dev \
             libgbm-dev libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev \
             libdbus-1-dev libibus-1.0-dev libudev-dev
-          echo "✅ Dependencies installed"
+
+          echo "📦 Installing clang-20 toolchain..."
+          wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc
+          sudo add-apt-repository -y "deb http://apt.llvm.org/noble/ llvm-toolchain-noble-20 main"
+          sudo apt-get update
+          sudo apt-get install -y clang-20 clang-tidy-20
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-20 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-20 100
+          sudo update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-20 100
+          echo "✅ clang-20 toolchain installed"
 
       - name: Configure CMake (LLVM)
         run: |

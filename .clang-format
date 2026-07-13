@@ -1,5 +1,5 @@
 # clang-format configuration for libgkit
-# Requires: clang-format >= 16 (for C++20 support and modern options)
+# Requires: clang-format >= 20 (for C++20 support and modern options)
 
 BasedOnStyle: LLVM
 
