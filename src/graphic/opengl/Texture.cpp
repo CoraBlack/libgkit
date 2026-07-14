@@ -9,6 +9,7 @@ gkit::graphic::opengl::Texture::Texture(const std::string& path, TextureType typ
     renderer_id(0), filepath(path), local_buffer(nullptr), width(0), height(0), bpp(0), type(type) {}
 
 gkit::graphic::opengl::Texture::~Texture() {
+    delete[] this->local_buffer;
     if (this->renderer_id != 0) {
         glDeleteTextures(1, &this->renderer_id);
         this->renderer_id = 0;

@@ -12,7 +12,7 @@ namespace gkit::graphic::opengl::buffer {
     class IndexBuffer {
     public:
         IndexBuffer(const IndexBuffer&)            = delete;
-        IndexBuffer& operator=(const IndexBuffer&) = delete;
+        auto operator=(const IndexBuffer&) -> IndexBuffer& = delete;
 
         /** @brief Move constructor - transfers ownership of GL buffer
 		 *  @param other Source object to move from (will be invalidated)

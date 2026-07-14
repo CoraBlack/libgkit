@@ -22,7 +22,7 @@ namespace gkit::graphic {
     class Shader {
     public:
         Shader(const Shader&)            = delete;
-        Shader& operator=(const Shader&) = delete;
+        auto operator=(const Shader&) -> Shader& = delete;
 
         /** @brief Move constructor - transfers ownership of GL shader program
 		 *  @param other Source object to move from (will be invalidated)

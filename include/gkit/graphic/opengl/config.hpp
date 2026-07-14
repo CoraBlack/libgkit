@@ -1,6 +1,4 @@
 #pragma once
-#ifndef CONFIG_H
-#define CONFIG_H
 
 #include <cstdint>
 
@@ -133,4 +131,3 @@ namespace gkit::graphic::opengl::viewport {
     auto set_viewport(int width, int height) -> void;
 
 } // namespace gkit::graphic::opengl::viewport
-#endif

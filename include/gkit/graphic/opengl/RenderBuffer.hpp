@@ -13,8 +13,8 @@ namespace gkit::graphic::opengl::buffer {
 
     class RenderBuffer {
     public:
-        RenderBuffer(const RenderBuffer&)            = delete;
-        RenderBuffer& operator=(const RenderBuffer&) = delete;
+        RenderBuffer(const RenderBuffer&)                    = delete;
+        auto operator=(const RenderBuffer&) -> RenderBuffer& = delete;
 
         /** @brief Move constructor - transfers ownership of GL renderbuffer
 		 *  @param other Source object to move from (will be invalidated)

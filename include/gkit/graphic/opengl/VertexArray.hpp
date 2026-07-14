@@ -16,7 +16,7 @@ namespace gkit::graphic::opengl {
     class VertexArray {
     public:
         VertexArray(const VertexArray&)            = delete;
-        VertexArray& operator=(const VertexArray&) = delete;
+        auto operator=(const VertexArray&) -> VertexArray& = delete;
 
         /** @brief Move constructor - transfers ownership of GL vertex array
 		 *  @param other Source object to move from (will be invalidated)

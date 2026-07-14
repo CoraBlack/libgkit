@@ -55,7 +55,7 @@ namespace gkit::graphic::opengl::buffer {
 		 * @param count Number of components
 		 */
         template<typename T>
-        void push(uint32_t count) {
+        auto push(uint32_t count) -> void {
             static_assert(sizeof(T) == 0, "Unsupported type for VertexBufferLayout::push");
         }
 
@@ -83,7 +83,7 @@ namespace gkit::graphic::opengl::buffer {
 	 * @param count Number of float components (1-4)
 	 */
     template<>
-    inline void VertexBufferLayout::push<float>(uint32_t count) {
+    inline auto VertexBufferLayout::push<float>(uint32_t count) -> void {
         assert(count > 0 && "VertexBufferLayout::push count must be greater than 0");
         this->elements.push_back({.type = GL_FLOAT, .count = count, .normalized = GL_FALSE});
         this->stride += VertexBufferElement::get_size_of_type(GL_FLOAT) * count;
@@ -94,7 +94,7 @@ namespace gkit::graphic::opengl::buffer {
 	 * @param count Number of unsigned int components
 	 */
     template<>
-    inline void VertexBufferLayout::push<uint32_t>(uint32_t count) {
+    inline auto VertexBufferLayout::push<uint32_t>(uint32_t count) -> void {
         assert(count > 0 && "VertexBufferLayout::push count must be greater than 0");
         this->elements.push_back({.type = GL_UNSIGNED_INT, .count = count, .normalized = GL_FALSE});
         this->stride += VertexBufferElement::get_size_of_type(GL_UNSIGNED_INT) * count;
@@ -105,7 +105,7 @@ namespace gkit::graphic::opengl::buffer {
 	 * @param count Number of unsigned byte components
 	 */
     template<>
-    inline void VertexBufferLayout::push<unsigned char>(uint32_t count) {
+    inline auto VertexBufferLayout::push<unsigned char>(uint32_t count) -> void {
         assert(count > 0 && "VertexBufferLayout::push count must be greater than 0");
         this->elements.push_back({.type = GL_UNSIGNED_BYTE, .count = count, .normalized = GL_TRUE});
         this->stride += VertexBufferElement::get_size_of_type(GL_UNSIGNED_BYTE) * count;

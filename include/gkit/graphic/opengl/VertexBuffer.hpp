@@ -13,7 +13,7 @@ namespace gkit::graphic::opengl::buffer {
     class VertexBuffer {
     public:
         VertexBuffer(const VertexBuffer&)            = delete;
-        VertexBuffer& operator=(const VertexBuffer&) = delete;
+        auto operator=(const VertexBuffer&) -> VertexBuffer& = delete;
 
         /** @brief Move constructor - transfers ownership of GL buffer
 		 *  @param other Source object to move from (will be invalidated)
