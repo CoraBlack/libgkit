@@ -16,7 +16,7 @@ namespace gkit::graphic::opengl {
 
     class Texture {
     public:
-        Texture(const Texture&)            = delete;
+        Texture(const Texture&)                    = delete;
         auto operator=(const Texture&) -> Texture& = delete;
 
         /** @brief Move constructor - transfers ownership of GL texture

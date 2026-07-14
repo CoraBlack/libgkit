@@ -23,7 +23,6 @@ namespace gkit::graphic {
         Renderer() = default;
 
     public:
-
         /**
 		 * @brief Clear the current framebuffer
 		 *

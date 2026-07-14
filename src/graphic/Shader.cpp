@@ -35,15 +35,14 @@ auto gkit::graphic::Shader::operator=(Shader&& other) noexcept -> Shader& {
 
 auto gkit::graphic::Shader::create_shader(const std::string& vertex_shader, const std::string& fragment_shader)
     -> uint32_t {
-    uint32_t program = glCreateProgram();
-    uint32_t vs      = compile_shader(GL_VERTEX_SHADER, vertex_shader);
-    uint32_t fs      = compile_shader(GL_FRAGMENT_SHADER, fragment_shader);
+    uint32_t vs = compile_shader(GL_VERTEX_SHADER, vertex_shader);
+    uint32_t fs = compile_shader(GL_FRAGMENT_SHADER, fragment_shader);
 
     if (vs == 0 || fs == 0) {
-        glDeleteProgram(program);
         return 0;
     }
 
+    uint32_t program = glCreateProgram();
     glAttachShader(program, vs);
     glAttachShader(program, fs);
     glLinkProgram(program);

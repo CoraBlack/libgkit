@@ -14,7 +14,7 @@ namespace gkit::graphic::opengl::buffer {
 
     class FrameBuffer {
     public:
-        FrameBuffer(const FrameBuffer&)            = delete;
+        FrameBuffer(const FrameBuffer&)                    = delete;
         auto operator=(const FrameBuffer&) -> FrameBuffer& = delete;
 
         /** @brief Move constructor - transfers ownership of GL framebuffer
