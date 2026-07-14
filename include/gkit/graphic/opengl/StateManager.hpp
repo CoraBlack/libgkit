@@ -16,9 +16,12 @@ namespace gkit::graphic::opengl {
      * Uses singleton pattern for global access.
      */
     class StateManager : public core::scene::Singleton<StateManager> {
-    public:
+        friend class core::scene::Singleton<StateManager>;
+
+    private:
         StateManager() = default;
 
+    public:
         /** @brief Depth test state structure */
         struct DepthState {
             bool enabled             = false; // Whether depth test is enabled

@@ -17,8 +17,12 @@
 namespace gkit::graphic {
 
     class Renderer : public core::scene::Singleton<Renderer> {
-    public:
+        friend class core::scene::Singleton<Renderer>;
+
+    private:
         Renderer() = default;
+
+    public:
 
         /**
 		 * @brief Clear the current framebuffer

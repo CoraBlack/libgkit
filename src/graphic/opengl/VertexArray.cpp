@@ -5,6 +5,22 @@
 #include "gkit/math/matrix4.hpp"
 #include "gkit/math/vector4.hpp"
 
+#include <glad/gl.h>
+
+namespace {
+    constexpr auto to_gl_enum(VertexElementType type) -> GLenum {
+        switch (type) {
+        case VertexElementType::Float:
+            return GL_FLOAT;
+        case VertexElementType::Uint32:
+            return GL_UNSIGNED_INT;
+        case VertexElementType::Uint8:
+            return GL_UNSIGNED_BYTE;
+        }
+        return GL_FLOAT;
+    }
+} // namespace
+
 gkit::graphic::opengl::VertexArray::VertexArray() {
     glGenVertexArrays(1, &this->renderer_id);
 }
@@ -45,7 +61,7 @@ auto gkit::graphic::opengl::VertexArray::add_buffer(const buffer::VertexBuffer& 
         //Specify the reading rules for the incoming data, the meaning of the arrays (coordinates, textures, etc.)
         glVertexAttribPointer(this->attrib_index,
                               element.count,
-                              element.type,
+                              to_gl_enum(element.type),
                               element.normalized,
                               layout.get_stride(),
                               reinterpret_cast<const void*>(offset)); // NOLINT(performance-no-int-to-ptr)
