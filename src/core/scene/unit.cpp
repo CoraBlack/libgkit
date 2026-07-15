@@ -5,7 +5,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
-#include <shared_mutex>
+#include <mutex>
 #include <utility>
 #include <vector>
 
@@ -20,7 +20,7 @@ auto gkit::core::scene::Unit::physics_process() -> void {}
 auto gkit::core::scene::Unit::exit() -> void {}
 
 auto gkit::core::scene::Unit::ready_handler() noexcept -> void {
-    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
+    std::unique_lock<std::mutex> lock(this->children_mutex);
     for (auto& child_ptr : this->children) {
         if (child_ptr == nullptr) continue;
         child_ptr->ready_handler();
@@ -29,7 +29,7 @@ auto gkit::core::scene::Unit::ready_handler() noexcept -> void {
 }
 
 auto gkit::core::scene::Unit::process_handler() noexcept -> void {
-    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
+    std::unique_lock<std::mutex> lock(this->children_mutex);
     for (auto& child_ptr : this->children) {
         if (child_ptr == nullptr || !child_ptr->process_enabled) continue;
         child_ptr->process_handler();
@@ -41,7 +41,7 @@ auto gkit::core::scene::Unit::process_handler() noexcept -> void {
 auto gkit::core::scene::Unit::physics_process_handler() noexcept -> void {}
 
 auto gkit::core::scene::Unit::exit_handler() noexcept -> void {
-    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
+    std::unique_lock<std::mutex> lock(this->children_mutex);
     for (auto& child_ptr : this->children) {
         if (child_ptr == nullptr) continue;
         child_ptr->exit_handler();
@@ -60,18 +60,13 @@ auto gkit::core::scene::Unit::add_child(std::unique_ptr<Unit>&& child_ptr) -> vo
 
     child_ptr->ready();
     {
-        std::unique_lock<std::shared_mutex> w_lock(this->children_rw_mutex);
-        child_ptr->parent = this;
-        children.push_back(std::move(child_ptr));
-    }
-    {
-        std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
+        std::unique_lock<std::mutex> lock(this->children_mutex);
         auto& child_name = this->children.back()->name;
-        auto* new_child_ptr = this->children.back().get();
+        auto& new_child_ptr = this->children.back();
         if (this->name_map_cache.contains(child_name)) {
             throw std::invalid_argument("child_ptr name is already exist");
         }
-        this->name_map_cache.emplace(std::make_pair(child_name, new_child_ptr));
+        this->name_map_cache.emplace(std::make_pair(child_name, new_child_ptr.get()));
     }
 }
 
@@ -89,7 +84,7 @@ auto gkit::core::scene::Unit::remove_child(const std::string& child_name) noexce
 
 
 auto gkit::core::scene::Unit::get_child(uint32_t index) noexcept -> Unit* {
-    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
+    std::unique_lock<std::mutex> lock(this->children_mutex);
 
     if (index >= this->children.size()) {
         return nullptr;
@@ -98,7 +93,7 @@ auto gkit::core::scene::Unit::get_child(uint32_t index) noexcept -> Unit* {
 }
 
 auto gkit::core::scene::Unit::get_child(const std::string& child_name) noexcept -> Unit* {
-    std::shared_lock<std::shared_mutex> r_lock(this->children_rw_mutex);
+    std::unique_lock<std::mutex> lock(this->children_mutex);
     auto iter = this->name_map_cache.find(child_name);
     if (iter == this->name_map_cache.end()) {
         return nullptr;
@@ -114,7 +109,7 @@ auto gkit::core::scene::Unit::drop_children() -> void {
     std::erase_if(this->children, [&](std::unique_ptr<Unit>& p) -> bool {
         if (p && p->drop_flag.load() == true) {
             {
-                std::unique_lock<std::shared_mutex> w_lock(this->children_rw_mutex);
+                std::unique_lock<std::mutex> lock(this->children_mutex);
                 this->name_map_cache.erase(p->name);
             }
             to_exit.push_back(std::move(p));
@@ -136,9 +131,6 @@ auto gkit::core::scene::Unit::get_parent<gkit::core::scene::Unit>() noexcept
 }
 
 // UnitIterator
-
-template class gkit::core::scene::Unit::UnitIterator<false>;
-template class gkit::core::scene::Unit::UnitIterator<true>;
 
 template<bool IsConst>
 gkit::core::scene::Unit::UnitIterator<IsConst>::UnitIterator(const Unit* owner, size_t pos)
@@ -184,6 +176,10 @@ template<bool IsConst>
 auto gkit::core::scene::Unit::UnitIterator<IsConst>::operator==(const UnitIterator& other) const -> bool {
     return m_owner == other.m_owner && m_pos == other.m_pos;
 }
+
+
+template class gkit::core::scene::Unit::UnitIterator<true>;
+template class gkit::core::scene::Unit::UnitIterator<false>;
 
 auto gkit::core::scene::Unit::begin() -> iterator { return iterator(this, 0); }
 auto gkit::core::scene::Unit::end() -> iterator { return iterator(this, children.size()); }
