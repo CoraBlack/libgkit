@@ -10,8 +10,10 @@
 #include <unordered_map>
 
 namespace gkit::resource {
-    class ResourceLoader : core::scene::Singleton<ResourceLoader> {
-    public:
+    class ResourceLoader : public core::scene::Singleton<ResourceLoader> {
+        friend class core::scene::Singleton<ResourceLoader>;
+
+    private:
         ResourceLoader() = default;
 
     public:
@@ -19,11 +21,14 @@ namespace gkit::resource {
         auto load(const std::filesystem::path& path) -> std::optional<std::shared_ptr<T>> {
             auto cached_res = get_cache(path);
             if (cached_res.has_value()) {
-                auto target_res = std::dynamic_pointer_cast<T>(cached_res);
-                return target_res == nullptr ? std::nullopt : target_res;
+                auto target_res = std::dynamic_pointer_cast<T>(cached_res.value());
+                if (target_res == nullptr) {
+                    return std::nullopt;
+                }
+                return target_res;
             }
 
-            auto loaded_res = std::make_shared<T>();
+            auto loaded_res = std::make_shared<T>(path);
             loaded_res->load_from_file();
 
             if (loaded_res->available()) {
