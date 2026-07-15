@@ -7,7 +7,6 @@
 #include <functional>
 #include <memory>
 #include <optional>
-#include <shared_mutex>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -37,7 +36,7 @@ namespace gkit::core::scene {
      */
     class Unit : public Object {
     protected:
-        Unit() noexcept;
+        Unit() noexcept = default;
         explicit Unit(std::string&& name) noexcept;
 
     public:
@@ -189,7 +188,7 @@ namespace gkit::core::scene {
         Unit* parent = nullptr;
 
     private: // children management
-        mutable std::shared_mutex children_rw_mutex{};
+        mutable std::mutex children_mutex{};
         std::unordered_map<std::string, Unit*> name_map_cache{};
         std::vector<std::unique_ptr<Unit>> children{};
 
