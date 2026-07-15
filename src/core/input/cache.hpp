@@ -31,12 +31,12 @@ namespace gkit::input {
          */
         inline auto modifiers_pressed(uint32_t mods) const -> bool {
             const auto& current_mods = static_cast<uint32_t>(SDL_GetModState());
-            static constexpr const uint32_t all_mods =
+            static constexpr const uint32_t ALL_MODS =
                 static_cast<uint32_t>(Mod::Alt) | static_cast<uint32_t>(Mod::Ctrl) | static_cast<uint32_t>(Mod::Shift) |
                 static_cast<uint32_t>(Mod::Gui);
 
             if (mods == static_cast<uint32_t>(Mod::None)) {
-                return (current_mods & all_mods) == 0u;
+                return (current_mods & ALL_MODS) == 0u;
             }
 
             return (mods & current_mods) == mods;
