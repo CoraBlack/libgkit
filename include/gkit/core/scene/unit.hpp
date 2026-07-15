@@ -21,7 +21,7 @@ namespace gkit::core::scene {
     class Unit;
 
     template<typename T>
-    concept IsUnitExtend = requires(T v) {
+    concept IsUnit = requires(T v) {
         { std::is_base_of_v<Unit, T> } -> std::convertible_to<bool>;
     };
 
@@ -46,7 +46,7 @@ namespace gkit::core::scene {
          * @return A unique pointer to the instance. If the type can't be created, return nullptr.
          * @note It will throw error if the type is not a class which is based of class Unit.
          */
-        template<IsUnitExtend T>
+        template<IsUnit T>
         static auto create(std::string&& name) noexcept -> std::unique_ptr<T>;
         virtual ~Unit() = default;
 
@@ -163,7 +163,7 @@ namespace gkit::core::scene {
          * @return the callable method's return value. 
          * If the index is out of range, return std::nullopt.
          */
-        template<IsUnitExtend UnitT, typename F, typename... Args>
+        template<IsUnit UnitT, typename F, typename... Args>
         auto with_child(uint32_t index, const F& func, Args&&... args) -> std::invoke_result_t<F, UnitT&, Args...>;
 
         /**
@@ -178,7 +178,7 @@ namespace gkit::core::scene {
          * @throws std::out_of_range If child name is not found.
          * @throws std::invalid_argument If child type cast fails.
          */
-        template<IsUnitExtend UnitT, typename F, typename... Args>
+        template<IsUnit UnitT, typename F, typename... Args>
         auto with_child(const std::string& child_name, const F& func, Args&&... args)
             -> std::invoke_result_t<F, UnitT&, Args...>;
 
@@ -188,7 +188,7 @@ namespace gkit::core::scene {
          * @return std::optional<std::reference_wrapper<T>>
          * If the parent is not the target type, return std::nullopt.
          */
-        template<IsUnitExtend T>
+        template<IsUnit T>
         auto get_parent() noexcept -> std::optional<std::reference_wrapper<T>>;
 
     protected: // propertries
@@ -331,7 +331,7 @@ namespace gkit::core::scene {
 
     }; // class Unit
 
-    template<IsUnitExtend T>
+    template<IsUnit T>
     auto Unit::create(std::string&& name) noexcept -> std::unique_ptr<T> {
         static_assert(std::is_base_of_v<Unit, T>, "T is not derived from Unit");
         try {
@@ -342,7 +342,7 @@ namespace gkit::core::scene {
         }
     }
 
-    template<IsUnitExtend UnitT, typename F, typename... Args>
+    template<IsUnit UnitT, typename F, typename... Args>
     auto Unit::with_child(uint32_t index, const F& func, Args&&... args) -> std::invoke_result_t<F, UnitT&, Args...> {
         auto* child_ptr = get_available_child(index);
         if (child_ptr == nullptr) {
@@ -356,7 +356,7 @@ namespace gkit::core::scene {
         return std::invoke(func, *target_child_ptr, std::forward<Args>(args)...);
     } // Unit::with_child
 
-    template<IsUnitExtend UnitT, typename F, typename... Args>
+    template<IsUnit UnitT, typename F, typename... Args>
     auto Unit::with_child(const std::string& child_name, const F& func, Args&&... args)
         -> std::invoke_result_t<F, UnitT&, Args...> {
         auto child_ptr = get_child(child_name);
@@ -371,7 +371,7 @@ namespace gkit::core::scene {
         return std::invoke(func, *child, std::forward<Args>(args)...);
     } // Unit::with_child(name)
 
-    template<IsUnitExtend T>
+    template<IsUnit T>
     auto Unit::get_parent() noexcept -> std::optional<std::reference_wrapper<T>> {
         static_assert(std::is_base_of_v<Unit, T>, "T is not derived from Unit");
         if (parent == nullptr) return std::nullopt;
