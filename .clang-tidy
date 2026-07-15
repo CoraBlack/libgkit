@@ -5,6 +5,8 @@ Checks: >
     google-*,
     readability-identifier-naming,
 
+HeaderFilterRegex: (include|src|test)/
+
 CheckOptions:
   # ── Classes / Structs / Enums ──────────────────────────────────
   - key:   readability-identifier-naming.ClassCase
