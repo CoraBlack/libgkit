@@ -47,6 +47,12 @@ jobs:
           cmake --preset linux-x86_64-llvm-debug
           echo "✅ CMake configuration completed"
 
+      - name: Build all
+        run: |
+          echo "🔨 Building project to generate all source files..."
+          cmake --build build/linux-x86_64-llvm-debug
+          echo "✅ Build completed"
+
       - name: Run clang-tidy
         run: |
           echo "🔍 Running clang-tidy..."
