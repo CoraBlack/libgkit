@@ -1,4 +1,5 @@
 // NOLINTBEGIN(google-readability-avoid-underscore-in-googletest-name)
+#include "gkit/core/scene/object.hpp"
 #include <gkit/core/scene/unit.hpp>
 
 #include <iostream>
@@ -69,12 +70,14 @@ public:
 std::vector<std::string> TestUnit::timeline;
 
 auto test_create_and_with_child() -> bool {
+    using gkit::core::scene::Object;
+
     std::cout << "\n=== test_create_and_with_child ===\n";
 
-    auto parent = Unit::create<TestUnit>("parent");
+    auto parent = Object::create<TestUnit>("parent");
     TEST(parent != nullptr, "create<TestUnit> returns non-null");
 
-    auto child = Unit::create<TestUnit>("child");
+    auto child = Object::create<TestUnit>("child");
     auto* child_ptr = child.get();
     parent->add_child(std::move(child));
 

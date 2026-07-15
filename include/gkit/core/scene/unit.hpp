@@ -1,5 +1,7 @@
 #pragma once
 
+#include "object.hpp"
+
 #include <atomic>
 #include <cstdint>
 #include <functional>
@@ -33,21 +35,12 @@ namespace gkit::core::scene {
      *
      * If you want to move an Unit instance, you should move with the std::unique_ptr by std::move().
      */
-    class Unit {
+    class Unit : public Object {
     protected:
         Unit() noexcept;
         explicit Unit(std::string&& name) noexcept;
 
     public:
-        /**
-         * @brief Create a instance of the type which is based of class Unit.
-         * @tparam T The type of the instance. It must be a class which is based of class Unit.
-         * @param name The name of the instance.
-         * @return A unique pointer to the instance. If the type can't be created, return nullptr.
-         * @note It will throw error if the type is not a class which is based of class Unit.
-         */
-        template<IsUnit T>
-        static auto create(std::string&& name) noexcept -> std::unique_ptr<T>;
         virtual ~Unit() = default;
 
     public: // virtual methods
@@ -330,17 +323,6 @@ namespace gkit::core::scene {
         auto crend() const -> const_reverse_iterator;
 
     }; // class Unit
-
-    template<IsUnit T>
-    auto Unit::create(std::string&& name) noexcept -> std::unique_ptr<T> {
-        static_assert(std::is_base_of_v<Unit, T>, "T is not derived from Unit");
-        try {
-            auto ptr = std::unique_ptr<T>(new T(std::move(name)));
-            return ptr;
-        } catch (...) {
-            return nullptr;
-        }
-    }
 
     template<IsUnit UnitT, typename F, typename... Args>
     auto Unit::with_child(uint32_t index, const F& func, Args&&... args) -> std::invoke_result_t<F, UnitT&, Args...> {

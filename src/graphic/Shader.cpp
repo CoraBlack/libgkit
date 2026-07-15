@@ -152,7 +152,7 @@ auto gkit::graphic::Shader::compile_shader(uint32_t type, const std::string& sou
         msg.level     = gkit::utils::Log::LogLevel::Error;
         msg.functions = static_cast<std::uint8_t>(gkit::utils::Log::LogFunction::Both);
         msg.message   = "Failed to compile " + std::string(type == GL_VERTEX_SHADER ? "vertex" : "fragment") +
-                        " shader: " + message;
+                      " shader: " + message;
         gkit::utils::Log::instance().log(std::move(msg));
         glDeleteShader(id);
         return 0;
