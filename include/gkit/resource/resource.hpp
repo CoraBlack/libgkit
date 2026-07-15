@@ -52,7 +52,7 @@ namespace gkit::resource {
 
     template<typename T>
     concept IsResource = requires(T v) {
-        std::is_base_of_v<gkit::resource::Resource, T>;
-        v.load_from_file();
+        { std::is_base_of_v<gkit::resource::Resource, T> } -> std::convertible_to<bool>;
+        { v.load_from_file() } -> std::convertible_to<void>;
     };
 } // namespace gkit::resource
