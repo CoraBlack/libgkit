@@ -5,7 +5,10 @@ Checks: >
     google-*,
     readability-identifier-naming,
 
+HeaderFileExtensions: ["", h, hpp, hxx, inc, glsl]
+ImplementationFileExtensions: [c, cpp]
 HeaderFilterRegex: '(include|src|test)/*'
+ExcludeHeaderFilterRegex: '(bin|build|cmake|third_party|)'
 
 CheckOptions:
   # ── Classes / Structs / Enums ──────────────────────────────────
