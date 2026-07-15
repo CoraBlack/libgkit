@@ -114,18 +114,20 @@ namespace gkit::math {
         /// @param row1 Second row
         /// @param row2 Third row
         /// @param row3 Fourth row
-        static auto
-        from_rows(const Vector4& row0, const Vector4& row1, const Vector4& row2, const Vector4& row3) noexcept
-            -> Matrix4;
+        static auto from_rows(const Vector4& row0,
+                              const Vector4& row1,
+                              const Vector4& row2,
+                              const Vector4& row3) noexcept -> Matrix4;
 
         /// @brief Create matrix from column vectors
         /// @param col0 First column (x, y, z, w)
         /// @param col1 Second column
         /// @param col2 Third column
         /// @param col3 Fourth column
-        static auto
-        from_columns(const Vector4& col0, const Vector4& col1, const Vector4& col2, const Vector4& col3) noexcept
-            -> Matrix4;
+        static auto from_columns(const Vector4& col0,
+                                 const Vector4& col1,
+                                 const Vector4& col2,
+                                 const Vector4& col3) noexcept -> Matrix4;
 
         /// @brief Rotation matrix that rotates 'from' vector to 'to' vector
         /// @param from Source direction vector (will be normalized)

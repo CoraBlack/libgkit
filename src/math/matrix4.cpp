@@ -362,9 +362,10 @@ namespace gkit::math {
         return result;
     }
 
-    auto
-    Matrix4::from_columns(const Vector4& col0, const Vector4& col1, const Vector4& col2, const Vector4& col3) noexcept
-        -> Matrix4 {
+    auto Matrix4::from_columns(const Vector4& col0,
+                               const Vector4& col1,
+                               const Vector4& col2,
+                               const Vector4& col3) noexcept -> Matrix4 {
         Matrix4 result;
         result.m[0][0] = col0.x;
         result.m[0][1] = col0.y;
