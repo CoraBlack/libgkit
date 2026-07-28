@@ -4,6 +4,7 @@ set (RESOURCE_SRC
     "./resource.cpp"
     "./resource_loader.cpp"
     "./texture.cpp"
+    "./shader_source.cpp"
     "./metadata.cpp"
 )
 
