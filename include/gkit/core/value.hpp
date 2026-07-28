@@ -3,6 +3,7 @@
 #include "gkit/core/scene/object.hpp"
 
 #include <concepts>
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <memory>
