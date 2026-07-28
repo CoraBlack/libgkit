@@ -1,17 +1,24 @@
 set (GKIT_CORE "gkit_core")
 
 set (CORE_SRC
-    # Runner
-    "./processer.cpp"
 
     # Input module
     "./input/action.cpp"
     "./input/cache.cpp"
     "./input/input.cpp"
 
+    # Misc module
+    "./misc/sdl_event_dispatcher.cpp"
+
     # Scene module
     "./scene/object.cpp"
     "./scene/unit.cpp"
+
+    # Reflect module
+    "./reflect/registry.cpp"
+
+    "./processer.cpp"
+    "./value.cpp"
 )
 
 add_library(${GKIT_CORE} OBJECT ${CORE_SRC})

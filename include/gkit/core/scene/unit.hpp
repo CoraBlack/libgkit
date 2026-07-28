@@ -1,11 +1,14 @@
 #pragma once
 
+#include "gkit/core/reflect/registry.hpp"
+#include "object.hpp"
+
 #include <atomic>
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <optional>
-#include <shared_mutex>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -33,21 +36,14 @@ namespace gkit::core::scene {
      *
      * If you want to move an Unit instance, you should move with the std::unique_ptr by std::move().
      */
-    class Unit {
+    class Unit : public Object {
+        static reflect::RegistHolder register_holder;
+        static auto regist_method() -> void;
     protected:
-        Unit() noexcept;
+        Unit() noexcept = default;
         explicit Unit(std::string&& name) noexcept;
 
     public:
-        /**
-         * @brief Create a instance of the type which is based of class Unit.
-         * @tparam T The type of the instance. It must be a class which is based of class Unit.
-         * @param name The name of the instance.
-         * @return A unique pointer to the instance. If the type can't be created, return nullptr.
-         * @note It will throw error if the type is not a class which is based of class Unit.
-         */
-        template<IsUnit T>
-        static auto create(std::string&& name) noexcept -> std::unique_ptr<T>;
         virtual ~Unit() = default;
 
     public: // virtual methods
@@ -149,7 +145,7 @@ namespace gkit::core::scene {
          * @return void
          * @note The unit will be dropped after the end of @ref process_handler().
          */
-        inline auto drop() -> void { this->ready_to_drop.store(true); };
+        inline auto ready_to_drop() noexcept -> void { this->drop_flag.store(true); };
 
     public: // cross-unit methods
         /**
@@ -196,28 +192,17 @@ namespace gkit::core::scene {
         Unit* parent = nullptr;
 
     private: // children management
-        std::atomic<bool> modified = false;
-
-        std::unordered_map<std::string, Unit*> name_map_cache;
-        mutable std::shared_mutex name_map_cache_rw_mutex;
-
-        std::vector<uint32_t> active_index_cache;
-        mutable std::shared_mutex index_cache_rw_mutex;
-
-        std::vector<std::unique_ptr<Unit>> children;
-        mutable std::shared_mutex children_rw_mutex;
-
-        // when (active_index_cache.size() / children.size() <= overload_factor)
-        // children vector will realloc(call method @ref remap_children_and_cache())
-        static const constexpr float OVERLOAD_FACTOR = 0.5f;
+        mutable std::mutex children_mutex{};
+        std::unordered_map<std::string, Unit*> name_map_cache{};
+        std::vector<std::unique_ptr<Unit>> children{};
 
         /**
-         * @brief Get the available child pointer.
+         * @brief Get child pointer by index.
          * @param index The index of the child.
-         * @return Unit* 
-         * If the index is valid, return the pointer to the child, otherwise return nullptr.
+         * @return Unit*
+         * If the index is valid, return the pointer to the child; otherwise return nullptr.
          */
-        auto get_available_child(uint32_t index) noexcept -> Unit*;
+        auto get_child(uint32_t index) noexcept -> Unit*;
 
         /**
          * @brief Get child pointer by name.
@@ -228,18 +213,6 @@ namespace gkit::core::scene {
         auto get_child(const std::string& child_name) noexcept -> Unit*;
 
         /**
-         * @brief Update the index cache. It will be call substantively when @ref modified is true.
-         * @return void
-         */
-        auto update_index_cache() -> void;
-
-        /**
-         * @brief Move away the dead child ptr in @ref children and update index cache.
-         * @return void
-         */
-        auto remap_children_and_cache() -> void;
-
-        /**
          * @brief Drop all children which are marked ready to drop.
          * @return void
          */
@@ -247,67 +220,41 @@ namespace gkit::core::scene {
 
     private:
         std::atomic<bool> process_enabled = true; // process enabled flag
-        std::atomic<bool> ready_to_drop   = false; // drop flag(mark as dead)
+        std::atomic<bool> drop_flag       = false; // mark as dead
 
     public:
-        // iterator
-        // NOLINTBEGIN(readability-identifier-naming)
-        class iterator {
+        template<bool IsConst>
+        class UnitIterator {
         public:
-            using iterator_category = std::bidirectional_iterator_tag;
-            using value_type        = Unit;
-            using difference_type   = std::ptrdiff_t;
-            using pointer           = Unit*;
-            using reference         = Unit&;
-
-        public:
-            // Constructor and operators
-            iterator(Unit* owner, size_t pos);
-            auto operator*() const -> reference;
-            auto operator->() const -> pointer;
-            auto operator++() -> iterator&;
-            auto operator++(int) -> iterator;
-            auto operator--() -> iterator&;
-            auto operator--(int) -> iterator;
-            auto operator==(const iterator& other) const -> bool;
-            auto operator!=(const iterator& other) const -> bool;
-
-        private:
-            Unit* m_owner;
-            size_t m_pos;
-            friend class Unit;
-        };
-
-        auto begin() -> iterator;
-        auto end() -> iterator;
-
-    public:
-        // Next, we are going to write the const implementation of the iterator.
-        class const_iterator {
-        public:
-            using iterator_category = std::bidirectional_iterator_tag;
-            using value_type        = const Unit;
-            using difference_type   = std::ptrdiff_t;
-            using pointer           = const Unit*;
-            using reference         = const Unit&;
-
-        public:
-            // Constructor and operators
-            const_iterator(const Unit* owner, size_t pos);
-            auto operator*() const -> reference;
-            auto operator->() const -> pointer;
-            auto operator++() -> const_iterator&;
-            auto operator++(int) -> const_iterator;
-            auto operator--() -> const_iterator&;
-            auto operator--(int) -> const_iterator;
-            auto operator==(const const_iterator& other) const -> bool;
-            auto operator!=(const const_iterator& other) const -> bool;
+            // NOLINTBEGIN(readability-identifier-naming)
+            using value_type      = Unit;
+            using difference_type = std::ptrdiff_t;
+            using pointer         = std::conditional_t<IsConst, const Unit*, Unit*>;
+            using reference       = std::conditional_t<IsConst, const Unit&, Unit&>;
+            // NOLINTEND(readability-identifier-naming)
 
         private:
             const Unit* m_owner;
             size_t m_pos;
-        };
-        // NOLINTEND(readability-identifier-naming)
+
+        public:
+            UnitIterator() = default;
+            UnitIterator(const Unit* owner, size_t pos);
+            auto operator*() const -> reference;
+            auto operator->() const -> pointer;
+            auto operator++() -> UnitIterator&;
+            auto operator++(int) -> UnitIterator;
+            auto operator--() -> UnitIterator&;
+            auto operator--(int) -> UnitIterator;
+            auto operator==(const UnitIterator&) const -> bool;
+            friend class Unit;
+        }; // class UnitIterator<bool IsConst>
+
+        using iterator       = UnitIterator<false>; // NOLINT(readability-identifier-naming)
+        using const_iterator = UnitIterator<true>; // NOLINT(readability-identifier-naming)
+
+        auto begin() -> iterator;
+        auto end() -> iterator;
 
         auto begin() const -> const_iterator;
         auto end() const -> const_iterator;
@@ -316,7 +263,6 @@ namespace gkit::core::scene {
         auto cend() const -> const_iterator;
 
     public:
-        // This is a reverse iterator, implemented using std::reverse_iterator.
         using reverse_iterator       = std::reverse_iterator<iterator>; // NOLINT(readability-identifier-naming)
         using const_reverse_iterator = std::reverse_iterator<const_iterator>; // NOLINT(readability-identifier-naming)
 
@@ -331,20 +277,9 @@ namespace gkit::core::scene {
 
     }; // class Unit
 
-    template<IsUnit T>
-    auto Unit::create(std::string&& name) noexcept -> std::unique_ptr<T> {
-        static_assert(std::is_base_of_v<Unit, T>, "T is not derived from Unit");
-        try {
-            auto ptr = std::unique_ptr<T>(new T(std::move(name)));
-            return ptr;
-        } catch (...) {
-            return nullptr;
-        }
-    }
-
     template<IsUnit UnitT, typename F, typename... Args>
     auto Unit::with_child(uint32_t index, const F& func, Args&&... args) -> std::invoke_result_t<F, UnitT&, Args...> {
-        auto* child_ptr = get_available_child(index);
+        auto* child_ptr = get_child(index);
         if (child_ptr == nullptr) {
             throw std::out_of_range("Child index is out of range");
         }
