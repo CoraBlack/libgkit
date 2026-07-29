@@ -58,7 +58,7 @@ jobs:
       - name: Run clang-tidy
         run: |
           echo "🔍 Running clang-tidy..."
-          COMPILE_DB="${{ github.workspace }}/build/x86_64-llvm-debug/compile_commands.json"
+          COMPILE_DB="${{ github.workspace }}/build/compile_commands.json"
 
           if [ ! -f "$COMPILE_DB" ]; then
             echo "::error::compile_commands.json not found at $COMPILE_DB"
