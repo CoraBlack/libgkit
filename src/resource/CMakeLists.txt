@@ -10,5 +10,5 @@ set (RESOURCE_SRC
 
 add_library(${GKIT_RESOURCE} OBJECT ${RESOURCE_SRC})
 
-target_include_directories(${GKIT_RESOURCE} PRIVATE ${CMAKE_SOURCE_DIR}/include)  # include for header file
-target_include_directories(${GKIT_RESOURCE} PRIVATE ${CMAKE_SOURCE_DIR}/src)      # top include for source file
+target_include_directories(${GKIT_RESOURCE} PRIVATE ${GKIT_SOURCE_DIR}/include)  # include for header file
+target_include_directories(${GKIT_RESOURCE} PRIVATE ${GKIT_SOURCE_DIR}/src)      # top include for source file

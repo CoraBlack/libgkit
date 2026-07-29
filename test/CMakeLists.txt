@@ -1,9 +1,9 @@
 set (EXECUTABLE_OUTPUT_PATH ${BIN_FOLDER}/test)
 
-include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(${CMAKE_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/src/c_abi/include)
-include_directories(${CMAKE_SOURCE_DIR}/third_party/glad_generated/include)
+include_directories(${GKIT_SOURCE_DIR}/src)
+include_directories(${GKIT_SOURCE_DIR}/include)
+include_directories(${GKIT_SOURCE_DIR}/src/c_abi/include)
+include_directories(${GKIT_SOURCE_DIR}/third_party/glad_generated/include)
 
 # build core tests
 file(GLOB_RECURSE TEST_SRCS
