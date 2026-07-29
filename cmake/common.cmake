@@ -15,9 +15,12 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(LIBRARY_OUTPUT_PATH ${BIN_FOLDER})
 
+# Global variable
+set(GKIT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 # Add third party include paths
-include_directories(${CMAKE_SOURCE_DIR}/third_party/sdl/include)
-include_directories(${CMAKE_SOURCE_DIR}/third_party/sdl_image/include)
+include_directories(${GKIT_SOURCE_DIR}/third_party/sdl/include)
+include_directories(${GKIT_SOURCE_DIR}/third_party/sdl_image/include)
 
 # Link third party libraries
 link_directories(${BIN_FOLDER}/third_party)
