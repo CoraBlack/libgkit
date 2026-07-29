@@ -44,9 +44,7 @@ jobs:
       - name: Configure CMake (LLVM)
         run: |
           echo "⚙️ Configuring CMake with LLVM preset..."
-          mkdir build & cd build
-          cmake ../src -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-          cd ../
+          cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
           echo "✅ CMake configuration completed"
 
       # - name: Build all
@@ -58,7 +56,7 @@ jobs:
       - name: Run clang-tidy
         run: |
           echo "🔍 Running clang-tidy..."
-          COMPILE_DB="${{ github.workspace }}/build/compile_commands.json"
+          COMPILE_DB="${{ github.workspace }}/compile_commands.json"
 
           if [ ! -f "$COMPILE_DB" ]; then
             echo "::error::compile_commands.json not found at $COMPILE_DB"
