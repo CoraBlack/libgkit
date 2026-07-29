@@ -16,25 +16,27 @@
             }
         },
 
-        {"name": "linux",   "hidden": true },
-        {"name": "windows", "hidden": true },
-
-
         {"name": "debug",   "hidden": true, "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}},
         {"name": "release", "hidden": true, "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}},
+
+        {"name": "static",  "hidden": true, "cacheVariables": {"GKIT_STATIC_BUILD": true}},
+        {"name": "shared",  "hidden": true, "cacheVariables": {"GKIT_SHARED_BUILD": true}},
+
+        {"name": "test",    "hidden": true, "cacheVariables": {"GKIT_TEST_BUILD": true}},
+        {"name": "notest",  "hidden": true, "cacheVariables": {"GKIT_TEST_BUILD": false}},
+
+        {"name": "c_abi",   "hidden": true, "cacheVariables": {"GKIT_ENABLE_CABI": true}},
+        {"name": "noabi",   "hidden": true, "cacheVariables": {"GKIT_ENABLE_CABI": false}},
 
         {"name": "gcc",  "hidden": true, "cacheVariables": {"CMAKE_C_COMPILER": "gcc",   "CMAKE_CXX_COMPILER": "g++"}},
         {"name": "llvm", "hidden": true, "cacheVariables": {"CMAKE_C_COMPILER": "clang", "CMAKE_CXX_COMPILER": "clang++"}},
         {"name": "msvc", "hidden": true, "cacheVariables": {"CMAKE_C_COMPILER": "cl",    "CMAKE_CXX_COMPILER": "cl", "CMAKE_CXX_LINKER": "link.exe"}},
 
-        {"name": "c_abi", "hidden": true, "cacheVariables": {"EXPORT_C_ABI": {"type": "BOOL", "value": true}}}, 
-        {"name": "noabi", "hidden": true, "cacheVariables": {"EXPORT_C_ABI": {"type": "BOOL", "value": false}}}, 
-
-        { "name": "linux-x86_64-gcc-debug",       "inherits": ["common", "linux", "debug", "gcc"] },
-        { "name": "linux-x86_64-llvm-debug",      "inherits": ["common", "linux", "debug", "llvm"]},
-
-        { "name": "windows-x86_64-mingw64-debug",       "inherits": ["common", "windows", "debug", "gcc"] },
-        { "name": "windows-x86_64-llvm-debug",          "inherits": ["common", "windows", "debug", "llvm"] },
-        { "name": "windows-x86_64-msvc-debug",          "inherits": ["common", "windows", "debug", "msvc"] }
+        { "name": "x86_64-gcc-debug",           "inherits": ["common", "debug", "gcc",  "static", "shared", "test"]},
+        { "name": "x86_64-llvm-debug",          "inherits": ["common", "debug", "llvm", "static", "shared", "test"]},
+        { "name": "x86_64-gcc-debug-notest",    "inherits": ["common", "debug", "gcc",  "static", "shared", "notest"]},
+        { "name": "x86_64-llvm-debug-notest",   "inherits": ["common", "debug", "llvm", "static", "shared", "notest"]},
+        { "name": "windows-x86_64-msvc-debug",          "inherits": ["common", "debug", "static", "shared", "msvc", "test"] },
+        { "name": "windows-x86_64-msvc-debug-notest",   "inherits": ["common", "debug", "static", "shared", "msvc", "notest"] }
     ]
 }
