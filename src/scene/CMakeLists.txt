@@ -10,5 +10,5 @@ set (SCENE_SRC
 
 add_library(${GKIT_SCENE} OBJECT ${SCENE_SRC})
 
-target_include_directories(${GKIT_SCENE} PRIVATE ${CMAKE_SOURCE_DIR}/include)  # include for header file
-target_include_directories(${GKIT_SCENE} PRIVATE ${CMAKE_SOURCE_DIR}/src)      # top include for source file
+target_include_directories(${GKIT_SCENE} PRIVATE ${GKIT_SOURCE_DIR}/include)  # include for header file
+target_include_directories(${GKIT_SCENE} PRIVATE ${GKIT_SOURCE_DIR}/src)      # top include for source file

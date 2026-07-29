@@ -17,8 +17,8 @@ set (GRAPHIC_SRC
 
 add_library(${GKIT_GRAPHIC} OBJECT ${GRAPHIC_SRC})
 
-target_include_directories(${GKIT_GRAPHIC} PRIVATE ${CMAKE_SOURCE_DIR}/include)     # include for header file
-target_include_directories(${GKIT_GRAPHIC} PRIVATE ${CMAKE_SOURCE_DIR}/src)         # top include for source file
-target_include_directories(${GKIT_GRAPHIC} PRIVATE ${CMAKE_SOURCE_DIR}/third_party/glad_generated/include)  # glad generated headers
+target_include_directories(${GKIT_GRAPHIC} PRIVATE ${GKIT_SOURCE_DIR}/include)     # include for header file
+target_include_directories(${GKIT_GRAPHIC} PRIVATE ${GKIT_SOURCE_DIR}/src)         # top include for source file
+target_include_directories(${GKIT_GRAPHIC} PRIVATE ${GKIT_SOURCE_DIR}/third_party/glad_generated/include)  # glad generated headers
 
 target_link_libraries(${GKIT_GRAPHIC} PRIVATE glad_gl)
