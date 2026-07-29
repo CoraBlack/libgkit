@@ -50,7 +50,7 @@ jobs:
       - name: Build all
         run: |
           echo "🔨 Building project to generate all source files..."
-          cmake --build build/linux-x86_64-llvm-debug
+          cmake --build build/x86_64-llvm-debug
           echo "✅ Build completed"
 
       - name: Run clang-tidy
