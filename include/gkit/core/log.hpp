@@ -14,7 +14,7 @@
 #include <string>
 #include <thread>
 
-namespace gkit::utils {
+namespace gkit::core {
     class Log : public gkit::core::templates::Singleton<Log> {
         friend class gkit::core::templates::Singleton<Log>;
 

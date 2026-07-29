@@ -12,6 +12,7 @@ set (CORE_SRC
     # Reflect module
     "./reflect/registry.cpp"
 
+    "./log.cpp"
     "object.cpp"
     "./processer.cpp"
     "./value.cpp"

@@ -2,9 +2,9 @@
 #include <thread>
 #include <vector>
 
-#include <gkit/gkit.hpp>
+#include <gkit/core/log.hpp>
 
-using gkit::utils::Log;
+using gkit::core::Log;
 
 auto main() -> int {
     auto& logger = Log::instance();

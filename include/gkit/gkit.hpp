@@ -17,7 +17,4 @@
 #include <gkit/math/vector2.hpp>
 #include <gkit/math/vector3.hpp>
 
-/** Utils **/
-#include <gkit/utils/log.hpp>
-
 namespace gkit {} // namespace gkit
