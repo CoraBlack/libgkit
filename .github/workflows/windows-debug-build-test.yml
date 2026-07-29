@@ -13,8 +13,8 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        preset: [ "windows-x86_64-mingw64-debug",
-                  "windows-x86_64-llvm-debug",
+        preset: [ "x86_64-mingw64-debug",
+                  "x86_64-llvm-debug",
                   "windows-x86_64-msvc-debug",]
 
     steps:

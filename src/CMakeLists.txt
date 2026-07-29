@@ -18,12 +18,16 @@ list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_utils>)
 add_subdirectory(graphic)
 list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_graphic>)
 
-add_library(${PROJECT_NAME} SHARED ${GKIT_OBJS})
-add_library(${PROJECT_NAME}_static STATIC ${GKIT_OBJS})
-
 set (GKIT_LIBS)
-list (APPEND GKIT_LIBS ${PROJECT_NAME})
-list (APPEND GKIT_LIBS ${PROJECT_NAME}_static)
+if(GKIT_SHARED_BUILD)
+    add_library(${PROJECT_NAME} SHARED ${GKIT_OBJS})
+    list (APPEND GKIT_LIBS ${PROJECT_NAME})
+endif()
+
+if(GKIT_STATIC_BUILD)
+    add_library(${PROJECT_NAME}_static STATIC ${GKIT_OBJS})
+    list (APPEND GKIT_LIBS ${PROJECT_NAME}_static)
+endif()
 
 # link third party static libraries
 foreach(GKIT_LIB ${GKIT_LIBS})

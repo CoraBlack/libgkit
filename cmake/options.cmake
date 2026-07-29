@@ -1,0 +1,10 @@
+option(GKIT_TEST_BUILD   "Enable test program build"        OFF)
+option(GKIT_STATIC_BUILD "Build libgkit as static library"  OFF)
+option(GKIT_SHARED_BUILD "Build libgkit as shared library"  ON)
+option(GKIT_ENABLE_CABI  "Build C ABI code(no impl now)"    OFF)
+
+function(check_options_available)
+    if (NOT GKIT_SHARED_BUILD AND NOT GKIT_STATIC_BUILD)
+        message(FATAL_ERROR "At least one of options GKIT_SHARED_BUILD and GKIT_STATIC_BUILD must be ON")
+    endif()
+endfunction()
