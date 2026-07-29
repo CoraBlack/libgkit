@@ -11,13 +11,13 @@
 namespace gkit::scene {
     auto Unit::regist_method() -> void {
         auto& db = core::reflect::ClassDB::instance();
-        db.regist<Unit>("Unit")
-            .add_field("Unit", "name", &Unit::name);
+        db.regist<Unit>("Unit").add_field("Unit", "name", &Unit::name);
     }
 
-    core::reflect::RegistHolder Unit::register_holder (
-        []() { Unit::regist_method(); return; }
-    );
+    core::reflect::RegistHolder Unit::register_holder([]() {
+        Unit::regist_method();
+        return;
+    });
 
     Unit::Unit(std::string&& name) noexcept : Unit() {
         this->name = name;
@@ -131,8 +131,7 @@ namespace gkit::scene {
     }
 
     template<>
-    auto Unit::get_parent<Unit>() noexcept
-        -> std::optional<std::reference_wrapper<Unit>> {
+    auto Unit::get_parent<Unit>() noexcept -> std::optional<std::reference_wrapper<Unit>> {
         if (parent == nullptr) return std::nullopt;
         return std::ref(*parent);
     }
@@ -140,8 +139,7 @@ namespace gkit::scene {
     // UnitIterator
 
     template<bool IsConst>
-    Unit::UnitIterator<IsConst>::UnitIterator(const Unit* owner, size_t pos) :
-        m_owner(owner), m_pos(pos) {}
+    Unit::UnitIterator<IsConst>::UnitIterator(const Unit* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
 
     template<bool IsConst>
     auto Unit::UnitIterator<IsConst>::operator*() const -> reference {
@@ -226,5 +224,3 @@ namespace gkit::scene {
     }
 
 } // namespace gkit::scene
-
-

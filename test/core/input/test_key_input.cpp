@@ -1,10 +1,10 @@
 #include "./min_window_for_input_test.hpp"
 
+#include <core/misc/sdl_event_dispatcher.hpp>
 #include <cstdint>
 #include <iostream>
 
 #include <gkit/core/input/input.hpp>
-#include <core/misc/sdl_event_dispatcher.hpp>
 
 auto main() -> int {
     using gkit::input::Action;

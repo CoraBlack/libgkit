@@ -20,7 +20,7 @@ namespace gkit::core {
     }
 
     auto SDLEventDispatcher::register_event_handler(SDL_EventType event_type,
-                                                                std::function<void(const SDL_Event&)> handler) -> void {
+                                                    std::function<void(const SDL_Event&)> handler) -> void {
         // Ignore empty callbacks to keep dispatch loop simple.
         if (!handler) {
             return;

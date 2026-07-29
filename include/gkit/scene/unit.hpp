@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gkit/core/reflect/registry.hpp"
 #include "gkit/core/object.hpp"
+#include "gkit/core/reflect/registry.hpp"
 
 #include <atomic>
 #include <cstdint>
@@ -39,6 +39,7 @@ namespace gkit::scene {
     class Unit : public gkit::core::Object {
         static gkit::core::reflect::RegistHolder register_holder;
         static auto regist_method() -> void;
+
     protected:
         Unit() noexcept = default;
         explicit Unit(std::string&& name) noexcept;

@@ -75,8 +75,7 @@ namespace gkit::core {
          * @brief Variant storage backing the Value. Object is held via std::unique_ptr
          *        for exclusive ownership and automatic lifetime management.
          */
-        using Storage =
-            std::variant<Null, bool, Number, std::string, Array, Map, std::unique_ptr<gkit::core::Object>>;
+        using Storage = std::variant<Null, bool, Number, std::string, Array, Map, std::unique_ptr<gkit::core::Object>>;
 
     public: // Constructors
         Value() noexcept = default;
@@ -215,8 +214,7 @@ namespace gkit::core {
          * @brief Return the stored Object pointer, or the given fallback if the Value
          *        does not hold an Object. Does not transfer ownership.
          */
-        [[nodiscard]] auto as_object_or(gkit::core::Object* fallback) const noexcept
-            -> gkit::core::Object*;
+        [[nodiscard]] auto as_object_or(gkit::core::Object* fallback) const noexcept -> gkit::core::Object*;
 
     public: // Map helpers
         /**

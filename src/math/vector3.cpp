@@ -1,4 +1,5 @@
 #include "gkit/math/vector3.hpp"
+
 #include "gkit/core/reflect/registry.hpp"
 
 namespace gkit::math {

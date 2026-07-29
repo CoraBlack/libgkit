@@ -116,4 +116,4 @@ namespace gkit::core {
         std::atomic<std::uint64_t> dropped_full_count{0};
         std::atomic<std::uint64_t> processed_count{0};
     }; // class Log
-} // namespace gkit::utils
+} // namespace gkit::core

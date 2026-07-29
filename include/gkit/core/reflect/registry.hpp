@@ -15,7 +15,7 @@ namespace gkit::core::reflect {
     struct RegistHolder {
         explicit RegistHolder(std::function<void()>&& regist_func) { regist_func(); };
     };
-    
+
     struct FieldDesc final {
         std::string name;
         Type value_type;

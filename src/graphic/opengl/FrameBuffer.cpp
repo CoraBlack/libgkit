@@ -1,7 +1,7 @@
 #include "gkit/graphic/opengl/FrameBuffer.hpp"
 
-#include "gkit/graphic/opengl/Texture.hpp"
 #include "gkit/core/log.hpp"
+#include "gkit/graphic/opengl/Texture.hpp"
 
 #include <glad/gl.h>
 

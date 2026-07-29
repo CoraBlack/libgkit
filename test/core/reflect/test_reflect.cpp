@@ -1,15 +1,15 @@
-#include "gkit/core/reflect/registry.hpp"
 #include "gkit/core/object.hpp"
+#include "gkit/core/reflect/registry.hpp"
 
 #include <cassert>
 #include <iostream>
 #include <string>
 
+using gkit::core::Object;
+using gkit::core::Value;
 using gkit::core::reflect::ClassDB;
 using gkit::core::reflect::ClassInfo;
 using gkit::core::reflect::FieldDesc;
-using gkit::core::Value;
-using gkit::core::Object;
 
 // =========================================================================
 // Test types
@@ -273,15 +273,15 @@ auto main() -> int {
     init_reflect();
 
     auto ok = true;
-    ok      &= test_regist_and_find();
-    ok      &= test_add_field();
-    ok      &= test_get_field();
-    ok      &= test_set_field();
-    ok      &= test_readonly_property();
-    ok      &= test_parent_inheritance();
-    ok      &= test_for_each_field_inheritance();
-    ok      &= test_get_field_inherited();
-    ok      &= test_set_field_inherited();
+    ok &= test_regist_and_find();
+    ok &= test_add_field();
+    ok &= test_get_field();
+    ok &= test_set_field();
+    ok &= test_readonly_property();
+    ok &= test_parent_inheritance();
+    ok &= test_for_each_field_inheritance();
+    ok &= test_get_field_inherited();
+    ok &= test_set_field_inherited();
 
     if (ok) {
         std::cout << '\n' << "All tests passed." << '\n';
