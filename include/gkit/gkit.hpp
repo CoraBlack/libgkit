@@ -4,9 +4,8 @@
 #include <gkit/core/input/input.hpp>
 #include <gkit/core/input/keys.hpp>
 #include <gkit/core/input/mouse.hpp>
+#include <gkit/core/object.hpp>
 #include <gkit/core/processer.hpp>
-#include <gkit/core/scene/object.hpp>
-#include <gkit/core/scene/unit.hpp>
 
 /** Resource **/
 #include <gkit/resource/metadata.hpp>

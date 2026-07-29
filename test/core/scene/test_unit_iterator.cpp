@@ -8,7 +8,7 @@
 
 #include <gkit/gkit.hpp>
 
-using gkit::core::scene::Unit;
+using gkit::scene::Unit;
 
 #define TEST(cond, msg)                                                                   \
     do {                                                                                  \

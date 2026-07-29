@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/core/scene/singleton.hpp"
+#include "gkit/core/templates/singleton.hpp"
 
 #include <SDL3/SDL.h>
 
@@ -12,8 +12,8 @@ namespace gkit::core {
     /**
      * @brief SDL event dispatcher based on event type to handler list mapping.
      */
-    class SDLEventDispatcher : public gkit::core::scene::Singleton<SDLEventDispatcher> {
-        friend class gkit::core::scene::Singleton<SDLEventDispatcher>;
+    class SDLEventDispatcher : public gkit::core::templates::Singleton<SDLEventDispatcher> {
+        friend class gkit::core::templates::Singleton<SDLEventDispatcher>;
 
     public:
         /**
@@ -55,4 +55,4 @@ namespace gkit::core {
         // Key: SDL event type, Value: callback chain for that event.
         std::unordered_map<Uint32, std::vector<std::function<void(const SDL_Event&)>>> event_handlers;
     }; // class SDLEventDispatcher
-} // namespace gkit::misc
+} // namespace gkit::core

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/core/scene/singleton.hpp"
+#include "gkit/core/templates/singleton.hpp"
 #include "gkit/graphic/Shader.hpp"
 #include "gkit/graphic/opengl/IndexBuffer.hpp"
 #include "gkit/graphic/opengl/VertexArray.hpp"
@@ -16,8 +16,8 @@
  */
 namespace gkit::graphic {
 
-    class Renderer : public core::scene::Singleton<Renderer> {
-        friend class core::scene::Singleton<Renderer>;
+    class Renderer : public core::templates::Singleton<Renderer> {
+        friend class core::templates::Singleton<Renderer>;
 
     private:
         Renderer() = default;

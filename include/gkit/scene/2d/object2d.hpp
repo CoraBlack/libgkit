@@ -1,10 +1,10 @@
 #pragma once
 
-#include "gkit/core/scene/object.hpp"
+#include "gkit/core/object.hpp"
 #include "gkit/scene/2d/transform2d.hpp"
 
 namespace gkit::scene {
-    class Object2D : public gkit::core::scene::Object {
+    class Object2D : public gkit::core::Object {
     public:
         Object2D()          = default;
         virtual ~Object2D() = default;

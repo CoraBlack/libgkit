@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gkit/core/reflect/registry.hpp"
-#include "object.hpp"
+#include "gkit/core/object.hpp"
 
 #include <atomic>
 #include <cstdint>
@@ -20,7 +20,7 @@ namespace gkit {
     class Processer;
 }
 
-namespace gkit::core::scene {
+namespace gkit::scene {
     class Unit;
 
     template<typename T>
@@ -36,8 +36,8 @@ namespace gkit::core::scene {
      *
      * If you want to move an Unit instance, you should move with the std::unique_ptr by std::move().
      */
-    class Unit : public Object {
-        static reflect::RegistHolder register_holder;
+    class Unit : public gkit::core::Object {
+        static gkit::core::reflect::RegistHolder register_holder;
         static auto regist_method() -> void;
     protected:
         Unit() noexcept = default;
@@ -313,4 +313,4 @@ namespace gkit::core::scene {
         auto cast_parent = dynamic_cast<T*>(parent);
         return cast_parent == nullptr ? std::nullopt : *cast_parent;
     } // Unit::get_parent<T>
-} // namespace gkit::core::scene
+} // namespace gkit::scene

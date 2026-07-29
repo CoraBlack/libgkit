@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/core/scene/singleton.hpp"
+#include "gkit/core/templates/singleton.hpp"
 #include "gkit/resource/resource.hpp"
 
 #include <filesystem>
@@ -10,8 +10,8 @@
 #include <unordered_map>
 
 namespace gkit::resource {
-    class ResourceLoader : public core::scene::Singleton<ResourceLoader> {
-        friend class core::scene::Singleton<ResourceLoader>;
+    class ResourceLoader : public core::templates::Singleton<ResourceLoader> {
+        friend class core::templates::Singleton<ResourceLoader>;
 
     private:
         ResourceLoader() = default;

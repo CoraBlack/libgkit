@@ -1,14 +1,14 @@
 #pragma once
 
 #include "gkit/core/input/action.hpp"
-#include "gkit/core/scene/singleton.hpp"
+#include "gkit/core/templates/singleton.hpp"
 #include "mouse.hpp"
 
 #include <string>
 #include <unordered_map>
 
 namespace gkit {
-    class Input : public gkit::core::scene::Singleton<Input> {
+    class Input : public gkit::core::templates::Singleton<Input> {
     public:
         Input();
         virtual ~Input() = default;

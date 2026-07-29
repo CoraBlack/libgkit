@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/core/scene/singleton.hpp"
+#include "gkit/core/templates/singleton.hpp"
 
 #include <atomic>
 #include <chrono>
@@ -15,8 +15,8 @@
 #include <thread>
 
 namespace gkit::utils {
-    class Log : public gkit::core::scene::Singleton<Log> {
-        friend class gkit::core::scene::Singleton<Log>;
+    class Log : public gkit::core::templates::Singleton<Log> {
+        friend class gkit::core::templates::Singleton<Log>;
 
     public:
         enum class LogLevel : std::uint8_t {

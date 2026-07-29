@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/core/scene/object.hpp"
+#include "gkit/core/object.hpp"
 #include "gkit/math/constants.hpp"
 
 #include <cmath>
@@ -9,7 +9,7 @@
 namespace gkit::math {
 
     /// @brief 2D vector (x, y)
-    class Vector2 final : public core::scene::Object {
+    class Vector2 final : public core::Object {
     public:
         float x = 0.0f;
         float y = 0.0f;

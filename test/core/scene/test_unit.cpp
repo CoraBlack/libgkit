@@ -1,14 +1,14 @@
 // NOLINTBEGIN(google-readability-avoid-underscore-in-googletest-name)
-#include "gkit/core/scene/object.hpp"
+#include "gkit/core/object.hpp"
 
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <gkit/core/scene/unit.hpp>
+#include <gkit/scene/unit.hpp>
 
-using gkit::core::scene::Unit;
+using gkit::scene::Unit;
 
 #define TEST(cond, msg)                                                                   \
     do {                                                                                  \
@@ -72,7 +72,7 @@ public:
 std::vector<std::string> TestUnit::timeline;
 
 auto test_create_and_with_child() -> bool {
-    using gkit::core::scene::Object;
+    using gkit::core::Object;
 
     std::cout << "\n=== test_create_and_with_child ===\n";
 

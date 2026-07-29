@@ -1,5 +1,5 @@
 #include "gkit/core/reflect/registry.hpp"
-#include "gkit/core/scene/object.hpp"
+#include "gkit/core/object.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -9,7 +9,7 @@ using gkit::core::reflect::ClassDB;
 using gkit::core::reflect::ClassInfo;
 using gkit::core::reflect::FieldDesc;
 using gkit::core::Value;
-using gkit::core::scene::Object;
+using gkit::core::Object;
 
 // =========================================================================
 // Test types
