@@ -14,8 +14,8 @@ list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_resource>)
 add_subdirectory(scene)
 list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_scene>)
 
-add_subdirectory(utils)
-list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_utils>)
+# add_subdirectory(utils)
+# list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_utils>)
 
 add_subdirectory(graphic)
 list (APPEND GKIT_OBJS $<TARGET_OBJECTS:gkit_graphic>)

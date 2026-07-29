@@ -14,14 +14,14 @@ namespace gkit::core {
     Value::Value(Array value) : storage(std::move(value)) {}
     Value::Value(Map value) : storage(std::move(value)) {}
 
-    Value::Value(std::unique_ptr<gkit::core::scene::Object> value) noexcept : storage(std::move(value)) {}
+    Value::Value(std::unique_ptr<gkit::core::Object> value) noexcept : storage(std::move(value)) {}
 
     Value::Value(const Value& other) {
         std::visit(
             [this](const auto& v) {
                 using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, std::unique_ptr<gkit::core::scene::Object>>) {
-                    throw std::logic_error("Cannot copy Value holding a non-copyable scene::Object");
+                if constexpr (std::is_same_v<T, std::unique_ptr<gkit::core::Object>>) {
+                    throw std::logic_error("Cannot copy Value holding a non-copyable Object");
                 } else {
                     this->storage = v;
                 }
@@ -38,8 +38,8 @@ namespace gkit::core {
         std::visit(
             [this](const auto& v) {
                 using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, std::unique_ptr<gkit::core::scene::Object>>) {
-                    throw std::logic_error("Cannot copy Value holding a non-copyable scene::Object");
+                if constexpr (std::is_same_v<T, std::unique_ptr<gkit::core::Object>>) {
+                    throw std::logic_error("Cannot copy Value holding a non-copyable Object");
                 } else {
                     this->storage = v;
                 }
@@ -92,7 +92,7 @@ namespace gkit::core {
         return *this;
     }
 
-    auto Value::operator=(std::unique_ptr<gkit::core::scene::Object> value) noexcept -> Value& {
+    auto Value::operator=(std::unique_ptr<gkit::core::Object> value) noexcept -> Value& {
         storage = std::move(value);
         return *this;
     }
@@ -125,8 +125,8 @@ namespace gkit::core {
     // Value - Object Accessors
     // =========================================================================
 
-    auto Value::as_object() -> std::unique_ptr<gkit::core::scene::Object> {
-        auto ptr = std::move(std::get<std::unique_ptr<gkit::core::scene::Object>>(storage));
+    auto Value::as_object() -> std::unique_ptr<gkit::core::Object> {
+        auto ptr = std::move(std::get<std::unique_ptr<gkit::core::Object>>(storage));
         storage  = Null{};
         return ptr;
     }
@@ -139,8 +139,8 @@ namespace gkit::core {
         return is_string() ? as_string() : fallback;
     }
 
-    auto Value::as_object_or(gkit::core::scene::Object* fallback) const noexcept -> gkit::core::scene::Object* {
-        return is_object() ? std::get<std::unique_ptr<gkit::core::scene::Object>>(storage).get() : fallback;
+    auto Value::as_object_or(gkit::core::Object* fallback) const noexcept -> gkit::core::Object* {
+        return is_object() ? std::get<std::unique_ptr<gkit::core::Object>>(storage).get() : fallback;
     }
 
     // =========================================================================

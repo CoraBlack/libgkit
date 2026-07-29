@@ -4,7 +4,7 @@ namespace gkit {
     class Processer;
 }
 
-namespace gkit::core::scene {
+namespace gkit::core::templates {
     template<typename T>
     class Singleton {
         friend T;
@@ -24,4 +24,4 @@ namespace gkit::core::scene {
             return instance;
         }
     }; // class Singleton
-} // namespace gkit::core::scene
+} // namespace gkit::core::templates

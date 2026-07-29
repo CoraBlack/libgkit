@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gkit/core/scene/object.hpp"
-#include "gkit/core/scene/singleton.hpp"
+#include "gkit/core/object.hpp"
+#include "gkit/core/templates/singleton.hpp"
 #include "gkit/core/value.hpp"
 
 #include <functional>
@@ -15,7 +15,7 @@ namespace gkit::core::reflect {
     struct RegistHolder {
         explicit RegistHolder(std::function<void()>&& regist_func) { regist_func(); };
     };
-    
+
     struct FieldDesc final {
         std::string name;
         Type value_type;
@@ -46,17 +46,17 @@ namespace gkit::core::reflect {
         std::vector<Setter> setters;
     };
 
-    class ClassDB final : public gkit::core::scene::Singleton<ClassDB> {
-        friend gkit::core::scene::Singleton<ClassDB>;
+    class ClassDB final : public gkit::core::templates::Singleton<ClassDB> {
+        friend gkit::core::templates::Singleton<ClassDB>;
 
     public:
-        template<scene::IsObject T>
+        template<IsObject T>
         auto regist(const std::string& class_name, const std::string& parent = "") -> ClassDB&;
 
-        template<scene::IsObject T, IsValueType F>
+        template<IsObject T, IsValueType F>
         auto add_field(const std::string& class_name, const std::string& field_name, F T::* member) -> ClassDB&;
 
-        template<scene::IsObject T>
+        template<IsObject T>
         auto add_property(const std::string& class_name,
                           const std::string& field_name,
                           std::function<Value(const T&)> getter,
@@ -125,7 +125,7 @@ namespace gkit::core::reflect {
     // Template implementation — ClassDB / ClassInfo
     // =========================================================================
 
-    template<scene::IsObject T>
+    template<IsObject T>
     auto ClassDB::regist(const std::string& class_name, const std::string& parent) -> ClassDB& {
         auto& info             = this->classes[class_name];
         info.class_name        = class_name;
@@ -133,7 +133,7 @@ namespace gkit::core::reflect {
         return *this;
     }
 
-    template<scene::IsObject T, IsValueType F>
+    template<IsObject T, IsValueType F>
     auto ClassDB::add_field(const std::string& class_name, const std::string& field_name, F T::* member) -> ClassDB& {
         auto& info = this->classes.at(class_name);
         info.fields.push_back(FieldDesc{field_name, detail::deduce_type<F>()});
@@ -142,7 +142,7 @@ namespace gkit::core::reflect {
         return *this;
     }
 
-    template<scene::IsObject T>
+    template<IsObject T>
     auto ClassDB::add_property(const std::string& class_name,
                                const std::string& field_name,
                                std::function<Value(const T&)> getter,

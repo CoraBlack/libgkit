@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/core/scene/singleton.hpp"
+#include "gkit/core/templates/singleton.hpp"
 
 #include <atomic>
 #include <chrono>
@@ -14,9 +14,9 @@
 #include <string>
 #include <thread>
 
-namespace gkit::utils {
-    class Log : public gkit::core::scene::Singleton<Log> {
-        friend class gkit::core::scene::Singleton<Log>;
+namespace gkit::core {
+    class Log : public gkit::core::templates::Singleton<Log> {
+        friend class gkit::core::templates::Singleton<Log>;
 
     public:
         enum class LogLevel : std::uint8_t {
@@ -116,4 +116,4 @@ namespace gkit::utils {
         std::atomic<std::uint64_t> dropped_full_count{0};
         std::atomic<std::uint64_t> processed_count{0};
     }; // class Log
-} // namespace gkit::utils
+} // namespace gkit::core

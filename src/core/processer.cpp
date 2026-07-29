@@ -1,6 +1,6 @@
 #include "gkit/core/processer.hpp"
 
-#include "gkit/core/scene/unit.hpp"
+#include "gkit/scene/unit.hpp"
 
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_init.h>
@@ -19,7 +19,7 @@ gkit::Processer::~Processer() noexcept {
     SDL_Quit();
 }
 
-auto gkit::Processer::set_root(std::unique_ptr<core::scene::Unit>&& root_ptr) noexcept -> void {
+auto gkit::Processer::set_root(std::unique_ptr<scene::Unit>&& root_ptr) noexcept -> void {
     if (root_ptr == nullptr) return;
     this->root = std::move(root_ptr);
 }

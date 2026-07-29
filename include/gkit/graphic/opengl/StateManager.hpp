@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/core/scene/singleton.hpp"
+#include "gkit/core/templates/singleton.hpp"
 #include "gkit/graphic/opengl/config.hpp"
 
 #include <cstdint>
@@ -15,8 +15,8 @@ namespace gkit::graphic::opengl {
      * Tracks current OpenGL state and only calls GL functions when state actually changes.
      * Uses singleton pattern for global access.
      */
-    class StateManager : public core::scene::Singleton<StateManager> {
-        friend class core::scene::Singleton<StateManager>;
+    class StateManager : public core::templates::Singleton<StateManager> {
+        friend class core::templates::Singleton<StateManager>;
 
     private:
         StateManager() = default;

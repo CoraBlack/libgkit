@@ -1,6 +1,8 @@
 set (GKIT_SCENE "gkit_scene")
 
 set (SCENE_SRC
+    "./unit.cpp"
+
     # 2D scene
     "2d/object2d.cpp"
     "2d/transform2d.cpp"

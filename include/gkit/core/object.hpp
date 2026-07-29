@@ -4,7 +4,7 @@
 #include <memory>
 #include <utility>
 
-namespace gkit::core::scene {
+namespace gkit::core {
     class Object;
 
     template<class T>
@@ -41,4 +41,4 @@ namespace gkit::core::scene {
             return nullptr;
         }
     }
-} // namespace gkit::core::scene
+} // namespace gkit::core

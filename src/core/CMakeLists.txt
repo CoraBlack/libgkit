@@ -1,7 +1,6 @@
 set (GKIT_CORE "gkit_core")
 
 set (CORE_SRC
-
     # Input module
     "./input/action.cpp"
     "./input/cache.cpp"
@@ -10,13 +9,11 @@ set (CORE_SRC
     # Misc module
     "./misc/sdl_event_dispatcher.cpp"
 
-    # Scene module
-    "./scene/object.cpp"
-    "./scene/unit.cpp"
-
     # Reflect module
     "./reflect/registry.cpp"
 
+    "./log.cpp"
+    "object.cpp"
     "./processer.cpp"
     "./value.cpp"
 )

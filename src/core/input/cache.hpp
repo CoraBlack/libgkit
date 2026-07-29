@@ -2,7 +2,7 @@
 
 #include "gkit/core/input/keys.hpp"
 #include "gkit/core/input/mouse.hpp"
-#include "gkit/core/scene/singleton.hpp"
+#include "gkit/core/templates/singleton.hpp"
 #include "gkit/math/vector2.hpp"
 
 #include <SDL3/SDL.h>
@@ -15,9 +15,9 @@ namespace gkit {
 }
 
 namespace gkit::input {
-    class Cache : public gkit::core::scene::Singleton<Cache> {
+    class Cache : public gkit::core::templates::Singleton<Cache> {
         friend class gkit::Input;
-        friend class gkit::core::scene::Singleton<Cache>;
+        friend class gkit::core::templates::Singleton<Cache>;
         Cache();
 
     public:

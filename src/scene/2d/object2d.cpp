@@ -1,1 +1,1 @@
-#include "gkit/core/scene/object.hpp"
+#include "gkit/scene/2d/object2d.hpp"
