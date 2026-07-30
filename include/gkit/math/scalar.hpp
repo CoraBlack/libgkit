@@ -34,13 +34,13 @@ namespace gkit::math {
 
     // Floating-point special values (64-bit double)
     /// @brief Double epsilon (machine epsilon for double)
-    constexpr float EPSILON64 = std::numeric_limits<float>::epsilon();
+    constexpr double EPSILON64 = std::numeric_limits<double>::epsilon();
 
     /// @brief Double minimum positive value
-    constexpr float MIN64 = std::numeric_limits<float>::min();
+    constexpr double MIN64 = std::numeric_limits<double>::min();
 
     /// @brief Double maximum value
-    constexpr float MAX64 = std::numeric_limits<float>::max();
+    constexpr double MAX64 = std::numeric_limits<double>::max();
 
     // Integer special values (8-bit)
     /// @brief 8-bit signed minimum (-128)
