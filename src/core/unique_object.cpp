@@ -23,4 +23,15 @@ namespace gkit::core {
         auto& obj_pool = ObjectPool::instance();
         obj_pool.release(this->id);
     }
+
+    auto UniqueObject::operator=(UniqueObject&& other) noexcept -> UniqueObject& {
+        if (this != &other) {
+            auto& obj_pool = ObjectPool::instance();
+            obj_pool.release(this->id);
+            this->id  = std::move(other.id);
+            this->obj = other.obj;
+            other.obj = nullptr;
+        }
+        return *this;
+    }
 } // namespace gkit::core
