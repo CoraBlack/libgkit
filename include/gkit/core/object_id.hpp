@@ -31,7 +31,7 @@ namespace gkit::core {
          * @brief check ObjectId is invalid
          * @return bool - Both id and version are not zero.
          */
-        inline auto available() -> bool { return this->id != 0 && this->version != 0; }
+        inline auto available() const -> bool { return this->id != 0 && this->version != 0; }
     }; // class ObjectId
 
     class ObjectIdAllocator final : public gkit::core::templates::Singleton<ObjectIdAllocator> {
