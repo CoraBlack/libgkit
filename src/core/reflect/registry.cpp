@@ -12,6 +12,17 @@ namespace gkit::core::reflect {
         return nullptr;
     }
 
+    auto ClassDB::create(const std::string& class_name) const -> std::unique_ptr<Object> {
+        auto it = this->classes.find(class_name);
+        if (it == this->classes.end()) {
+            return nullptr;
+        }
+        if (!it->second.factory) {
+            return nullptr;
+        }
+        return it->second.factory();
+    }
+
     auto ClassInfo::parent() const -> const ClassInfo* {
         if (this->parent_cache == nullptr && !this->parent_class_name.empty()) {
             auto* found        = const_cast<ClassInfo*>(ClassDB::instance().find(this->parent_class_name));

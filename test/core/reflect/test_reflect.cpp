@@ -265,6 +265,36 @@ auto test_set_field_inherited() -> bool {
     return true;
 }
 
+auto test_create_object() -> bool {
+    std::cout << "=== Test: create object by class name ===" << '\n';
+
+    auto obj = ClassDB::instance().create("ReflectTestObj");
+    assert(obj != nullptr);
+    std::cout << "  create existing class: OK" << '\n';
+
+    auto* typed = dynamic_cast<ReflectTestObj*>(obj.get());
+    assert(typed != nullptr);
+    assert(typed->active == true);
+    assert(typed->count == 0);
+    assert(typed->scale == 1.0f);
+    assert(typed->label == "default");
+    std::cout << "  created object has default values: OK" << '\n';
+
+    auto bad = ClassDB::instance().create("NonExistent");
+    assert(bad == nullptr);
+    std::cout << "  create non-existent class returns nullptr: OK" << '\n';
+
+    auto child = ClassDB::instance().create("ChildObj");
+    assert(child != nullptr);
+    auto* child_typed = dynamic_cast<ChildObj*>(child.get());
+    assert(child_typed != nullptr);
+    assert(child_typed->label == "default");
+    assert(child_typed->weight == 0.0f);
+    std::cout << "  create inherited class: OK" << '\n';
+
+    return true;
+}
+
 // =========================================================================
 // Entry
 // =========================================================================
@@ -282,6 +312,7 @@ auto main() -> int {
     ok &= test_for_each_field_inheritance();
     ok &= test_get_field_inherited();
     ok &= test_set_field_inherited();
+    ok &= test_create_object();
 
     if (ok) {
         std::cout << '\n' << "All tests passed." << '\n';

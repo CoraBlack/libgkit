@@ -40,11 +40,9 @@ namespace gkit::scene {
         static gkit::core::reflect::RegistHolder register_holder;
         static auto regist_method() -> void;
 
-    protected:
+    public:
         Unit() noexcept = default;
         explicit Unit(std::string&& name) noexcept;
-
-    public:
         virtual ~Unit() = default;
 
     public: // virtual methods
