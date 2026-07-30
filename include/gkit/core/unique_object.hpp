@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gkit/core/object.hpp"
+#include "core/object_pool.hpp"
 #include "object_id.hpp"
 
 namespace gkit::core {
@@ -17,15 +18,17 @@ namespace gkit::core {
         UniqueObject(UniqueObject&& other) noexcept;
 
         auto operator=(const UniqueObject& other) -> ObjectId;
+
+        inline auto get_id() const -> const ObjectId& { return this->id; }
     };
 
     template<IsObject T>
     UniqueObject::UniqueObject() noexcept {
-        try {
-            this->obj = new T();
-            this->id  = ObjectIdAllocator::instance().new_one();
-        } catch (...) {
-            this->obj = nullptr;
+        auto& obj_pool = ObjectPool::instance();
+        auto obj_opt = obj_pool.create<T>();
+        if (obj_opt.has_value()) {
+            this->id  = obj_opt->first;
+            this->obj = obj_opt->second;
         }
     }
 } // namespace gkit::core
