@@ -2,7 +2,9 @@
 
 #include "gkit/core/templates/singleton.hpp"
 
+#include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <mutex>
 #include <stack>
 #include <unordered_map>
@@ -12,6 +14,7 @@ namespace gkit::core {
 
     class ObjectId final {
         friend ObjectIdAllocator;
+        friend std::hash<gkit::core::ObjectId>;
         // defalut is invalid value
         uint32_t id      = 0u;
         uint32_t version = 0u;
@@ -54,3 +57,11 @@ namespace gkit::core {
         auto drop(const ObjectId& obj_id) noexcept -> void;
     }; // class ObjectIdAllocator
 } // namespace gkit::core
+
+template<>
+struct std::hash<gkit::core::ObjectId> {
+    auto operator()(const gkit::core::ObjectId& objid) -> std::size_t {
+        auto uint_hash = std::hash<uint32_t>();
+        return uint_hash(objid.id) ^ uint_hash(objid.version);
+    }
+};
