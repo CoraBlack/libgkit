@@ -2,6 +2,7 @@
 
 #include "gkit/core/object_id.hpp"
 #include "gkit/core/reflect/registry.hpp"
+#include "object_pool.hpp"
 
 #include <string>
 #include <utility>
@@ -19,13 +20,7 @@ namespace gkit::core {
     }
 
     UniqueObject::~UniqueObject() noexcept {
-        if (this->obj != nullptr) {
-            delete this->obj;
-        }
-
-        if (this->id.available()) {
-            auto& id_alloc = ObjectIdAllocator::instance();
-            id_alloc.drop(this->id);
-        }
+        auto& obj_pool = ObjectPool::instance();
+        obj_pool.release(this->id);
     }
 } // namespace gkit::core
