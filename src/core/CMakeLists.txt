@@ -13,8 +13,10 @@ set (CORE_SRC
     "./reflect/registry.cpp"
 
     "./log.cpp"
-    "object.cpp"
+    "./object_id.cpp"
+    "./object.cpp"
     "./processer.cpp"
+    "./unique_object.cpp"
     "./value.cpp"
 )
 
