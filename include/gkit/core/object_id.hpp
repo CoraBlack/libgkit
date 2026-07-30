@@ -7,7 +7,6 @@
 #include <stack>
 #include <unordered_map>
 
-
 namespace gkit::core {
     class ObjectIdAllocator;
 
@@ -23,7 +22,7 @@ namespace gkit::core {
     public:
         ObjectId(const ObjectId& other) noexcept = default;
         ObjectId(ObjectId&& other) noexcept;
-        auto operator= (const ObjectId& other) -> ObjectId& = default;
+        auto operator=(const ObjectId& other) -> ObjectId& = default;
 
         /**
          * @brief check ObjectId is invalid
@@ -53,5 +52,5 @@ namespace gkit::core {
          * @param obj_id - which ObjectId is needed to be dropped
          */
         auto drop(const ObjectId& obj_id) noexcept -> void;
-    };// class ObjectIdAllocator
+    }; // class ObjectIdAllocator
 } // namespace gkit::core

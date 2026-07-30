@@ -1,14 +1,16 @@
 #include "gkit/core/object_id.hpp"
+
 #include <mutex>
 
 namespace gkit::core {
-    
+
     /**
      * ObjectId
      */
-    ObjectId::ObjectId() noexcept { }
+    ObjectId::ObjectId() noexcept {}
     ObjectId::ObjectId(ObjectId&& other) noexcept : id(other.id), version(other.version) {
-        other.id = 0; other.version = 0;
+        other.id      = 0;
+        other.version = 0;
     }
 
     /**
@@ -18,7 +20,6 @@ namespace gkit::core {
         // init value, every id is alloc from 1
         // id equal zero means not alloc or invalid
         this->id_pool.push(1);
-
     }
 
     auto ObjectIdAllocator::new_one() noexcept -> ObjectId {
@@ -26,14 +27,15 @@ namespace gkit::core {
         {
             std::unique_lock alloc_locker(this->id_alloc_lock);
             if (this->id_pool.size() <= 1) {
-                // Final element in id_pool is not alloc before be called top(). 
+                // Final element in id_pool is not alloc before be called top().
                 // So the version of final element always is one.
-                obj_id.id = id_pool.top()++;
+                obj_id.id      = id_pool.top()++;
                 obj_id.version = 1;
             } else {
                 // version of recycle id is not always one
                 // and is recorded to version map when the id is dropped.
-                obj_id.id = id_pool.top(); id_pool.pop();
+                obj_id.id = id_pool.top();
+                id_pool.pop();
                 obj_id.version = ++this->id_version[obj_id.id];
             }
         }
@@ -41,7 +43,7 @@ namespace gkit::core {
     }
 
     auto ObjectIdAllocator::drop(const ObjectId& obj_id) noexcept -> void {
-        auto old_id = obj_id.id;
+        auto old_id      = obj_id.id;
         auto old_version = obj_id.version;
 
         {
@@ -55,4 +57,4 @@ namespace gkit::core {
             }
         }
     }
-}// namespace gkit::core
+} // namespace gkit::core

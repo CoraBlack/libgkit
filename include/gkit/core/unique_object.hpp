@@ -7,6 +7,7 @@ namespace gkit::core {
     class UniqueObject final {
         Object* obj = nullptr;
         ObjectId id;
+
     public:
         template<IsObject T>
         UniqueObject() noexcept;
@@ -15,15 +16,15 @@ namespace gkit::core {
         UniqueObject(const UniqueObject&) noexcept = delete;
         UniqueObject(UniqueObject&& other) noexcept;
 
-        auto operator= (const UniqueObject& other) -> ObjectId;
+        auto operator=(const UniqueObject& other) -> ObjectId;
     };
 
     template<IsObject T>
     UniqueObject::UniqueObject() noexcept {
         try {
             this->obj = new T();
-            this->id = ObjectIdAllocator::instance().new_one();
-        } catch(...) {
+            this->id  = ObjectIdAllocator::instance().new_one();
+        } catch (...) {
             this->obj = nullptr;
         }
     }
