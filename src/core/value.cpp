@@ -14,14 +14,15 @@ namespace gkit::core {
     Value::Value(Array value) : storage(std::move(value)) {}
     Value::Value(Map value) : storage(std::move(value)) {}
 
-    Value::Value(std::unique_ptr<gkit::core::Object> value) noexcept : storage(std::move(value)) {}
+    Value::Value(UniqueObject value) noexcept : storage(std::move(value)) {}
+    Value::Value(ObjectId value) noexcept : storage(value) {}
 
     Value::Value(const Value& other) {
         std::visit(
             [this](const auto& v) {
                 using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, std::unique_ptr<gkit::core::Object>>) {
-                    throw std::logic_error("Cannot copy Value holding a non-copyable Object");
+                if constexpr (std::is_same_v<T, UniqueObject>) {
+                    throw std::logic_error("Cannot copy Value holding a non-copyable UniqueObject");
                 } else {
                     this->storage = v;
                 }
@@ -38,8 +39,8 @@ namespace gkit::core {
         std::visit(
             [this](const auto& v) {
                 using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, std::unique_ptr<gkit::core::Object>>) {
-                    throw std::logic_error("Cannot copy Value holding a non-copyable Object");
+                if constexpr (std::is_same_v<T, UniqueObject>) {
+                    throw std::logic_error("Cannot copy Value holding a non-copyable UniqueObject");
                 } else {
                     this->storage = v;
                 }
@@ -47,10 +48,6 @@ namespace gkit::core {
             other.storage);
         return *this;
     }
-
-    // =========================================================================
-    // Value - Assignment Operators
-    // =========================================================================
 
     auto Value::operator=(Null) noexcept -> Value& {
         storage = Null{};
@@ -92,8 +89,13 @@ namespace gkit::core {
         return *this;
     }
 
-    auto Value::operator=(std::unique_ptr<gkit::core::Object> value) noexcept -> Value& {
+    auto Value::operator=(UniqueObject value) noexcept -> Value& {
         storage = std::move(value);
+        return *this;
+    }
+
+    auto Value::operator=(ObjectId value) noexcept -> Value& {
+        storage = value;
         return *this;
     }
 
@@ -125,10 +127,34 @@ namespace gkit::core {
     // Value - Object Accessors
     // =========================================================================
 
-    auto Value::as_object() -> std::unique_ptr<gkit::core::Object> {
-        auto ptr = std::move(std::get<std::unique_ptr<gkit::core::Object>>(storage));
-        storage  = Null{};
-        return ptr;
+    auto Value::as_object() const noexcept -> ObjectId {
+        if (std::holds_alternative<UniqueObject>(storage)) {
+            return std::get<UniqueObject>(storage).get_id();
+        }
+        if (std::holds_alternative<ObjectId>(storage)) {
+            return std::get<ObjectId>(storage);
+        }
+        return ObjectId{};
+    }
+
+    auto Value::as_object_ptr() noexcept -> gkit::core::Object* {
+        if (std::holds_alternative<UniqueObject>(storage)) {
+            return std::get<UniqueObject>(storage).get();
+        }
+        if (std::holds_alternative<ObjectId>(storage)) {
+            return ObjectPool::instance().deref_from(std::get<ObjectId>(storage));
+        }
+        return nullptr;
+    }
+
+    auto Value::as_object_ptr() const noexcept -> const gkit::core::Object* {
+        if (std::holds_alternative<UniqueObject>(storage)) {
+            return std::get<UniqueObject>(storage).get();
+        }
+        if (std::holds_alternative<ObjectId>(storage)) {
+            return ObjectPool::instance().deref_from(std::get<ObjectId>(storage));
+        }
+        return nullptr;
     }
 
     // =========================================================================
@@ -140,7 +166,8 @@ namespace gkit::core {
     }
 
     auto Value::as_object_or(gkit::core::Object* fallback) const noexcept -> gkit::core::Object* {
-        return is_object() ? std::get<std::unique_ptr<gkit::core::Object>>(storage).get() : fallback;
+        auto* ptr = as_object_ptr();
+        return ptr != nullptr ? const_cast<gkit::core::Object*>(ptr) : fallback;
     }
 
     // =========================================================================
