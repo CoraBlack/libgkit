@@ -71,28 +71,27 @@ int main(int argc, char* argv[]) {
 
         auto& device = renderer.get_device();
 
-#pragma region square
-        // Triangle vertex data
-        float pic_vertices[] = {// positions        // tex coordsc
-                                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.0f,
-                                0.5f,  0.5f,  0.0f, 1.0f, 1.0f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f};
+#pragma region triangle
+        // Colored triangle vertex data (position + color)
+        float tri_vertices[] = {// positions            // colors
+                                0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // top: red
+                                -0.4f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom-left: green
+                                0.4f,  -0.25f, 0.0f, 0.0f, 0.0f, 1.0f}; // bottom-right: blue
 
         // index data
-        unsigned int pic_indices[] = {0, 1, 2, 2, 3, 0};
+        unsigned int tri_indices[] = {0, 1, 2};
 
-        auto pic_vao = device.create_vertex_array();
-        auto pic_vbo = device.create_vertex_buffer(pic_vertices, sizeof(pic_vertices), false);
-        auto pic_ibo = device.create_index_buffer(pic_indices, 6);
+        auto tri_vao = device.create_vertex_array();
+        auto tri_vbo = device.create_vertex_buffer(tri_vertices, sizeof(tri_vertices), false);
+        auto tri_ibo = device.create_index_buffer(tri_indices, 3);
 
-        gkit::graphic::VertexBufferLayout pic_layout;
-        pic_layout.push<float>(3);
-        pic_layout.push<float>(2);
-        pic_vao->add_buffer(*pic_vbo, pic_layout);
+        gkit::graphic::VertexBufferLayout tri_layout;
+        tri_layout.push<float>(3); // position
+        tri_layout.push<float>(3); // color
+        tri_vao->add_buffer(*tri_vbo, tri_layout);
 
         // load shader source
-        auto pic_shader = device.create_shader((resource_base / "graphic" / "texture.shader").string());
-        gkit::graphic::opengl::Texture main_texture((resource_base / "graphic" / "container2.png").string(),
-                                                    gkit::graphic::TextureType::Texture2D);
+        auto tri_shader = device.create_shader((resource_base / "graphic" / "color_triangle.shader").string());
 
         // Full-screen quad vertex data (post-processing)
         float quad_vertices[] = {// positions                    // tex coords
@@ -142,42 +141,27 @@ int main(int argc, char* argv[]) {
             fbo->set_viewport(0, 0, screen_width, screen_height);
             renderer.clear(gkit::graphic::ClearFlags::All);
             // 1. Render to framebuffer
-            pic_shader->bind();
-            main_texture.bind(0);
-            renderer.draw(*pic_vao, *pic_ibo, *pic_shader);
+            tri_shader->bind();
+            renderer.draw(*tri_vao, *tri_ibo, *tri_shader);
 
             // 2. Render to screen (post-processing)
             fbo->unbind();
-            renderer.clear(gkit::graphic::ClearFlags::All);
-            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width / 2, screen_height / 2);
-            state_manager.set_stencil_test(true);
-            state_manager.set_stencil(gkit::graphic::CompareFunc::Always, 1, 0xFF);
-            state_manager.set_stencil_op(
-                gkit::graphic::StencilOp::Keep, gkit::graphic::StencilOp::Keep, gkit::graphic::StencilOp::Replace);
-            state_manager.apply();
-            pic_shader->bind();
-            main_texture.bind(0);
-            renderer.draw(*pic_vao, *pic_ibo, *pic_shader);
-
             gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width, screen_height);
-            state_manager.set_stencil(gkit::graphic::CompareFunc::Equal, 1, 0xFF);
-            state_manager.set_stencil_op(
-                gkit::graphic::StencilOp::Keep, gkit::graphic::StencilOp::Keep, gkit::graphic::StencilOp::Keep);
-            state_manager.apply();
             post_shader->bind();
             fbo_texture.bind(0);
             post_shader->set_uniform_1i("screenTexture", 0);
             renderer.draw(*quad_vao, *quad_ib, *post_shader);
 
-            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width / 4, screen_height / 4);
+            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width/2, screen_height/2);
+            tri_shader->bind();
+            renderer.draw(*tri_vao, *tri_ibo, *tri_shader);
+
+            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width/4, screen_height/4);
             post_shader->bind();
             fbo_texture.bind(0);
             post_shader->set_uniform_1i("screenTexture", 0);
             renderer.draw(*quad_vao, *quad_ib, *post_shader);
-
-            state_manager.set_stencil_test(false);
-            state_manager.apply();
-
+            
             // Swap buffers
             SDL_GL_SwapWindow(window);
         }

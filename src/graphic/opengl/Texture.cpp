@@ -6,7 +6,23 @@
 //#include <iostream>
 
 gkit::graphic::opengl::Texture::Texture(const std::string& path, gkit::graphic::TextureType type) :
-    renderer_id(0), filepath(path), local_buffer(nullptr), width(0), height(0), bpp(0), type(type) {}
+    renderer_id(0), filepath(path), local_buffer(nullptr), width(0), height(0), bpp(0), type(type) {
+    // Framebuffer textures need a real GL texture object with storage to be a
+    // valid FBO color attachment. Image loading (stb) is stubbed out for now,
+    // but off-screen textures only need empty renderable storage.
+    if (this->type == gkit::graphic::TextureType::TextureFramebuffer) {
+        this->width  = gkit::graphic::SCR_WIDTH;
+        this->height = gkit::graphic::SCR_HEIGHT;
+        glGenTextures(1, &this->renderer_id);
+        glBindTexture(GL_TEXTURE_2D, this->renderer_id);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, this->width, this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+}
 
 gkit::graphic::opengl::Texture::~Texture() {
     delete[] this->local_buffer;
