@@ -2,6 +2,8 @@
 
 #include <concepts>
 #include <memory>
+#include <string_view>
+#include <typeinfo>
 #include <utility>
 
 namespace gkit::core {
@@ -10,11 +12,13 @@ namespace gkit::core {
     template<class T>
     concept IsObject = std::derived_from<T, Object>;
 
-    /**
-     * @brief The base object in libgkit,
-     * and should create it with func @ref gkit::core::scene::Object::create<T>().
-     */
+    namespace reflect::detail {
+        class ObjectNode;
+    }
+
     class Object {
+        friend class gkit::core::reflect::detail::ObjectNode;
+
     public:
         Object()          = default;
         virtual ~Object() = default;
@@ -28,6 +32,10 @@ namespace gkit::core {
          */
         template<IsObject T, typename... Args>
         static auto create(Args&&...) noexcept -> std::unique_ptr<T>;
+
+    private:
+        /// @brief Only accessible to ObjectNode for field-snapshot expansion at tree build time.
+        [[nodiscard]] virtual auto get_class_name() const noexcept -> std::string_view { return typeid(*this).name(); }
     };
 
     template<IsObject T, typename... Args>
