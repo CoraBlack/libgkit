@@ -11,11 +11,11 @@ namespace gkit::graphic {
 	 */
     class RenderBuffer {
     public:
-        RenderBuffer()                                = default;
-        RenderBuffer(const RenderBuffer&)             = delete;
+        RenderBuffer()                                       = default;
+        RenderBuffer(const RenderBuffer&)                    = delete;
         auto operator=(const RenderBuffer&) -> RenderBuffer& = delete;
 
-        RenderBuffer(RenderBuffer&&) noexcept                          = default;
+        RenderBuffer(RenderBuffer&&) noexcept                    = default;
         auto operator=(RenderBuffer&&) noexcept -> RenderBuffer& = default;
 
         virtual ~RenderBuffer() = default;

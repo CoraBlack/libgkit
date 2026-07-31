@@ -22,8 +22,8 @@ namespace gkit::graphic::opengl {
     auto FrameBuffer::attach_color_texture(const graphic::Texture& texture, int slot) -> void {
         bind();
         const auto& gl_texture = static_cast<const gkit::graphic::opengl::Texture&>(texture);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, gl_texture.get_renderer_id(),
-                               0);
+        glFramebufferTexture2D(
+            GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + slot, GL_TEXTURE_2D, gl_texture.get_renderer_id(), 0);
     }
 
     auto FrameBuffer::detach_color_texture(int slot) -> void {
@@ -34,8 +34,7 @@ namespace gkit::graphic::opengl {
     auto FrameBuffer::attach_depth_stencil(const graphic::RenderBuffer& rbo) -> void {
         bind();
         const auto& gl_rbo = static_cast<const gkit::graphic::opengl::RenderBuffer&>(rbo);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                                  gl_rbo.get_render_id());
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, gl_rbo.get_render_id());
     }
 
     auto FrameBuffer::detach_depth_stencil() -> void {

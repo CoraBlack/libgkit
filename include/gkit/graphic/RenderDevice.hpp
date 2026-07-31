@@ -29,26 +29,25 @@ namespace gkit::graphic {
 	 */
     class RenderDevice {
     public:
-        RenderDevice(const RenderDevice&) = delete;
+        RenderDevice(const RenderDevice&)                    = delete;
         auto operator=(const RenderDevice&) -> RenderDevice& = delete;
 
-        RenderDevice()                         = default;
-        RenderDevice(RenderDevice&&) noexcept  = default;
+        RenderDevice()                                           = default;
+        RenderDevice(RenderDevice&&) noexcept                    = default;
         auto operator=(RenderDevice&&) noexcept -> RenderDevice& = default;
 
         virtual ~RenderDevice() = default;
 
         // ---- 资源工厂 ----
 
-        virtual auto create_vertex_buffer(const void* data, uint32_t size, bool dynamic = false)
-            -> std::unique_ptr<VertexBuffer> = 0;
-        virtual auto create_index_buffer(const uint32_t* data, uint32_t count)
-            -> std::unique_ptr<IndexBuffer> = 0;
-        virtual auto create_shader(const std::string& filepath) -> std::unique_ptr<Shader> = 0;
+        virtual auto create_vertex_buffer(const void* data, uint32_t size, bool dynamic)
+            -> std::unique_ptr<VertexBuffer>                                                                   = 0;
+        virtual auto create_index_buffer(const uint32_t* data, uint32_t count) -> std::unique_ptr<IndexBuffer> = 0;
+        virtual auto create_shader(const std::string& filepath) -> std::unique_ptr<Shader>                     = 0;
         /// @brief 纹理创建: 资源模块就绪前为空(见 RHI 设计文档 §4.4/§4.5)
-        virtual auto create_texture() -> std::unique_ptr<Texture> = 0;
-        virtual auto create_vertex_array() -> std::unique_ptr<VertexArray> = 0;
-        virtual auto create_frame_buffer(int width, int height) -> std::unique_ptr<FrameBuffer> = 0;
+        virtual auto create_texture() -> std::unique_ptr<Texture>                                 = 0;
+        virtual auto create_vertex_array() -> std::unique_ptr<VertexArray>                        = 0;
+        virtual auto create_frame_buffer(int width, int height) -> std::unique_ptr<FrameBuffer>   = 0;
         virtual auto create_render_buffer(int width, int height) -> std::unique_ptr<RenderBuffer> = 0;
         // 将来: create_storage_buffer() / create_uniform_buffer()
 

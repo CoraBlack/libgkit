@@ -12,8 +12,8 @@ namespace gkit::graphic {
 
     class VertexArray {
     public:
-        VertexArray()                                  = default;
-        VertexArray(const VertexArray&)                = delete;
+        VertexArray()                                      = default;
+        VertexArray(const VertexArray&)                    = delete;
         auto operator=(const VertexArray&) -> VertexArray& = delete;
 
         VertexArray(VertexArray&&) noexcept                    = default;

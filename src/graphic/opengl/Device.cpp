@@ -48,9 +48,8 @@ namespace gkit::graphic::opengl {
         glClear(mask);
     }
 
-    auto Device::draw(const graphic::VertexArray& va,
-                      const graphic::IndexBuffer& ib,
-                      const graphic::Shader& shader) -> void {
+    auto Device::draw(const graphic::VertexArray& va, const graphic::IndexBuffer& ib, const graphic::Shader& shader)
+        -> void {
         shader.bind();
         va.bind();
         ib.bind();

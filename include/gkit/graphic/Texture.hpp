@@ -14,11 +14,11 @@ namespace gkit::graphic {
 	 */
     class Texture {
     public:
-        Texture()                        = default;
-        Texture(const Texture&)          = delete;
+        Texture()                                  = default;
+        Texture(const Texture&)                    = delete;
         auto operator=(const Texture&) -> Texture& = delete;
 
-        Texture(Texture&&) noexcept            = default;
+        Texture(Texture&&) noexcept                    = default;
         auto operator=(Texture&&) noexcept -> Texture& = default;
 
         virtual ~Texture() = default;

@@ -9,7 +9,7 @@ namespace gkit::graphic::opengl {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->renderer_id);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), data, GL_STATIC_DRAW);
         this->count = count;
-        this->size_ = count * sizeof(uint32_t);
+        this->size  = count * sizeof(uint32_t);
     }
 
     IndexBuffer::~IndexBuffer() {
@@ -29,11 +29,11 @@ namespace gkit::graphic::opengl {
 
     auto IndexBuffer::update_data(const void* data, uint32_t size) -> void {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->renderer_id);
-        if (size == this->size_) {
+        if (size == this->size) {
             glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
         } else {
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
-            this->size_ = size;
+            this->size = size;
         }
     }
 

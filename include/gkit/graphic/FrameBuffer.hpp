@@ -13,11 +13,11 @@ namespace gkit::graphic {
 	 */
     class FrameBuffer {
     public:
-        FrameBuffer()                                  = default;
-        FrameBuffer(const FrameBuffer&)                = delete;
+        FrameBuffer()                                      = default;
+        FrameBuffer(const FrameBuffer&)                    = delete;
         auto operator=(const FrameBuffer&) -> FrameBuffer& = delete;
 
-        FrameBuffer(FrameBuffer&&) noexcept                        = default;
+        FrameBuffer(FrameBuffer&&) noexcept                    = default;
         auto operator=(FrameBuffer&&) noexcept -> FrameBuffer& = default;
 
         virtual ~FrameBuffer() = default;

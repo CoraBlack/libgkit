@@ -33,8 +33,7 @@ namespace gkit::graphic::opengl {
         }
     }
 
-    auto VertexArray::add_buffer(const graphic::VertexBuffer& vb, const graphic::VertexBufferLayout& layout)
-        -> void {
+    auto VertexArray::add_buffer(const graphic::VertexBuffer& vb, const graphic::VertexBufferLayout& layout) -> void {
         bind();
         vb.bind();
         const auto& elements = layout.get_elements();

@@ -18,7 +18,7 @@ namespace gkit::graphic::opengl {
 
     class Texture final : public graphic::Texture {
     public:
-        Texture(const Texture&) = delete;
+        Texture(const Texture&)                    = delete;
         auto operator=(const Texture&) -> Texture& = delete;
 
         Texture(Texture&& other) noexcept;

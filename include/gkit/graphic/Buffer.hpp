@@ -13,11 +13,11 @@ namespace gkit::graphic {
 
     class Buffer {
     public:
-        Buffer()                          = default;
-        Buffer(const Buffer&)             = delete;
+        Buffer()                                 = default;
+        Buffer(const Buffer&)                    = delete;
         auto operator=(const Buffer&) -> Buffer& = delete;
 
-        Buffer(Buffer&&) noexcept            = default;
+        Buffer(Buffer&&) noexcept                    = default;
         auto operator=(Buffer&&) noexcept -> Buffer& = default;
 
         virtual ~Buffer() = default;
@@ -35,10 +35,10 @@ namespace gkit::graphic {
         virtual auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void = 0;
 
         /// @brief 缓冲区大小(字节)
-        [[nodiscard]] auto get_size() const -> uint32_t { return size_; }
+        [[nodiscard]] auto get_size() const -> uint32_t { return size; }
 
     protected:
-        uint32_t size_ = 0; // 字节数
+        uint32_t size = 0; // 字节数
     };
 
 } // namespace gkit::graphic

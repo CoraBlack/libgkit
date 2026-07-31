@@ -12,7 +12,7 @@ namespace gkit::graphic::opengl {
         } else {
             glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
         }
-        this->size_ = size;
+        this->size    = size;
         this->dynamic = dynamic;
     }
 
@@ -33,11 +33,11 @@ namespace gkit::graphic::opengl {
 
     auto VertexBuffer::update_data(const void* data, uint32_t size) -> void {
         glBindBuffer(GL_ARRAY_BUFFER, this->renderer_id);
-        if (size == this->size_) {
+        if (size == this->size) {
             glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
         } else {
             glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
-            this->size_ = size;
+            this->size = size;
         }
     }
 

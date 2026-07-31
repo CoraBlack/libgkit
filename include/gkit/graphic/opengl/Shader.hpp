@@ -15,7 +15,7 @@ namespace gkit::graphic::opengl {
 
     class Shader final : public graphic::Shader {
     public:
-        Shader(const Shader&) = delete;
+        Shader(const Shader&)                    = delete;
         auto operator=(const Shader&) -> Shader& = delete;
 
         Shader(Shader&& other) noexcept;

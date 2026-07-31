@@ -1,13 +1,7 @@
 #include "gkit/graphic/Renderer.hpp"
-#include "gkit/graphic/opengl/FrameBuffer.hpp"
-#include "gkit/graphic/opengl/IndexBuffer.hpp"
-#include "gkit/graphic/opengl/RenderBuffer.hpp"
-#include "gkit/graphic/opengl/Shader.hpp"
+#include "gkit/graphic/VertexBufferLayout.hpp"
 #include "gkit/graphic/opengl/StateManager.hpp"
 #include "gkit/graphic/opengl/Texture.hpp"
-#include "gkit/graphic/opengl/VertexArray.hpp"
-#include "gkit/graphic/opengl/VertexBuffer.hpp"
-#include "gkit/graphic/VertexBufferLayout.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -71,6 +65,12 @@ int main(int argc, char* argv[]) {
 #pragma endregion
 
     {
+        auto& renderer      = gkit::graphic::Renderer::instance();
+        auto& state_manager = gkit::graphic::opengl::StateManager::instance();
+        renderer.init(); // 默认 OpenGL 后端
+
+        auto& device = renderer.get_device();
+
 #pragma region square
         // Triangle vertex data
         float pic_vertices[] = {// positions        // tex coordsc
@@ -80,17 +80,17 @@ int main(int argc, char* argv[]) {
         // index data
         unsigned int pic_indices[] = {0, 1, 2, 2, 3, 0};
 
-        gkit::graphic::opengl::VertexArray pic_vao;
-        gkit::graphic::opengl::VertexBuffer pic_vbo(pic_vertices, sizeof(pic_vertices));
-        gkit::graphic::opengl::IndexBuffer pic_ibo(pic_indices, 6);
+        auto pic_vao = device.create_vertex_array();
+        auto pic_vbo = device.create_vertex_buffer(pic_vertices, sizeof(pic_vertices), false);
+        auto pic_ibo = device.create_index_buffer(pic_indices, 6);
 
         gkit::graphic::VertexBufferLayout pic_layout;
         pic_layout.push<float>(3);
         pic_layout.push<float>(2);
-        pic_vao.add_buffer(pic_vbo, pic_layout);
+        pic_vao->add_buffer(*pic_vbo, pic_layout);
 
         // load shader source
-        gkit::graphic::opengl::Shader pic_shader((resource_base / "graphic" / "texture.shader").string());
+        auto pic_shader = device.create_shader((resource_base / "graphic" / "texture.shader").string());
         gkit::graphic::opengl::Texture main_texture((resource_base / "graphic" / "container2.png").string(),
                                                     gkit::graphic::TextureType::Texture2D);
 
@@ -101,30 +101,27 @@ int main(int argc, char* argv[]) {
 
         unsigned int quad_indices[] = {0, 1, 2, 2, 3, 0};
 
-        gkit::graphic::opengl::VertexArray quad_vao;
-        gkit::graphic::opengl::VertexBuffer quad_vb(quad_vertices, sizeof(quad_vertices));
-        gkit::graphic::opengl::IndexBuffer quad_ib(quad_indices, 6);
+        auto quad_vao = device.create_vertex_array();
+        auto quad_vb  = device.create_vertex_buffer(quad_vertices, sizeof(quad_vertices), false);
+        auto quad_ib  = device.create_index_buffer(quad_indices, 6);
 
         gkit::graphic::VertexBufferLayout quad_layout;
         quad_layout.push<float>(3);
         quad_layout.push<float>(2);
-        quad_vao.add_buffer(quad_vb, quad_layout);
+        quad_vao->add_buffer(*quad_vb, quad_layout);
 
         // load post-processing shader
-        gkit::graphic::opengl::Shader post_shader((resource_base / "graphic" / "post_process.shader").string());
+        auto post_shader = device.create_shader((resource_base / "graphic" / "post_process.shader").string());
 #pragma endregion
 
 #pragma region framebuffer
-        gkit::graphic::opengl::FrameBuffer fbo(gkit::graphic::SCR_WIDTH, gkit::graphic::SCR_HEIGHT);
+        auto fbo = device.create_frame_buffer(gkit::graphic::SCR_WIDTH, gkit::graphic::SCR_HEIGHT);
         gkit::graphic::opengl::Texture fbo_texture(" ", gkit::graphic::TextureType::TextureFramebuffer);
-        gkit::graphic::opengl::RenderBuffer rbo(gkit::graphic::SCR_WIDTH, gkit::graphic::SCR_HEIGHT);
-        fbo.attach_color_texture(fbo_texture, 0);
-        fbo.attach_depth_stencil(rbo);
-        fbo.check();
+        auto rbo = device.create_render_buffer(gkit::graphic::SCR_WIDTH, gkit::graphic::SCR_HEIGHT);
+        fbo->attach_color_texture(fbo_texture, 0);
+        fbo->attach_depth_stencil(*rbo);
+        fbo->check();
 #pragma endregion
-
-        auto& renderer      = gkit::graphic::Renderer::instance();
-        auto& state_manager = gkit::graphic::opengl::StateManager::instance();
 
         // Main loop
         bool quit = false;
@@ -141,44 +138,42 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            fbo.bind();
-            fbo.set_viewport(0, 0, screen_width, screen_height);
+            fbo->bind();
+            fbo->set_viewport(0, 0, screen_width, screen_height);
             renderer.clear(gkit::graphic::ClearFlags::All);
             // 1. Render to framebuffer
-            pic_shader.bind();
+            pic_shader->bind();
             main_texture.bind(0);
-            renderer.draw(pic_vao, pic_ibo, pic_shader);
+            renderer.draw(*pic_vao, *pic_ibo, *pic_shader);
 
             // 2. Render to screen (post-processing)
-            fbo.unbind();
+            fbo->unbind();
             renderer.clear(gkit::graphic::ClearFlags::All);
             gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width / 2, screen_height / 2);
             state_manager.set_stencil_test(true);
             state_manager.set_stencil(gkit::graphic::CompareFunc::Always, 1, 0xFF);
-            state_manager.set_stencil_op(gkit::graphic::StencilOp::Keep,
-                                         gkit::graphic::StencilOp::Keep,
-                                         gkit::graphic::StencilOp::Replace);
+            state_manager.set_stencil_op(
+                gkit::graphic::StencilOp::Keep, gkit::graphic::StencilOp::Keep, gkit::graphic::StencilOp::Replace);
             state_manager.apply();
-            pic_shader.bind();
+            pic_shader->bind();
             main_texture.bind(0);
-            renderer.draw(pic_vao, pic_ibo, pic_shader);
+            renderer.draw(*pic_vao, *pic_ibo, *pic_shader);
 
             gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width, screen_height);
             state_manager.set_stencil(gkit::graphic::CompareFunc::Equal, 1, 0xFF);
-            state_manager.set_stencil_op(gkit::graphic::StencilOp::Keep,
-                                         gkit::graphic::StencilOp::Keep,
-                                         gkit::graphic::StencilOp::Keep);
+            state_manager.set_stencil_op(
+                gkit::graphic::StencilOp::Keep, gkit::graphic::StencilOp::Keep, gkit::graphic::StencilOp::Keep);
             state_manager.apply();
-            post_shader.bind();
+            post_shader->bind();
             fbo_texture.bind(0);
-            post_shader.set_uniform_1i("screenTexture", 0);
-            renderer.draw(quad_vao, quad_ib, post_shader);
+            post_shader->set_uniform_1i("screenTexture", 0);
+            renderer.draw(*quad_vao, *quad_ib, *post_shader);
 
             gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width / 4, screen_height / 4);
-            post_shader.bind();
+            post_shader->bind();
             fbo_texture.bind(0);
-            post_shader.set_uniform_1i("screenTexture", 0);
-            renderer.draw(quad_vao, quad_ib, post_shader);
+            post_shader->set_uniform_1i("screenTexture", 0);
+            renderer.draw(*quad_vao, *quad_ib, *post_shader);
 
             state_manager.set_stencil_test(false);
             state_manager.apply();
