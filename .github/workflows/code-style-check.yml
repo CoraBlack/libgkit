@@ -46,7 +46,7 @@ jobs:
             CHECKED=$((CHECKED + 1))
             echo "  [$CHECKED] $file"
 
-            result=$(clang-tidy "$file" -- \
+            result=$(clang-tidy "$file" --header-filter=.* -- \
               -I include -I src -std=c++20 2>&1) || true
 
             if echo "$result" | grep -q "fatal error:"; then
