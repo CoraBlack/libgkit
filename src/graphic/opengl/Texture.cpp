@@ -5,7 +5,7 @@
 
 //#include <iostream>
 
-gkit::graphic::opengl::Texture::Texture(const std::string& path, TextureType type) :
+gkit::graphic::opengl::Texture::Texture(const std::string& path, gkit::graphic::TextureType type) :
     renderer_id(0), filepath(path), local_buffer(nullptr), width(0), height(0), bpp(0), type(type) {}
 
 gkit::graphic::opengl::Texture::~Texture() {
@@ -40,19 +40,21 @@ auto gkit::graphic::opengl::Texture::operator=(Texture&& other) noexcept -> Text
 }
 
 auto gkit::graphic::opengl::Texture::bind(unsigned int slot) const -> void {
-    if (this->type == TextureType::TextureCubeMap) {
+    if (this->type == gkit::graphic::TextureType::TextureCubeMap) {
         glActiveTexture(GL_TEXTURE0 + slot);
         glBindTexture(GL_TEXTURE_CUBE_MAP, this->renderer_id);
-    } else if (this->type == TextureType::Texture2D || this->type == TextureType::TextureFramebuffer) {
+    } else if (this->type == gkit::graphic::TextureType::Texture2D ||
+               this->type == gkit::graphic::TextureType::TextureFramebuffer) {
         glActiveTexture(GL_TEXTURE0 + slot);
         glBindTexture(GL_TEXTURE_2D, this->renderer_id);
     }
 }
 
 auto gkit::graphic::opengl::Texture::unbind() const -> void {
-    if (this->type == TextureType::TextureCubeMap) {
+    if (this->type == gkit::graphic::TextureType::TextureCubeMap) {
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-    } else if (this->type == TextureType::Texture2D || this->type == TextureType::TextureFramebuffer) {
+    } else if (this->type == gkit::graphic::TextureType::Texture2D ||
+               this->type == gkit::graphic::TextureType::TextureFramebuffer) {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 }

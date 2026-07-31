@@ -2,9 +2,9 @@
 
 #include "gkit/core/templates/singleton.hpp"
 #include "gkit/graphic/Shader.hpp"
+#include "gkit/graphic/config.hpp"
 #include "gkit/graphic/opengl/IndexBuffer.hpp"
 #include "gkit/graphic/opengl/VertexArray.hpp"
-#include "gkit/graphic/opengl/config.hpp"
 
 #include <cstdint>
 
@@ -29,7 +29,7 @@ namespace gkit::graphic {
 		 * @param flags Bitmask specifying which buffers to clear (e.g., ClearFlags::Color | ClearFlags::Depth)
 		 *              Defaults to ClearFlags::All (clears all buffers)
 		 */
-        auto clear(opengl::ClearFlags flags = opengl::ClearFlags::All) const -> void;
+        auto clear(ClearFlags flags = ClearFlags::All) const -> void;
 
         /**
 		 * @brief Draw indexed geometry

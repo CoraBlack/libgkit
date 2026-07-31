@@ -1,11 +1,10 @@
 #pragma once
 
 #include "gkit/core/templates/singleton.hpp"
+#include "gkit/graphic/config.hpp"
 #include "gkit/graphic/opengl/config.hpp"
 
 #include <cstdint>
-
-#include <glad/gl.h>
 
 namespace gkit::graphic::opengl {
 

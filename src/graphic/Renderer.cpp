@@ -7,8 +7,8 @@
 
 #include <glad/gl.h>
 
-auto gkit::graphic::Renderer::clear(opengl::ClearFlags flags) const -> void {
-    auto mask = static_cast<GLbitfield>(flags);
+auto gkit::graphic::Renderer::clear(ClearFlags flags) const -> void {
+    auto mask = opengl::to_gl_clear_mask(flags);
     glClear(mask);
 }
 

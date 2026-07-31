@@ -1,111 +1,107 @@
 #pragma once
 
+#include "gkit/graphic/config.hpp"
+
 #include <cstdint>
+
+#include <glad/gl.h>
 
 namespace gkit::graphic::opengl {
 
-    const unsigned int SCR_WIDTH  = 500;
-    const unsigned int SCR_HEIGHT = 500;
+    // ---------------------------------------------------------------------------
+    // 后端无关枚举 -> GL 常量映射
+    // 前端枚举(见 gkit/graphic/config.hpp)值与 GL 解耦, 集中在此转换为 GL 常量
+    // ---------------------------------------------------------------------------
 
-    /**
-	 * @brief texture pattern
-	 */
-    enum class TextureType : std::uint8_t {
-        Texture2D,
-        TextureCubeMap,
-        TextureFramebuffer
-    };
+    constexpr auto to_gl_compare_func(CompareFunc func) -> GLenum {
+        switch (func) {
+        case CompareFunc::Never:    return GL_NEVER;
+        case CompareFunc::Less:     return GL_LESS;
+        case CompareFunc::Equal:    return GL_EQUAL;
+        case CompareFunc::Lequal:   return GL_LEQUAL;
+        case CompareFunc::Greater:  return GL_GREATER;
+        case CompareFunc::Gequal:   return GL_GEQUAL;
+        case CompareFunc::Notequal: return GL_NOTEQUAL;
+        case CompareFunc::Always:   return GL_ALWAYS;
+        }
+        return GL_ALWAYS;
+    }
 
-    /**
-	 * @brief Compare Functions
-	 */
-    enum class CompareFunc : std::uint16_t {
-        Never    = 0x0200, // GL_NEVER
-        Less     = 0x0201, // GL_LESS
-        Equal    = 0x0202, // GL_EQUAL
-        Lequal   = 0x0203, // GL_LEQUAL
-        Greater  = 0x0204, // GL_GREATER
-        Gequal   = 0x0205, // GL_GEQUAL
-        Notequal = 0x0206, // GL_NOTEQUAL
-        Always   = 0x0207, // GL_ALWAYS
-    };
+    constexpr auto to_gl_blend_func(BlendFunc func) -> GLenum {
+        switch (func) {
+        case BlendFunc::Zero:                  return GL_ZERO;
+        case BlendFunc::One:                   return GL_ONE;
+        case BlendFunc::SrcColor:              return GL_SRC_COLOR;
+        case BlendFunc::OneMinusSrcColor:      return GL_ONE_MINUS_SRC_COLOR;
+        case BlendFunc::DstColor:              return GL_DST_COLOR;
+        case BlendFunc::OneMinusDstColor:      return GL_ONE_MINUS_DST_COLOR;
+        case BlendFunc::SrcAlpha:              return GL_SRC_ALPHA;
+        case BlendFunc::OneMinusSrcAlpha:      return GL_ONE_MINUS_SRC_ALPHA;
+        case BlendFunc::DstAlpha:              return GL_DST_ALPHA;
+        case BlendFunc::OneMinusDstAlpha:      return GL_ONE_MINUS_DST_ALPHA;
+        case BlendFunc::ConstantColor:         return GL_CONSTANT_COLOR;
+        case BlendFunc::OneMinusConstantColor: return GL_ONE_MINUS_CONSTANT_COLOR;
+        case BlendFunc::ConstantAlpha:         return GL_CONSTANT_ALPHA;
+        case BlendFunc::OneMinusConstantAlpha: return GL_ONE_MINUS_CONSTANT_ALPHA;
+        }
+        return GL_ONE;
+    }
 
-    /**
-	 * @brief Blend Functions
-	 */
-    enum class BlendFunc : std::uint16_t {
-        Zero                  = 0, // GL_ZERO
-        One                   = 1, // GL_ONE
-        SrcColor              = 0x0300, // GL_SRC_COLOR
-        OneMinusSrcColor      = 0x0301, // GL_ONE_MINUS_SRC_COLOR
-        DstColor              = 0x0306, // GL_DST_COLOR
-        OneMinusDstColor      = 0x0307, // GL_ONE_MINUS_DST_COLOR
-        SrcAlpha              = 0x0302, // GL_SRC_ALPHA
-        OneMinusSrcAlpha      = 0x0303, // GL_ONE_MINUS_SRC_ALPHA
-        DstAlpha              = 0x0304, // GL_DST_ALPHA
-        OneMinusDstAlpha      = 0x0305, // GL_ONE_MINUS_DST_ALPHA
-        ConstantColor         = 0x8001, // GL_CONSTANT_COLOR
-        OneMinusConstantColor = 0x8002, // GL_ONE_MINUS_CONSTANT_COLOR
-        ConstantAlpha         = 0x8003, // GL_CONSTANT_ALPHA
-        OneMinusConstantAlpha = 0x8004, // GL_ONE_MINUS_CONSTANT_ALPHA
-    };
+    constexpr auto to_gl_blend_equation(BlendEquation equation) -> GLenum {
+        switch (equation) {
+        case BlendEquation::Add:             return GL_FUNC_ADD;
+        case BlendEquation::Subtract:        return GL_FUNC_SUBTRACT;
+        case BlendEquation::ReverseSubtract: return GL_FUNC_REVERSE_SUBTRACT;
+        case BlendEquation::Min:             return GL_MIN;
+        case BlendEquation::Max:             return GL_MAX;
+        }
+        return GL_FUNC_ADD;
+    }
 
-    /**
-	 * @brief Blend Equations
-	 */
-    enum class BlendEquation : std::uint16_t {
-        Add             = 0x8006, // GL_FUNC_ADD
-        Subtract        = 0x800A, // GL_FUNC_SUBTRACT
-        ReverseSubtract = 0x800B, // GL_FUNC_REVERSE_SUBTRACT
-        Min             = 0x8007, // GL_MIN
-        Max             = 0x8008, // GL_MAX
-    };
+    constexpr auto to_gl_cull_face_mode(CullFaceMode mode) -> GLenum {
+        switch (mode) {
+        case CullFaceMode::Front:        return GL_FRONT;
+        case CullFaceMode::Back:         return GL_BACK;
+        case CullFaceMode::FrontAndBack: return GL_FRONT_AND_BACK;
+        }
+        return GL_BACK;
+    }
 
-    /**
-	 * @brief Cull Face Modes
-	 */
-    enum class CullFaceMode : std::uint16_t {
-        Front        = 0x0404, // GL_FRONT
-        Back         = 0x0405, // GL_BACK
-        FrontAndBack = 0x0408, // GL_FRONT_AND_BACK
-    };
+    constexpr auto to_gl_front_face(FrontFace front_face) -> GLenum {
+        switch (front_face) {
+        case FrontFace::Clockwise:        return GL_CW;
+        case FrontFace::CounterClockwise: return GL_CCW;
+        }
+        return GL_CCW;
+    }
 
-    /**
-	 * @brief Front Face Winding
-	 */
-    enum class FrontFace : std::uint16_t {
-        Clockwise        = 0x0900, // GL_CW
-        CounterClockwise = 0x0901, // GL_CCW
-    };
+    constexpr auto to_gl_stencil_op(StencilOp op) -> GLenum {
+        switch (op) {
+        case StencilOp::Keep:     return GL_KEEP;
+        case StencilOp::Zero:     return GL_ZERO;
+        case StencilOp::Replace:  return GL_REPLACE;
+        case StencilOp::Incr:     return GL_INCR;
+        case StencilOp::IncrWrap: return GL_INCR_WRAP;
+        case StencilOp::Decr:     return GL_DECR;
+        case StencilOp::DecrWrap: return GL_DECR_WRAP;
+        case StencilOp::Invert:   return GL_INVERT;
+        }
+        return GL_KEEP;
+    }
 
-    /**
-	 * @brief Stencil Operations
-	 */
-    enum class StencilOp : std::uint16_t {
-        Keep     = 0x1E00, // GL_KEEP
-        Zero     = 0, // GL_ZERO
-        Replace  = 0x1E01, // GL_REPLACE
-        Incr     = 0x1E02, // GL_INCR
-        IncrWrap = 0x8507, // GL_INCR_WRAP
-        Decr     = 0x1E03, // GL_DECR
-        DecrWrap = 0x8508, // GL_DECR_WRAP
-        Invert   = 0x150A, // GL_INVERT
-    };
-
-    /**
-	 * @brief Clear Options
-	 */
-    enum class ClearFlags : std::uint16_t {
-        Color   = 0x00004000, // Clear Color (GL_COLOR_BUFFER_BIT)
-        Depth   = 0x00000100, // Clear Depth (GL_DEPTH_BUFFER_BIT)
-        Stencil = 0x00000400, // Clear Stencil (GL_STENCIL_BUFFER_BIT)
-
-        ColorDepth = Color | Depth, // Color + Depth
-        All        = Color | Depth | Stencil // Clear All
-    };
-
-    constexpr auto operator|(ClearFlags a, ClearFlags b) noexcept -> ClearFlags {
-        return static_cast<ClearFlags>(static_cast<std::uint16_t>(a) | static_cast<std::uint16_t>(b));
+    constexpr auto to_gl_clear_mask(ClearFlags flags) -> GLbitfield {
+        GLbitfield mask = 0;
+        const auto bits = static_cast<std::uint8_t>(flags);
+        if (bits & static_cast<std::uint8_t>(ClearFlags::Color)) {
+            mask |= GL_COLOR_BUFFER_BIT;
+        }
+        if (bits & static_cast<std::uint8_t>(ClearFlags::Depth)) {
+            mask |= GL_DEPTH_BUFFER_BIT;
+        }
+        if (bits & static_cast<std::uint8_t>(ClearFlags::Stencil)) {
+            mask |= GL_STENCIL_BUFFER_BIT;
+        }
+        return mask;
     }
 
 } // namespace gkit::graphic::opengl

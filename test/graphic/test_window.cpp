@@ -31,8 +31,8 @@ int main(int argc, char* argv[]) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     // Create window
-    int screen_width  = gkit::graphic::opengl::SCR_WIDTH;
-    int screen_height = gkit::graphic::opengl::SCR_HEIGHT;
+    int screen_width  = gkit::graphic::SCR_WIDTH;
+    int screen_height = gkit::graphic::SCR_HEIGHT;
 
     SDL_Window* window = SDL_CreateWindow("OpenGL Window", screen_width, screen_height, SDL_WINDOW_OPENGL);
 
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
         // load shader source
         gkit::graphic::Shader pic_shader((resource_base / "graphic" / "texture.shader").string());
         gkit::graphic::opengl::Texture main_texture((resource_base / "graphic" / "container2.png").string(),
-                                                    gkit::graphic::opengl::TextureType::Texture2D);
+                                                    gkit::graphic::TextureType::Texture2D);
 
         // Full-screen quad vertex data (post-processing)
         float quad_vertices[] = {// positions                    // tex coords
@@ -112,11 +112,11 @@ int main(int argc, char* argv[]) {
 #pragma endregion
 
 #pragma region framebuffer
-        gkit::graphic::opengl::buffer::FrameBuffer fbo(gkit::graphic::opengl::SCR_WIDTH,
-                                                       gkit::graphic::opengl::SCR_HEIGHT);
-        gkit::graphic::opengl::Texture fbo_texture(" ", gkit::graphic::opengl::TextureType::TextureFramebuffer);
-        gkit::graphic::opengl::buffer::RenderBuffer rbo(gkit::graphic::opengl::SCR_WIDTH,
-                                                        gkit::graphic::opengl::SCR_HEIGHT);
+        gkit::graphic::opengl::buffer::FrameBuffer fbo(gkit::graphic::SCR_WIDTH,
+                                                       gkit::graphic::SCR_HEIGHT);
+        gkit::graphic::opengl::Texture fbo_texture(" ", gkit::graphic::TextureType::TextureFramebuffer);
+        gkit::graphic::opengl::buffer::RenderBuffer rbo(gkit::graphic::SCR_WIDTH,
+                                                        gkit::graphic::SCR_HEIGHT);
         fbo.attach_color_texture(fbo_texture, 0);
         fbo.attach_depth_stencil(rbo);
         fbo.check();
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
 
             fbo.bind();
             fbo.set_viewport(0, 0, screen_width, screen_height);
-            renderer.clear(gkit::graphic::opengl::ClearFlags::All);
+            renderer.clear(gkit::graphic::ClearFlags::All);
             // 1. Render to framebuffer
             pic_shader.bind();
             main_texture.bind(0);
@@ -150,23 +150,23 @@ int main(int argc, char* argv[]) {
 
             // 2. Render to screen (post-processing)
             fbo.unbind();
-            renderer.clear(gkit::graphic::opengl::ClearFlags::All);
+            renderer.clear(gkit::graphic::ClearFlags::All);
             gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width / 2, screen_height / 2);
             state_manager.set_stencil_test(true);
-            state_manager.set_stencil(gkit::graphic::opengl::CompareFunc::Always, 1, 0xFF);
-            state_manager.set_stencil_op(gkit::graphic::opengl::StencilOp::Keep,
-                                         gkit::graphic::opengl::StencilOp::Keep,
-                                         gkit::graphic::opengl::StencilOp::Replace);
+            state_manager.set_stencil(gkit::graphic::CompareFunc::Always, 1, 0xFF);
+            state_manager.set_stencil_op(gkit::graphic::StencilOp::Keep,
+                                         gkit::graphic::StencilOp::Keep,
+                                         gkit::graphic::StencilOp::Replace);
             state_manager.apply();
             pic_shader.bind();
             main_texture.bind(0);
             renderer.draw(pic_vao, pic_ibo, pic_shader);
 
             gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width, screen_height);
-            state_manager.set_stencil(gkit::graphic::opengl::CompareFunc::Equal, 1, 0xFF);
-            state_manager.set_stencil_op(gkit::graphic::opengl::StencilOp::Keep,
-                                         gkit::graphic::opengl::StencilOp::Keep,
-                                         gkit::graphic::opengl::StencilOp::Keep);
+            state_manager.set_stencil(gkit::graphic::CompareFunc::Equal, 1, 0xFF);
+            state_manager.set_stencil_op(gkit::graphic::StencilOp::Keep,
+                                         gkit::graphic::StencilOp::Keep,
+                                         gkit::graphic::StencilOp::Keep);
             state_manager.apply();
             post_shader.bind();
             fbo_texture.bind(0);
