@@ -3,14 +3,16 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief 纹理(前端抽象接口)
+	 * @brief Texture (frontend abstract interface)
 	 *
-	 * CPU 资源(像素数据, 由资源模块持有) ↔ GPU 纹理对象(由后端持有) 的薄绑定。
-	 * 不拥有像素数据、不负责解码。
+	 * A thin binding between the CPU resource (pixel data, owned by the resource
+	 * module) and the GPU texture object (owned by the backend).
+	 * Does not own pixel data or decode images.
 	 *
-	 * TODO(将来): 资源模块就绪后, 构造/工厂入参改为资源句柄
-	 *             (shared_ptr<resource::Texture> 或 GUID), 见 RHI 设计文档 §4.4/§4.5。
-	 *             当前 `opengl::Texture` 为占位实现。
+	 * TODO(future): once the resource module is ready, the constructor/factory
+	 *               should take a resource handle (shared_ptr<resource::Texture>
+	 *               or GUID); see RHI design doc §4.4/§4.5.
+	 *               `opengl::Texture` is currently a placeholder implementation.
 	 */
     class Texture {
     public:
@@ -23,16 +25,16 @@ namespace gkit::graphic {
 
         virtual ~Texture() = default;
 
-        /// @brief 绑定到指定槽位
+        /// @brief Bind to the given slot
         virtual auto bind(unsigned int slot) const -> void = 0;
 
-        /// @brief 解绑
+        /// @brief Unbind
         virtual auto unbind() const -> void = 0;
 
-        /// @brief 纹理宽度(像素)
+        /// @brief Texture width in pixels
         [[nodiscard]] virtual auto get_width() const -> int = 0;
 
-        /// @brief 纹理高度(像素)
+        /// @brief Texture height in pixels
         [[nodiscard]] virtual auto get_height() const -> int = 0;
     };
 

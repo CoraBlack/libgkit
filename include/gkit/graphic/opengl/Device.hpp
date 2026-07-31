@@ -6,9 +6,10 @@
 #include <string>
 
 /**
- * @brief OpenGL 后端渲染设备
+ * @brief OpenGL backend render device
  *
- * 继承前端 `graphic::RenderDevice`, 实现资源工厂与 GL 渲染命令。
+ * Inherits frontend `graphic::RenderDevice`; implements the resource factory
+ * and GL render commands.
  */
 namespace gkit::graphic::opengl {
 
@@ -17,7 +18,7 @@ namespace gkit::graphic::opengl {
         Device()           = default;
         ~Device() override = default;
 
-        auto create_vertex_buffer(const void* data, uint32_t size, bool dynamic = false)
+        auto create_vertex_buffer(const void* data, uint32_t size, bool dynamic)
             -> std::unique_ptr<graphic::VertexBuffer> override;
         auto create_index_buffer(const uint32_t* data, uint32_t count)
             -> std::unique_ptr<graphic::IndexBuffer> override;

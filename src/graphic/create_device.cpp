@@ -8,7 +8,7 @@ namespace gkit::graphic {
         case Backend::OpenGL:
             return std::make_unique<opengl::Device>();
         }
-        // 将来: case Backend::Vulkan: return std::make_unique<vulkan::Device>();
+        // future: case Backend::Vulkan: return std::make_unique<vulkan::Device>();
         return nullptr;
     }
 

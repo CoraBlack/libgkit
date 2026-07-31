@@ -5,19 +5,20 @@
 #include <cstdint>
 
 /**
- * @brief OpenGL 后端顶点缓冲(VBO)
+ * @brief OpenGL backend vertex buffer (VBO)
  *
- * 继承前端 `graphic::VertexBuffer`, 实现具体的 GL 缓冲操作。
+ * Inherits frontend `graphic::VertexBuffer`; implements the concrete GL buffer
+ * operations.
  */
 namespace gkit::graphic::opengl {
 
     class VertexBuffer final : public graphic::VertexBuffer {
     public:
         /**
-		 * @brief 构造顶点缓冲
-		 * @param data 顶点数据指针
-		 * @param size 数据字节数
-		 * @param dynamic true 则频繁更新(GL_DYNAMIC_DRAW)
+		 * @brief Construct a vertex buffer
+		 * @param data pointer to vertex data
+		 * @param size size of the data in bytes
+		 * @param dynamic true if updated frequently (GL_DYNAMIC_DRAW)
 		 */
         explicit VertexBuffer(const void* data, uint32_t size, bool dynamic = false);
 
@@ -30,7 +31,7 @@ namespace gkit::graphic::opengl {
         [[nodiscard]] auto is_dynamic() const -> bool override { return this->dynamic; }
 
     private:
-        uint32_t renderer_id = 0; // GL 缓冲句柄
+        uint32_t renderer_id = 0; // GL buffer handle
         bool dynamic         = false;
     };
 

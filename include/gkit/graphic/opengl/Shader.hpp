@@ -7,9 +7,10 @@
 #include <unordered_map>
 
 /**
- * @brief OpenGL 后端着色器程序
+ * @brief OpenGL backend shader program
  *
- * 继承前端 `graphic::Shader`, 实现 GL 着色器的加载/编译/链接与 uniform 操作。
+ * Inherits frontend `graphic::Shader`; implements GL shader loading,
+ * compilation, linking, and uniform operations.
  */
 namespace gkit::graphic::opengl {
 
@@ -22,8 +23,8 @@ namespace gkit::graphic::opengl {
         auto operator=(Shader&& other) noexcept -> Shader&;
 
         /**
-		 * @brief 从文件构造着色器
-		 * @param filepath 着色器源码文件路径
+		 * @brief Construct a shader from a file
+		 * @param filepath path to the shader source file
 		 */
         explicit Shader(const std::string& filepath);
 
@@ -48,9 +49,9 @@ namespace gkit::graphic::opengl {
         auto get_uniform_location(const std::string& name) -> int;
 
     private:
-        uint32_t renderer_id = 0; // GL 着色器程序句柄
-        std::string file_path; // 着色器文件路径
-        std::unordered_map<std::string, int> uniform_location_cache; // uniform 位置缓存
+        uint32_t renderer_id = 0; // GL shader program handle
+        std::string file_path; // shader file path
+        std::unordered_map<std::string, int> uniform_location_cache; // uniform location cache
     };
 
 } // namespace gkit::graphic::opengl

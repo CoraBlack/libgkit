@@ -7,15 +7,15 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief 索引数据缓冲(前端抽象接口)
+	 * @brief Index data buffer (frontend abstract interface)
 	 *
-	 * 存储绘制顺序的索引数据, 用于高效绘制索引几何体。
+	 * Stores draw-order index data for efficient indexed geometry rendering.
 	 */
     class IndexBuffer : public Buffer {
     public:
         ~IndexBuffer() override = default;
 
-        /// @brief 索引数量
+        /// @brief Number of indices
         [[nodiscard]] virtual auto get_count() const -> uint32_t = 0;
     };
 

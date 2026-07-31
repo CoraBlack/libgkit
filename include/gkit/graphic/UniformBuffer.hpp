@@ -5,12 +5,12 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief Uniform 数据缓冲(占位, 暂不实现)
+	 * @brief Uniform data buffer (placeholder, not implemented yet)
 	 *
-	 * 存储 uniform 数据的缓冲(UBO), 用于批量设置着色器常量。
+	 * Buffer that stores uniform data (UBO) for batching shader constants.
 	 *
-	 * TODO(将来): 实现后端(opengl::UniformBuffer)与 Device 工厂方法
-	 *             create_uniform_buffer()。
+	 * TODO(future): implement the backend (opengl::UniformBuffer) and the Device
+	 *               factory method create_uniform_buffer().
 	 */
     // class UniformBuffer : public Buffer {
     // public:

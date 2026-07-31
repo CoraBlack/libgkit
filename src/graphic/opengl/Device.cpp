@@ -27,7 +27,7 @@ namespace gkit::graphic::opengl {
     }
 
     auto Device::create_texture() -> std::unique_ptr<graphic::Texture> {
-        // 资源模块就绪前, 纹理创建留空(见 RHI 设计文档 §4.4/§4.5)
+        // Empty until the resource module is ready (see RHI design doc §4.4/§4.5)
         return nullptr;
     }
 

@@ -4,9 +4,10 @@
 #include "gkit/graphic/VertexBufferLayout.hpp"
 
 /**
- * @brief 顶点数组(前端抽象接口)
+ * @brief Vertex array (frontend abstract interface)
  *
- * 保存顶点缓冲与属性布局的绑定配置(OpenGL VAO / Vulkan pipeline 顶点输入)。
+ * Holds the binding configuration of vertex buffers and their attribute layouts
+ * (OpenGL VAO / Vulkan pipeline vertex input).
  */
 namespace gkit::graphic {
 
@@ -21,16 +22,16 @@ namespace gkit::graphic {
 
         virtual ~VertexArray() = default;
 
-        /// @brief 绑定一个顶点缓冲及其布局
+        /// @brief Bind a vertex buffer with its layout
         virtual auto add_buffer(const VertexBuffer& vb, const VertexBufferLayout& layout) -> void = 0;
 
-        /// @brief 添加实例化缓冲(逐实例数据)
+        /// @brief Add an instance buffer (per-instance data)
         virtual auto add_instance_buffer(const VertexBuffer& vb) -> void = 0;
 
-        /// @brief 绑定到当前后端上下文
+        /// @brief Bind to the current backend context
         virtual auto bind() const -> void = 0;
 
-        /// @brief 解绑
+        /// @brief Unbind
         virtual auto unbind() const -> void = 0;
     };
 

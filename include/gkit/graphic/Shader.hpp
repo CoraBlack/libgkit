@@ -3,15 +3,15 @@
 #include <string>
 
 /**
- * @brief 着色器(前端抽象接口)
+ * @brief Shader (frontend abstract interface)
  *
- * 加载/编译/绑定着色器程序的统一接口。
- * 具体后端(OpenGL/Vulkan)负责编译、链接与 uniform 设置。
+ * Unified interface for loading/compiling/binding shader programs.
+ * Concrete backends (OpenGL/Vulkan) handle compilation, linking, and uniforms.
  */
 namespace gkit::graphic {
 
     /**
-	 * @brief 着色器源码结构(按阶段拆分)
+	 * @brief Shader source split by stage
 	 */
     struct ShaderProgramSource {
         std::string vertex_shader; // Vertex shader source code
@@ -29,13 +29,13 @@ namespace gkit::graphic {
 
         virtual ~Shader() = default;
 
-        /// @brief 绑定着色器程序到当前后端上下文
+        /// @brief Bind the shader program to the current backend context
         virtual auto bind() const -> void = 0;
 
-        /// @brief 解绑
+        /// @brief Unbind
         virtual auto unbind() const -> void = 0;
 
-        // Uniform setters(由后端实现, 映射到具体 API)
+        // Uniform setters (implemented by backends, mapped to the concrete API)
 
         virtual auto set_uniform_1i(const std::string& name, int value) -> void                              = 0;
         virtual auto set_uniform_1f(const std::string& name, float value) -> void                            = 0;

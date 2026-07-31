@@ -3,11 +3,12 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief 渲染缓冲(前端抽象接口)
+	 * @brief Renderbuffer (frontend abstract interface)
 	 *
-	 * 离屏渲染缓冲(OpenGL renderbuffer), 不能被着色器直接采样,
-	 * 通常用于帧缓冲的深度/模板附件。
-	 * 不属于 Buffer 家族(它是渲染目标附件, 而非数据缓冲)。
+	 * Off-screen renderbuffer (OpenGL renderbuffer) that cannot be sampled
+	 * directly by shaders; typically used as the depth/stencil attachment of
+	 * a framebuffer. Not part of the Buffer family (it is a render-target
+	 * attachment rather than a data buffer).
 	 */
     class RenderBuffer {
     public:
@@ -20,10 +21,10 @@ namespace gkit::graphic {
 
         virtual ~RenderBuffer() = default;
 
-        /// @brief 绑定到当前后端上下文
+        /// @brief Bind to the current backend context
         virtual auto bind() const -> void = 0;
 
-        /// @brief 解绑
+        /// @brief Unbind
         virtual auto unbind() const -> void = 0;
     };
 

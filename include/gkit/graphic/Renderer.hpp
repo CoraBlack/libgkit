@@ -24,8 +24,8 @@ namespace gkit::graphic {
 
     public:
         /**
-		 * @brief 选择渲染后端并创建设备(默认 OpenGL)
-		 * @param backend 后端标识
+		 * @brief Select the render backend and create the device (defaults to OpenGL)
+		 * @param backend backend identifier
 		 */
         auto init(Backend backend = Backend::OpenGL) -> void;
 
@@ -55,7 +55,7 @@ namespace gkit::graphic {
         auto draw_instance(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, uint32_t instance_count)
             -> void;
 
-        /// @brief 访问当前渲染设备
+        /// @brief Access the current render device
         [[nodiscard]] auto get_device() -> RenderDevice&;
 
     private:

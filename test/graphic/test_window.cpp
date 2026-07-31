@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
     {
         auto& renderer      = gkit::graphic::Renderer::instance();
         auto& state_manager = gkit::graphic::opengl::StateManager::instance();
-        renderer.init(); // 默认 OpenGL 后端
+        renderer.init(); // default OpenGL backend
 
         auto& device = renderer.get_device();
 

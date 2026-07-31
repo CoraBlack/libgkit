@@ -9,8 +9,9 @@
 namespace gkit::graphic::opengl {
 
     // ---------------------------------------------------------------------------
-    // 后端无关枚举 -> GL 常量映射
-    // 前端枚举(见 gkit/graphic/config.hpp)值与 GL 解耦, 集中在此转换为 GL 常量
+    // Backend-agnostic enum -> GL constant mapping
+    // Frontend enums (see gkit/graphic/config.hpp) are decoupled from GL values;
+    // they are converted to GL constants centrally here.
     // ---------------------------------------------------------------------------
 
     constexpr auto to_gl_compare_func(CompareFunc func) -> GLenum {

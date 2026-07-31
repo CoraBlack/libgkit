@@ -5,22 +5,22 @@
 #include <vector>
 
 /**
- * @brief 顶点元素数据类型(与具体后端无关)
+ * @brief Vertex element data type (backend-agnostic)
  */
 enum class VertexElementType : std::uint8_t {
-    Float  = 0, // 4 字节浮点
-    Uint32 = 1, // 4 字节无符号整型
-    Uint8  = 2, // 1 字节无符号字节
+    Float  = 0, // 4-byte float
+    Uint32 = 1, // 4-byte unsigned int
+    Uint8  = 2, // 1-byte unsigned byte
 };
 
 namespace gkit::graphic {
 
     /**
-	 * @brief 顶点布局中的单个属性元素
+	 * @brief A single attribute element in a vertex layout
 	 */
     struct VertexBufferElement {
         /**
-		 * @brief 元素类型所占字节数
+		 * @brief Size in bytes of an element type
 		 */
         static constexpr auto get_size_of_type(VertexElementType type) -> uint32_t {
             switch (type) {
@@ -35,34 +35,34 @@ namespace gkit::graphic {
             }
         }
 
-        VertexElementType type; // 元素类型
-        uint32_t count; // 分量数量
-        unsigned char normalized; // 是否归一化
+        VertexElementType type; // element type
+        uint32_t count; // number of components
+        unsigned char normalized; // whether to normalize
     };
 
     /**
-	 * @brief 顶点缓冲布局(前端定义, 后端据此配置顶点输入)
+	 * @brief Vertex buffer layout (frontend definition; backends configure vertex input from it)
 	 */
     class VertexBufferLayout {
     public:
         VertexBufferLayout() = default;
 
         /**
-		 * @brief 添加一个属性元素(不支持的类型触发编译期错误)
-		 * @tparam T 数据类型
-		 * @param count 分量数量
+		 * @brief Add an attribute element (unsupported types trigger a compile-time error)
+		 * @tparam T data type
+		 * @param count number of components
 		 */
         template<typename T>
         auto push(uint32_t count) -> void {
             static_assert(sizeof(T) == 0, "Unsupported type for VertexBufferLayout::push");
         }
 
-        /// @brief 所有元素(只读, 零拷贝)
+        /// @brief All elements (read-only, zero copy)
         [[nodiscard]] inline auto get_elements() const -> const std::vector<VertexBufferElement>& {
             return this->elements;
         }
 
-        /// @brief 顶点步长(字节)
+        /// @brief Vertex stride in bytes
         [[nodiscard]] inline auto get_stride() const -> uint32_t { return this->stride; }
 
     private:
@@ -70,7 +70,7 @@ namespace gkit::graphic {
         uint32_t stride = 0;
     };
 
-    // 模板特化
+    // Template specializations
 
     template<>
     inline auto VertexBufferLayout::push<float>(uint32_t count) -> void {

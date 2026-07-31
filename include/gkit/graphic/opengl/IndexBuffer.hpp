@@ -5,18 +5,19 @@
 #include <cstdint>
 
 /**
- * @brief OpenGL 后端索引缓冲(EBO)
+ * @brief OpenGL backend index buffer (EBO)
  *
- * 继承前端 `graphic::IndexBuffer`, 实现具体的 GL 缓冲操作。
+ * Inherits frontend `graphic::IndexBuffer`; implements the concrete GL buffer
+ * operations.
  */
 namespace gkit::graphic::opengl {
 
     class IndexBuffer final : public graphic::IndexBuffer {
     public:
         /**
-		 * @brief 构造索引缓冲
-		 * @param data 索引数据指针
-		 * @param count 索引数量
+		 * @brief Construct an index buffer
+		 * @param data pointer to index data
+		 * @param count number of indices
 		 */
         explicit IndexBuffer(const uint32_t* data, uint32_t count);
 
@@ -29,8 +30,8 @@ namespace gkit::graphic::opengl {
         [[nodiscard]] auto get_count() const -> uint32_t override { return this->count; }
 
     private:
-        uint32_t renderer_id = 0; // GL 缓冲句柄
-        uint32_t count       = 0; // 索引数量
+        uint32_t renderer_id = 0; // GL buffer handle
+        uint32_t count       = 0; // number of indices
     };
 
 } // namespace gkit::graphic::opengl

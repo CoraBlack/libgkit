@@ -15,17 +15,17 @@
 
 namespace gkit::graphic {
 
-    /// @brief 后端标识
+    /// @brief Backend identifier
     enum class Backend : std::uint8_t {
         OpenGL,
-        // Vulkan  // 将来
+        // Vulkan  // future
     };
 
     /**
-	 * @brief 抽象渲染设备: 资源工厂 + 渲染命令入口
+	 * @brief Abstract render device: resource factory + render command entry
 	 *
-	 * 具体后端(OpenGL/Vulkan)继承并实现资源创建与渲染操作。
-	 * Renderer 持有 RenderDevice, 通过 create_device 选定后端。
+	 * Concrete backends (OpenGL/Vulkan) inherit and implement resource creation
+	 * and render operations. Renderer owns a RenderDevice selected via create_device.
 	 */
     class RenderDevice {
     public:
@@ -38,35 +38,35 @@ namespace gkit::graphic {
 
         virtual ~RenderDevice() = default;
 
-        // ---- 资源工厂 ----
+        // ---- Resource factory ----
 
         virtual auto create_vertex_buffer(const void* data, uint32_t size, bool dynamic)
             -> std::unique_ptr<VertexBuffer>                                                                   = 0;
         virtual auto create_index_buffer(const uint32_t* data, uint32_t count) -> std::unique_ptr<IndexBuffer> = 0;
         virtual auto create_shader(const std::string& filepath) -> std::unique_ptr<Shader>                     = 0;
-        /// @brief 纹理创建: 资源模块就绪前为空(见 RHI 设计文档 §4.4/§4.5)
+        /// @brief Create a texture; empty until the resource module is ready (see RHI design doc §4.4/§4.5)
         virtual auto create_texture() -> std::unique_ptr<Texture>                                 = 0;
         virtual auto create_vertex_array() -> std::unique_ptr<VertexArray>                        = 0;
         virtual auto create_frame_buffer(int width, int height) -> std::unique_ptr<FrameBuffer>   = 0;
         virtual auto create_render_buffer(int width, int height) -> std::unique_ptr<RenderBuffer> = 0;
-        // 将来: create_storage_buffer() / create_uniform_buffer()
+        // future: create_storage_buffer() / create_uniform_buffer()
 
-        // ---- 渲染命令入口 ----
+        // ---- Render command entry ----
 
-        /// @brief 清除当前渲染目标
+        /// @brief Clear the current render target
         virtual auto clear(ClearFlags flags) -> void = 0;
 
-        /// @brief 绘制索引几何体
+        /// @brief Draw indexed geometry
         virtual auto draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) -> void = 0;
 
-        /// @brief 绘制实例化索引几何体
+        /// @brief Draw instanced indexed geometry
         virtual auto draw_instance(const VertexArray& va,
                                    const IndexBuffer& ib,
                                    const Shader& shader,
                                    uint32_t instance_count) -> void = 0;
     };
 
-    /// @brief 后端工厂 —— 全工程唯一 switch 点
+    /// @brief Backend factory - the single switch point across the project
     auto create_device(Backend backend) -> std::unique_ptr<RenderDevice>;
 
 } // namespace gkit::graphic

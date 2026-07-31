@@ -5,15 +5,15 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief 顶点数据缓冲(前端抽象接口)
+	 * @brief Vertex data buffer (frontend abstract interface)
 	 *
-	 * 存储顶点数据(position/color/uv 等)到 GPU 的缓冲区。
+	 * Buffer that stores vertex data (position/color/uv, etc.) on the GPU.
 	 */
     class VertexBuffer : public Buffer {
     public:
         ~VertexBuffer() override = default;
 
-        /// @brief 是否为动态缓冲(频繁更新, 后端映射 GL_DYNAMIC_DRAW 等)
+        /// @brief Whether this is a dynamic buffer (updated frequently; backend maps to GL_DYNAMIC_DRAW etc.)
         [[nodiscard]] virtual auto is_dynamic() const -> bool = 0;
     };
 

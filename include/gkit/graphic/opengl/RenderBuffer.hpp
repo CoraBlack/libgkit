@@ -5,9 +5,10 @@
 #include <cstdint>
 
 /**
- * @brief OpenGL 后端渲染缓冲(renderbuffer)
+ * @brief OpenGL backend renderbuffer
  *
- * 继承前端 `graphic::RenderBuffer`, 用于帧缓冲的深度/模板附件。
+ * Inherits frontend `graphic::RenderBuffer`; used as the depth/stencil
+ * attachment of a framebuffer.
  */
 namespace gkit::graphic::opengl {
 
@@ -20,11 +21,11 @@ namespace gkit::graphic::opengl {
         auto bind() const -> void override;
         auto unbind() const -> void override;
 
-        /// @brief 获取 GL 渲染缓冲句柄(后端逃生通道)
+        /// @brief Get the GL renderbuffer handle (backend escape hatch)
         [[nodiscard]] auto get_render_id() const -> uint32_t { return this->renderer_id; }
 
     private:
-        uint32_t renderer_id = 0; // GL 渲染缓冲句柄
+        uint32_t renderer_id = 0; // GL renderbuffer handle
     };
 
 } // namespace gkit::graphic::opengl

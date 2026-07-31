@@ -5,13 +5,14 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief 存储缓冲(占位, 暂不实现)
+	 * @brief Storage buffer (placeholder, not implemented yet)
 	 *
-	 * 供计算着色器读写(SSBO)的缓冲。资源模块与后端就绪后,
-	 * 在此基类上扩展(绑定到计算管线/材质槽位)。
+	 * Buffer readable/writable by compute shaders (SSBO). Once the resource
+	 * module and backends are ready, extend this base class (bind to compute
+	 * pipelines / material slots).
 	 *
-	 * TODO(将来): 实现后端(opengl::StorageBuffer)与 Device 工厂方法
-	 *             create_storage_buffer()。
+	 * TODO(future): implement the backend (opengl::StorageBuffer) and the Device
+	 *               factory method create_storage_buffer().
 	 */
     // class StorageBuffer : public Buffer {
     // public:

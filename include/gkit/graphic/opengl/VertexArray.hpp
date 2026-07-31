@@ -7,9 +7,10 @@
 #include <cstdint>
 
 /**
- * @brief OpenGL 后端顶点数组(VAO)
+ * @brief OpenGL backend vertex array (VAO)
  *
- * 继承前端 `graphic::VertexArray`, 维护 GL 顶点属性配置。
+ * Inherits frontend `graphic::VertexArray`; maintains GL vertex attribute
+ * configuration.
  */
 namespace gkit::graphic::opengl {
 
@@ -25,8 +26,8 @@ namespace gkit::graphic::opengl {
         auto unbind() const -> void override;
 
     private:
-        uint32_t renderer_id  = 0; // GL 顶点数组句柄
-        uint32_t attrib_index = 0; // 当前属性索引
+        uint32_t renderer_id  = 0; // GL vertex array handle
+        uint32_t attrib_index = 0; // current attribute index
     };
 
 } // namespace gkit::graphic::opengl

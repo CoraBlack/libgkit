@@ -3,11 +3,11 @@
 #include <cstdint>
 
 /**
- * @brief 缓冲区基类(前端抽象接口)
+ * @brief Base class for GPU data buffers (frontend abstract interface)
  *
- * 所有 GPU 数据缓冲(顶点/索引等)共有的数据操作接口。
- * 具体后端(OpenGL/Vulkan)继承并实现 bind/unbind/update 等操作,
- * 资源句柄(renderer_id)只存在于后端实现内部。
+ * Common data operations shared by all GPU data buffers (vertex, index, etc.).
+ * Concrete backends (OpenGL/Vulkan) inherit and implement bind/unbind/update.
+ * The resource handle (renderer_id) only lives inside the backend implementation.
  */
 namespace gkit::graphic {
 
@@ -22,23 +22,23 @@ namespace gkit::graphic {
 
         virtual ~Buffer() = default;
 
-        /// @brief 绑定到当前后端上下文
+        /// @brief Bind to the current backend context
         virtual auto bind() const -> void = 0;
 
-        /// @brief 解绑
+        /// @brief Unbind
         virtual auto unbind() const -> void = 0;
 
-        /// @brief 全量更新: 仅当 size 不变时后端走 SubData, 否则重建
+        /// @brief Update the whole buffer; uses SubData if size is unchanged, otherwise reallocates
         virtual auto update_data(const void* data, uint32_t size) -> void = 0;
 
-        /// @brief 局部更新: 从 offset 起更新 size 字节
+        /// @brief Update a byte range starting at offset
         virtual auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void = 0;
 
-        /// @brief 缓冲区大小(字节)
+        /// @brief Buffer size in bytes
         [[nodiscard]] auto get_size() const -> uint32_t { return size; }
 
     protected:
-        uint32_t size = 0; // 字节数
+        uint32_t size = 0; // size in bytes
     };
 
 } // namespace gkit::graphic

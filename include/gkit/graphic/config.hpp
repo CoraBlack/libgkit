@@ -5,14 +5,14 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief 默认窗口尺寸(平台层配置)
+	 * @brief Default window size (platform-layer configuration)
 	 */
     const unsigned int SCR_WIDTH  = 500;
     const unsigned int SCR_HEIGHT = 500;
 
     /**
-	 * @brief texture pattern
-	 * @note 后端无关的纹理类型, 由后端映射到具体 API 常量
+	 * @brief Texture pattern
+	 * @note Backend-agnostic texture type; backends map it to concrete API constants
 	 */
     enum class TextureType : std::uint8_t {
         Texture2D,

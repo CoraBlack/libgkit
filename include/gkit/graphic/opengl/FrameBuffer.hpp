@@ -7,9 +7,10 @@
 #include <cstdint>
 
 /**
- * @brief OpenGL 后端帧缓冲(FBO)
+ * @brief OpenGL backend framebuffer (FBO)
  *
- * 继承前端 `graphic::FrameBuffer`, 实现 GL 离屏渲染目标。
+ * Inherits frontend `graphic::FrameBuffer`; implements the GL off-screen
+ * render target.
  */
 namespace gkit::graphic::opengl {
 
@@ -31,11 +32,11 @@ namespace gkit::graphic::opengl {
         auto unbind() const -> void override;
 
     private:
-        uint32_t renderer_id = 0; // GL 帧缓冲句柄
-        unsigned int fb_height; // 帧缓冲高度
-        unsigned int fb_width; // 帧缓冲宽度
-        unsigned int left_x   = 0; // 视口左坐标
-        unsigned int bottom_y = 0; // 视口底坐标
+        uint32_t renderer_id = 0; // GL framebuffer handle
+        unsigned int fb_height; // framebuffer height
+        unsigned int fb_width; // framebuffer width
+        unsigned int left_x   = 0; // viewport left coordinate
+        unsigned int bottom_y = 0; // viewport bottom coordinate
     };
 
 } // namespace gkit::graphic::opengl
