@@ -2,8 +2,10 @@ set (GKIT_GRAPHIC "gkit_graphic")
 
 set (GRAPHIC_SRC
     "./Renderer.cpp"
+    "./create_device.cpp"
 
     # OpenGL module
+    "./opengl/Device.cpp"
     "./opengl/FrameBuffer.cpp"
     "./opengl/IndexBuffer.cpp"
     "./opengl/RenderBuffer.cpp"

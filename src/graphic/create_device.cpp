@@ -1,0 +1,16 @@
+#include "gkit/graphic/RenderDevice.hpp"
+
+#include "gkit/graphic/opengl/Device.hpp"
+
+namespace gkit::graphic {
+
+    auto create_device(Backend backend) -> std::unique_ptr<RenderDevice> {
+        switch (backend) {
+        case Backend::OpenGL:
+            return std::make_unique<opengl::Device>();
+        }
+        // 将来: case Backend::Vulkan: return std::make_unique<vulkan::Device>();
+        return nullptr;
+    }
+
+} // namespace gkit::graphic
