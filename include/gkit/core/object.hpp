@@ -15,10 +15,8 @@ namespace gkit::core {
      * and should create it with func @ref gkit::core::scene::Object::create<T>().
      */
     class Object {
-    protected:
-        Object() = default;
-
     public:
+        Object() = default;
         virtual ~Object() = default;
 
         /**

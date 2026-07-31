@@ -16,10 +16,12 @@ namespace gkit::core {
         ~UniqueObject() noexcept;
         UniqueObject(const UniqueObject&) noexcept = delete;
         UniqueObject(UniqueObject&& other) noexcept;
+        auto operator=(const UniqueObject&) noexcept = delete;
+        auto operator=(UniqueObject&& other) noexcept -> UniqueObject&;
 
-        auto operator=(const UniqueObject& other) -> ObjectId;
-
-        inline auto get_id() const -> const ObjectId& { return this->id; }
+        [[nodiscard]] auto get() -> Object* { return this->obj; }
+        [[nodiscard]] auto get() const -> const Object* { return this->obj; }
+        [[nodiscard]] inline auto get_id() const -> const ObjectId& { return this->id; }
     };
 
     template<IsObject T>

@@ -23,8 +23,9 @@ namespace gkit::core::reflect {
 
     class ClassInfo final {
     public:
-        using Getter = std::function<Value(const void*)>;
-        using Setter = std::function<void(void*, const Value&)>;
+        using Getter  = std::function<Value(const void*)>;
+        using Setter  = std::function<void(void*, const Value&)>;
+        using Factory = std::function<std::unique_ptr<Object>()>;
 
         std::string class_name;
         std::string parent_class_name;
@@ -37,6 +38,8 @@ namespace gkit::core::reflect {
 
         template<typename Fn>
         auto for_each_field(Fn&& fn) const -> void;
+
+        Factory factory;
 
     private:
         friend class ClassDB;
@@ -63,6 +66,8 @@ namespace gkit::core::reflect {
                           std::function<void(T&, const Value&)> setter = nullptr) -> ClassDB&;
 
         [[nodiscard]] auto find(const std::string& class_name) const -> const ClassInfo*;
+
+        [[nodiscard]] auto create(const std::string& class_name) const -> std::unique_ptr<Object>;
 
     private:
         ClassDB() = default;
@@ -130,6 +135,11 @@ namespace gkit::core::reflect {
         auto& info             = this->classes[class_name];
         info.class_name        = class_name;
         info.parent_class_name = parent;
+        if constexpr (std::is_constructible_v<T>) {
+            info.factory = []() -> std::unique_ptr<Object> {
+                return Object::create<T>();
+            };
+        }
         return *this;
     }
 

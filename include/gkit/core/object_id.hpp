@@ -19,13 +19,18 @@ namespace gkit::core {
         uint32_t id      = 0u;
         uint32_t version = 0u;
 
-    private:
+    public:
         ObjectId() noexcept;
 
     public:
         ObjectId(const ObjectId& other) noexcept = default;
         ObjectId(ObjectId&& other) noexcept;
         auto operator=(const ObjectId& other) -> ObjectId& = default;
+        auto operator=(ObjectId&& other) -> ObjectId& = default;
+
+        auto operator==(const ObjectId& other) const -> bool {
+            return this->id == other.id && this->version == other.version;
+        }
 
         /**
          * @brief check ObjectId is invalid
@@ -60,7 +65,7 @@ namespace gkit::core {
 
 template<>
 struct std::hash<gkit::core::ObjectId> {
-    auto operator()(const gkit::core::ObjectId& objid) -> std::size_t {
+    auto operator()(const gkit::core::ObjectId& objid) const -> std::size_t {
         auto uint_hash = std::hash<uint32_t>();
         return uint_hash(objid.id) ^ uint_hash(objid.version);
     }

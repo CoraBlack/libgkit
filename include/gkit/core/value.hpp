@@ -1,12 +1,13 @@
 #pragma once
 
 #include "gkit/core/object.hpp"
+#include "gkit/core/object_id.hpp"
+#include "gkit/core/unique_object.hpp"
 
 #include <concepts>
 #include <cstdint>
 #include <functional>
 #include <map>
-#include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -31,7 +32,8 @@ namespace gkit::core {
         String,
         Array,
         Map,
-        Object
+        Object,
+        ObjectId
     };
 
     /**
@@ -57,13 +59,11 @@ namespace gkit::core {
      */
     using Map = std::map<std::string, Value>;
 
-    using ObjectOwner = std::unique_ptr<Object>;
-
     template<typename T>
     concept IsValueType =
         std::same_as<std::remove_cv_t<T>, bool> || std::is_convertible_v<std::remove_cv_t<T>, Number> ||
         std::same_as<std::remove_cv_t<T>, String> || std::is_convertible_v<std::remove_cv_t<T>, Array> ||
-        std::is_convertible_v<std::remove_cv_t<T>, Map> || std::is_convertible_v<std::remove_cv_t<T>, Object>;
+        std::is_convertible_v<std::remove_cv_t<T>, Map>;
 
     /**
      * @brief Dynamically typed value container capable of holding null, bool,
@@ -75,11 +75,10 @@ namespace gkit::core {
          * @brief Variant storage backing the Value. Object is held via std::unique_ptr
          *        for exclusive ownership and automatic lifetime management.
          */
-        using Storage = std::variant<Null, bool, Number, std::string, Array, Map, std::unique_ptr<gkit::core::Object>>;
+        using Storage = std::variant<Null, bool, Number, std::string, Array, Map, UniqueObject, ObjectId>;
 
     public: // Constructors
         Value() noexcept = default;
-        /// @brief Copy constructor. Throws std::logic_error if the source holds a non-copyable Object.
         Value(const Value&);
         Value(Value&&) noexcept = default;
         ~Value()                = default;
@@ -94,12 +93,8 @@ namespace gkit::core {
         Value(Array value); // NOLINT(google-explicit-constructor)
         Value(Map value); // NOLINT(google-explicit-constructor)
 
-        /** @brief Store an Object by unique_ptr (the Value takes exclusive ownership). */
-        explicit Value(std::unique_ptr<gkit::core::Object> value) noexcept;
-
-        /**  @brief Copy-construct a Value from a derived Object type. Allocates a new copy on the heap. */
-        template<gkit::core::IsObject T>
-        explicit Value(const T& value);
+        explicit Value(UniqueObject value) noexcept;
+        explicit Value(ObjectId value) noexcept;
 
     public: // Assignment operators
         auto operator=(const Value&) -> Value&;
@@ -115,8 +110,8 @@ namespace gkit::core {
         auto operator=(Array value) -> Value&;
         auto operator=(Map value) -> Value&;
 
-        /** @brief Assign a unique_ptr, taking ownership of the Object. */
-        auto operator=(std::unique_ptr<gkit::core::Object> value) noexcept -> Value&;
+        auto operator=(UniqueObject value) noexcept -> Value&;
+        auto operator=(ObjectId value) noexcept -> Value&;
 
     public: // Type checking
         [[nodiscard]] constexpr auto is_null() const noexcept -> bool { return std::holds_alternative<Null>(storage); }
@@ -140,7 +135,13 @@ namespace gkit::core {
         }
         [[nodiscard]] constexpr auto is_map() const noexcept -> bool { return std::holds_alternative<Map>(storage); }
         [[nodiscard]] constexpr auto is_object() const noexcept -> bool {
-            return std::holds_alternative<std::unique_ptr<gkit::core::Object>>(storage);
+            return std::holds_alternative<UniqueObject>(storage) || std::holds_alternative<ObjectId>(storage);
+        }
+        [[nodiscard]] constexpr auto is_object_owner() const noexcept -> bool {
+            return std::holds_alternative<UniqueObject>(storage);
+        }
+        [[nodiscard]] constexpr auto is_object_ref() const noexcept -> bool {
+            return std::holds_alternative<ObjectId>(storage);
         }
 
     public: // Value accessors (unchecked - behavior undefined if wrong type)
@@ -165,36 +166,20 @@ namespace gkit::core {
         [[nodiscard]] auto as_map() noexcept -> Map&;
 
     public: // Object accessors
-        /**
-         * @brief Release the stored Object and transfer ownership to the caller.
-         *        The Value becomes Null after this call.
-         * @pre is_object() must be true; otherwise throws std::bad_variant_access.
-         */
-        [[nodiscard]] auto as_object() -> std::unique_ptr<gkit::core::Object>;
+        [[nodiscard]] auto as_object() const noexcept -> ObjectId;
 
-        /**
-         * @brief Access the stored Object by reference, downcasting to T via dynamic_cast.
-         * @throws std::invalid_argument if the stored Object is not of type T.
-         */
+        [[nodiscard]] auto as_object_ptr() noexcept -> gkit::core::Object*;
+        [[nodiscard]] auto as_object_ptr() const noexcept -> const gkit::core::Object*;
+
         template<gkit::core::IsObject T>
         [[nodiscard]] auto as() -> T&;
 
-        /**
-         * @brief Const version of as<T>().
-         */
         template<gkit::core::IsObject T>
         [[nodiscard]] auto as() const -> const T&;
 
-        /**
-         * @brief Try to access the stored Object as type T. Returns nullptr on mismatch
-         *        or if the Value does not hold an Object.
-         */
         template<gkit::core::IsObject T>
         [[nodiscard]] auto try_as() noexcept -> T*;
 
-        /**
-         * @brief Const version of try_as<T>().
-         */
         template<gkit::core::IsObject T>
         [[nodiscard]] auto try_as() const noexcept -> const T*;
 
@@ -210,10 +195,6 @@ namespace gkit::core {
         }
         [[nodiscard]] auto as_string_or(const std::string& fallback) const noexcept -> const std::string&;
 
-        /**
-         * @brief Return the stored Object pointer, or the given fallback if the Value
-         *        does not hold an Object. Does not transfer ownership.
-         */
         [[nodiscard]] auto as_object_or(gkit::core::Object* fallback) const noexcept -> gkit::core::Object*;
 
     public: // Map helpers
@@ -263,7 +244,8 @@ namespace gkit::core {
                     if constexpr (std::is_same_v<T, std::string>) return Type::String;
                     if constexpr (std::is_same_v<T, Array>) return Type::Array;
                     if constexpr (std::is_same_v<T, Map>) return Type::Map;
-                    if constexpr (std::is_same_v<T, std::unique_ptr<gkit::core::Object>>) return Type::Object;
+                    if constexpr (std::is_same_v<T, UniqueObject>) return Type::Object;
+                    if constexpr (std::is_same_v<T, ObjectId>) return Type::ObjectId;
                     return Type::Null; // unreachable
                 },
                 storage);
@@ -281,13 +263,8 @@ namespace gkit::core {
     };
 
     template<gkit::core::IsObject T>
-    Value::Value(const T& value) {
-        this->storage = std::make_unique<Object>(value);
-    }
-
-    template<gkit::core::IsObject T>
     auto Value::as() -> T& {
-        auto* ptr  = std::get<std::unique_ptr<gkit::core::Object>>(this->storage).get();
+        auto* ptr  = this->as_object_ptr();
         auto* cast = dynamic_cast<T*>(ptr);
         if (cast == nullptr) {
             throw std::invalid_argument("Value::as<T>() failed: stored object is not of requested type");
@@ -297,7 +274,7 @@ namespace gkit::core {
 
     template<gkit::core::IsObject T>
     auto Value::as() const -> const T& {
-        const auto* ptr  = std::get<std::unique_ptr<gkit::core::Object>>(this->storage).get();
+        const auto* ptr  = this->as_object_ptr();
         const auto* cast = dynamic_cast<const T*>(ptr);
         if (cast == nullptr) {
             throw std::invalid_argument("Value::as<T>() const failed: stored object is not of requested type");
@@ -308,14 +285,12 @@ namespace gkit::core {
     template<gkit::core::IsObject T>
     auto Value::try_as() noexcept -> T* {
         if (!this->is_object()) return nullptr;
-        auto* ptr = std::get<std::unique_ptr<gkit::core::Object>>(this->storage).get();
-        return dynamic_cast<T*>(ptr);
+        return dynamic_cast<T*>(this->as_object_ptr());
     }
 
     template<gkit::core::IsObject T>
     auto Value::try_as() const noexcept -> const T* {
         if (!this->is_object()) return nullptr;
-        const auto* ptr = std::get<std::unique_ptr<gkit::core::Object>>(this->storage).get();
-        return dynamic_cast<const T*>(ptr);
+        return dynamic_cast<const T*>(this->as_object_ptr());
     }
 } // namespace gkit::core
