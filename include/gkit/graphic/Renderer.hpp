@@ -3,8 +3,8 @@
 #include "gkit/core/templates/singleton.hpp"
 #include "gkit/graphic/Shader.hpp"
 #include "gkit/graphic/config.hpp"
-#include "gkit/graphic/opengl/IndexBuffer.hpp"
-#include "gkit/graphic/opengl/VertexArray.hpp"
+#include "gkit/graphic/IndexBuffer.hpp"
+#include "gkit/graphic/VertexArray.hpp"
 
 #include <cstdint>
 
@@ -37,8 +37,8 @@ namespace gkit::graphic {
 		 * @param ib Index buffer containing indices
 		 * @param shader Shader program to use for rendering
 		 */
-        auto draw(const gkit::graphic::opengl::VertexArray& va,
-                  const gkit::graphic::opengl::buffer::IndexBuffer& ib,
+        auto draw(const gkit::graphic::VertexArray& va,
+                  const gkit::graphic::IndexBuffer& ib,
                   const gkit::graphic::Shader& shader) const -> void;
 
         /**
@@ -48,8 +48,8 @@ namespace gkit::graphic {
 		 * @param shader Shader program to use for rendering
 		 * @param instance_count Number of instances to draw
 		 */
-        auto draw_instance(const gkit::graphic::opengl::VertexArray& va,
-                           const gkit::graphic::opengl::buffer::IndexBuffer& ib,
+        auto draw_instance(const gkit::graphic::VertexArray& va,
+                           const gkit::graphic::IndexBuffer& ib,
                            const gkit::graphic::Shader& shader,
                            uint32_t instance_count) const -> void;
     };

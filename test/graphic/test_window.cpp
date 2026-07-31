@@ -1,10 +1,13 @@
 #include "gkit/graphic/Renderer.hpp"
-#include "gkit/graphic/Shader.hpp"
 #include "gkit/graphic/opengl/FrameBuffer.hpp"
 #include "gkit/graphic/opengl/IndexBuffer.hpp"
 #include "gkit/graphic/opengl/RenderBuffer.hpp"
+#include "gkit/graphic/opengl/Shader.hpp"
 #include "gkit/graphic/opengl/StateManager.hpp"
+#include "gkit/graphic/opengl/Texture.hpp"
 #include "gkit/graphic/opengl/VertexArray.hpp"
+#include "gkit/graphic/opengl/VertexBuffer.hpp"
+#include "gkit/graphic/VertexBufferLayout.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -78,16 +81,16 @@ int main(int argc, char* argv[]) {
         unsigned int pic_indices[] = {0, 1, 2, 2, 3, 0};
 
         gkit::graphic::opengl::VertexArray pic_vao;
-        gkit::graphic::opengl::buffer::VertexBuffer pic_vbo(pic_vertices, sizeof(pic_vertices));
-        gkit::graphic::opengl::buffer::IndexBuffer pic_ibo(pic_indices, 6);
+        gkit::graphic::opengl::VertexBuffer pic_vbo(pic_vertices, sizeof(pic_vertices));
+        gkit::graphic::opengl::IndexBuffer pic_ibo(pic_indices, 6);
 
-        gkit::graphic::opengl::buffer::VertexBufferLayout pic_layout;
+        gkit::graphic::VertexBufferLayout pic_layout;
         pic_layout.push<float>(3);
         pic_layout.push<float>(2);
         pic_vao.add_buffer(pic_vbo, pic_layout);
 
         // load shader source
-        gkit::graphic::Shader pic_shader((resource_base / "graphic" / "texture.shader").string());
+        gkit::graphic::opengl::Shader pic_shader((resource_base / "graphic" / "texture.shader").string());
         gkit::graphic::opengl::Texture main_texture((resource_base / "graphic" / "container2.png").string(),
                                                     gkit::graphic::TextureType::Texture2D);
 
@@ -99,24 +102,22 @@ int main(int argc, char* argv[]) {
         unsigned int quad_indices[] = {0, 1, 2, 2, 3, 0};
 
         gkit::graphic::opengl::VertexArray quad_vao;
-        gkit::graphic::opengl::buffer::VertexBuffer quad_vb(quad_vertices, sizeof(quad_vertices));
-        gkit::graphic::opengl::buffer::IndexBuffer quad_ib(quad_indices, 6);
+        gkit::graphic::opengl::VertexBuffer quad_vb(quad_vertices, sizeof(quad_vertices));
+        gkit::graphic::opengl::IndexBuffer quad_ib(quad_indices, 6);
 
-        gkit::graphic::opengl::buffer::VertexBufferLayout quad_layout;
+        gkit::graphic::VertexBufferLayout quad_layout;
         quad_layout.push<float>(3);
         quad_layout.push<float>(2);
         quad_vao.add_buffer(quad_vb, quad_layout);
 
         // load post-processing shader
-        gkit::graphic::Shader post_shader((resource_base / "graphic" / "post_process.shader").string());
+        gkit::graphic::opengl::Shader post_shader((resource_base / "graphic" / "post_process.shader").string());
 #pragma endregion
 
 #pragma region framebuffer
-        gkit::graphic::opengl::buffer::FrameBuffer fbo(gkit::graphic::SCR_WIDTH,
-                                                       gkit::graphic::SCR_HEIGHT);
+        gkit::graphic::opengl::FrameBuffer fbo(gkit::graphic::SCR_WIDTH, gkit::graphic::SCR_HEIGHT);
         gkit::graphic::opengl::Texture fbo_texture(" ", gkit::graphic::TextureType::TextureFramebuffer);
-        gkit::graphic::opengl::buffer::RenderBuffer rbo(gkit::graphic::SCR_WIDTH,
-                                                        gkit::graphic::SCR_HEIGHT);
+        gkit::graphic::opengl::RenderBuffer rbo(gkit::graphic::SCR_WIDTH, gkit::graphic::SCR_HEIGHT);
         fbo.attach_color_texture(fbo_texture, 0);
         fbo.attach_depth_stencil(rbo);
         fbo.check();

@@ -2,12 +2,12 @@ set (GKIT_GRAPHIC "gkit_graphic")
 
 set (GRAPHIC_SRC
     "./Renderer.cpp"
-    "./Shader.cpp"
 
     # OpenGL module
     "./opengl/FrameBuffer.cpp"
     "./opengl/IndexBuffer.cpp"
     "./opengl/RenderBuffer.cpp"
+    "./opengl/Shader.cpp"
     "./opengl/StateManager.cpp"
     "./opengl/Texture.cpp"
     "./opengl/VertexArray.cpp"

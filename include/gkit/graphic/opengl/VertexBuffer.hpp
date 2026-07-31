@@ -1,73 +1,37 @@
 #pragma once
 
+#include "gkit/graphic/VertexBuffer.hpp"
+
 #include <cstdint>
 
 /**
- * @brief Vertex buffer wrapper for OpenGL vertex buffer objects (VBO)
+ * @brief OpenGL 后端顶点缓冲(VBO)
  *
- * A VertexBuffer stores vertex data on the GPU, containing attributes
- * such as position, color, texture coordinates, etc.
+ * 继承前端 `graphic::VertexBuffer`, 实现具体的 GL 缓冲操作。
  */
-namespace gkit::graphic::opengl::buffer {
+namespace gkit::graphic::opengl {
 
-    class VertexBuffer {
-    public:
-        VertexBuffer(const VertexBuffer&)                    = delete;
-        auto operator=(const VertexBuffer&) -> VertexBuffer& = delete;
-
-        /** @brief Move constructor - transfers ownership of GL buffer
-		 *  @param other Source object to move from (will be invalidated)
-		 */
-        VertexBuffer(VertexBuffer&& other) noexcept;
-
-        /** @brief Move assignment - transfers ownership of GL buffer
-		 *  @param other Source object to move from (will be invalidated)
-		 *  @note Releases any existing GL buffer before taking ownership
-		 */
-        auto operator=(VertexBuffer&& other) noexcept -> VertexBuffer&;
-
+    class VertexBuffer final : public graphic::VertexBuffer {
     public:
         /**
-		 * @brief Construct a vertex buffer
-		 * @param data Pointer to vertex data
-		 * @param size Size of the data in bytes
-		 * @param dynamic If true, the buffer will be updated frequently (GL_DYNAMIC_DRAW)
+		 * @brief 构造顶点缓冲
+		 * @param data 顶点数据指针
+		 * @param size 数据字节数
+		 * @param dynamic true 则频繁更新(GL_DYNAMIC_DRAW)
 		 */
-        VertexBuffer(const void* data, uint32_t size, bool dynamic = false);
+        explicit VertexBuffer(const void* data, uint32_t size, bool dynamic = false);
 
-        /**
-		 * @brief Destructor - deletes the vertex buffer
-		 */
-        ~VertexBuffer();
+        ~VertexBuffer() override;
 
-        /**
-		 * @brief Bind this vertex buffer to the current OpenGL context
-		 */
-        auto bind() const -> void;
-
-        /**
-		 * @brief Unbind this vertex buffer from the current OpenGL context
-		 */
-        auto unbind() const -> void;
-
-        /**
-		 * @brief Update all buffer data
-		 * @param data Pointer to the new data
-		 * @param size Size of the data in bytes (if size is same, uses SubData; if different, reallocates)
-		 */
-        auto update_data(const void* data, uint32_t size) -> void;
-
-        /**
-		 * @brief Update partial buffer data
-		 * @param offset Offset in bytes from the start of the buffer
-		 * @param data Pointer to the new data
-		 * @param size Size of the data in bytes
-		 */
-        auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void;
+        auto bind() const -> void override;
+        auto unbind() const -> void override;
+        auto update_data(const void* data, uint32_t size) -> void override;
+        auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void override;
+        [[nodiscard]] auto is_dynamic() const -> bool override { return this->dynamic; }
 
     private:
-        uint32_t renderer_id; // OpenGL buffer ID
-        uint32_t size; // Buffer size in bytes
+        uint32_t renderer_id = 0; // GL 缓冲句柄
+        bool dynamic         = false;
     };
 
-} // namespace gkit::graphic::opengl::buffer
+} // namespace gkit::graphic::opengl

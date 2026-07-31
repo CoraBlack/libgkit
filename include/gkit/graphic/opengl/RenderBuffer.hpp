@@ -1,57 +1,30 @@
 #pragma once
 
+#include "gkit/graphic/RenderBuffer.hpp"
+
 #include <cstdint>
 
 /**
- * @brief Render buffer wrapper for OpenGL renderbuffer objects
+ * @brief OpenGL 后端渲染缓冲(renderbuffer)
  *
- * A RenderBuffer is an off-screen buffer that stores rendered images but
- * cannot be directly sampled by shaders. Typically used for depth and
- * stencil attachments in a FrameBuffer.
+ * 继承前端 `graphic::RenderBuffer`, 用于帧缓冲的深度/模板附件。
  */
-namespace gkit::graphic::opengl::buffer {
+namespace gkit::graphic::opengl {
 
-    class RenderBuffer {
+    class RenderBuffer final : public graphic::RenderBuffer {
     public:
-        RenderBuffer(const RenderBuffer&)                    = delete;
-        auto operator=(const RenderBuffer&) -> RenderBuffer& = delete;
+        explicit RenderBuffer(int width, int height);
 
-        /** @brief Move constructor - transfers ownership of GL renderbuffer
-		 *  @param other Source object to move from (will be invalidated)
-		 */
-        RenderBuffer(RenderBuffer&& other) noexcept;
+        ~RenderBuffer() override;
 
-        /** @brief Move assignment - transfers ownership of GL renderbuffer
-		 *  @param other Source object to move from (will be invalidated)
-		 *  @note Releases any existing GL renderbuffer before taking ownership
-		 */
-        auto operator=(RenderBuffer&& other) noexcept -> RenderBuffer&;
+        auto bind() const -> void override;
+        auto unbind() const -> void override;
 
-    public:
-        /**
-		 * @brief Construct a renderbuffer
-		 */
-        RenderBuffer(int width, int height);
-
-        /**
-		 * @brief Destructor - deletes the renderbuffer
-		 */
-        ~RenderBuffer();
-
-        /**
-		 * @brief Bind this renderbuffer to the current OpenGL context
-		 */
-        auto bind() const -> void;
-
-        /**
-		 * @brief Unbind this renderbuffer from the current OpenGL context
-		 */
-        auto unbind() const -> void;
-
+        /// @brief 获取 GL 渲染缓冲句柄(后端逃生通道)
         [[nodiscard]] auto get_render_id() const -> uint32_t { return this->renderer_id; }
 
     private:
-        uint32_t renderer_id; // OpenGL renderbuffer ID
+        uint32_t renderer_id = 0; // GL 渲染缓冲句柄
     };
 
-} // namespace gkit::graphic::opengl::buffer
+} // namespace gkit::graphic::opengl

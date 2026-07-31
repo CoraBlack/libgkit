@@ -1,158 +1,50 @@
 #pragma once
 
-#include <cstdint>
 #include <string>
-#include <unordered_map>
 
+/**
+ * @brief 着色器(前端抽象接口)
+ *
+ * 加载/编译/绑定着色器程序的统一接口。
+ * 具体后端(OpenGL/Vulkan)负责编译、链接与 uniform 设置。
+ */
 namespace gkit::graphic {
+
     /**
- 	 * @brief Structure holding parsed shader source code
+	 * @brief 着色器源码结构(按阶段拆分)
 	 */
     struct ShaderProgramSource {
         std::string vertex_shader; // Vertex shader source code
-        std::string fragment_shader; // Fragment shader source code (note: typo in original)
+        std::string fragment_shader; // Fragment shader source code
     };
 
-    /**
-	 * @brief Shader wrapper for OpenGL shader programs
-	 *
-	 * Provides functionality to load, compile, and manage shader programs
-	 * including uniform variable manipulation.
-	 */
     class Shader {
     public:
-        Shader(const Shader&)                    = delete;
+        Shader()                         = default;
+        Shader(const Shader&)            = delete;
         auto operator=(const Shader&) -> Shader& = delete;
 
-        /** @brief Move constructor - transfers ownership of GL shader program
-		 *  @param other Source object to move from (will be invalidated)
-		 */
-        Shader(Shader&& other) noexcept;
+        Shader(Shader&&) noexcept            = default;
+        auto operator=(Shader&&) noexcept -> Shader& = default;
 
-        /** @brief Move assignment - transfers ownership of GL shader program
-		 *  @param other Source object to move from (will be invalidated)
-		 *  @note Releases any existing GL shader program before taking ownership
-		 */
-        auto operator=(Shader&& other) noexcept -> Shader&;
+        virtual ~Shader() = default;
 
-    public:
-        /**
-		 * @brief Construct a shader from a file
-		 * @param filepath Path to the shader source file
-		 */
-        explicit Shader(const std::string& filepath);
+        /// @brief 绑定着色器程序到当前后端上下文
+        virtual auto bind() const -> void = 0;
 
-        /**
-		 * @brief Destructor - deletes the shader program
-		 */
-        ~Shader();
+        /// @brief 解绑
+        virtual auto unbind() const -> void = 0;
 
-        /**
-		 * @brief Bind this shader program to the current OpenGL context
-		 */
-        auto bind() const -> void;
+        // Uniform setters(由后端实现, 映射到具体 API)
 
-        /**
-		 * @brief Unbind this shader program from the current OpenGL context
-		 */
-        auto unbind() const -> void;
-
-        // Uniform setters
-
-        /**
-		 * @brief Set an integer uniform variable
-		 * @param name Name of the uniform
-		 * @param value Integer value to set
-		 */
-        auto set_uniform_1i(const std::string& name, int value) -> void;
-
-        /**
-		 * @brief Set a float uniform variable
-		 * @param name Name of the uniform
-		 * @param value Float value to set
-		 */
-        auto set_uniform_1f(const std::string& name, float value) -> void;
-
-        /**
-		 * @brief Set a 4-component float uniform variable
-		 * @param name Name of the uniform
-		 * @param v0 First component
-		 * @param v1 Second component
-		 * @param f2 Third component
-		 * @param f3 Fourth component
-		 */
-        auto set_uniform_4f(const std::string& name, float v0, float v1, float f2, float f3) -> void;
-
-        /**
-		 * @brief Set a 4-component float vector uniform
-		 * @param name Name of the uniform
-		 * @param vector4 Pointer to 4-component float array
-		 */
-        auto set_uniform_vec_4f(const std::string& name, const float* vector4) -> void;
-
-        /**
-		 * @brief Set a 3-component float vector uniform
-		 * @param name Name of the uniform
-		 * @param vector3 Pointer to 3-component float array
-		 */
-        auto set_uniform_vec_3f(const std::string& name, const float* vector3) -> void;
-
-        /**
-		 * @brief Set a 4x4 float matrix uniform
-		 * @param name Name of the uniform
-		 * @param matrix Pointer to 16-element float array (column-major)
-		 */
-        auto set_uniform_mat_4f(const std::string& name, const float* matrix) -> void;
-
-        /**
-		 * @brief Set a 3x3 float matrix uniform
-		 * @param name Name of the uniform
-		 * @param matrix Pointer to 9-element float array (column-major)
-		 */
-        auto set_uniform_mat_3f(const std::string& name, const float* matrix) -> void;
-
-        /**
-		 * @brief Set an array of integer uniform variables
-		 * @param name Name of the uniform
-		 * @param sz Number of elements
-		 * @param ind Array of integer values
-		 */
-        auto set_uniform_1iv(const std::string& name, const int sz, const int* ind) -> void;
-
-    private:
-        /**
-		 * @brief Parse shader source from file
-		 * @param filePath Path to the shader file
-		 * @return Parsed shader source structure
-		 */
-        auto parse_shader(const std::string& file_path) -> ShaderProgramSource;
-
-        /**
-		 * @brief Compile a shader of the specified type
-		 * @param type Shader type (GL_VERTEX_SHADER or GL_FRAGMENT_SHADER)
-		 * @param source Shader source code
-		 * @return Compiled shader ID
-		 */
-        auto compile_shader(uint32_t type, const std::string& source) -> uint32_t;
-
-        /**
-		 * @brief Create a shader program from vertex and fragment shaders
-		 * @param vertex_shader Vertex shader source
-		 * @param fragment_shader Fragment shader source
-		 * @return Linked shader program ID
-		 */
-        auto create_shader(const std::string& vertex_shader, const std::string& fragment_shader) -> uint32_t;
-
-        /**
-		 * @brief Get the location of a uniform variable
-		 * @param name Name of the uniform
-		 * @return Location ID, or -1 if not found
-		 */
-        auto get_uniform_location(const std::string& name) -> int;
-
-    private:
-        uint32_t renderer_id; // OpenGL shader program ID
-        std::string file_path; // Path to the shader file
-        std::unordered_map<std::string, int> uniform_location_cache; // Cache for uniform locations
+        virtual auto set_uniform_1i(const std::string& name, int value) -> void = 0;
+        virtual auto set_uniform_1f(const std::string& name, float value) -> void = 0;
+        virtual auto set_uniform_4f(const std::string& name, float v0, float v1, float v2, float v3) -> void = 0;
+        virtual auto set_uniform_vec_4f(const std::string& name, const float* vec4) -> void = 0;
+        virtual auto set_uniform_vec_3f(const std::string& name, const float* vec3) -> void = 0;
+        virtual auto set_uniform_mat_4f(const std::string& name, const float* mat4) -> void = 0;
+        virtual auto set_uniform_mat_3f(const std::string& name, const float* mat3) -> void = 0;
+        virtual auto set_uniform_1iv(const std::string& name, int count, const int* values) -> void = 0;
     };
+
 } // namespace gkit::graphic

@@ -2,39 +2,44 @@
 
 #include <glad/gl.h>
 
-gkit::graphic::opengl::buffer::IndexBuffer::IndexBuffer(const uint32_t* data, uint32_t count) : count(count) {
-    glGenBuffers(1, &this->renderer_id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->renderer_id);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), data, GL_STATIC_DRAW);
-}
-gkit::graphic::opengl::buffer::IndexBuffer::~IndexBuffer() {
-    if (this->renderer_id != 0) {
-        glDeleteBuffers(1, &this->renderer_id);
-        this->renderer_id = 0;
+namespace gkit::graphic::opengl {
+
+    IndexBuffer::IndexBuffer(const uint32_t* data, uint32_t count) {
+        glGenBuffers(1, &this->renderer_id);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->renderer_id);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), data, GL_STATIC_DRAW);
+        this->count = count;
+        this->size_ = count * sizeof(uint32_t);
     }
-}
 
-gkit::graphic::opengl::buffer::IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept :
-    renderer_id(other.renderer_id), count(other.count) {
-    other.renderer_id = 0;
-}
-
-auto gkit::graphic::opengl::buffer::IndexBuffer::operator=(IndexBuffer&& other) noexcept -> IndexBuffer& {
-    if (this != &other) {
+    IndexBuffer::~IndexBuffer() {
         if (this->renderer_id != 0) {
             glDeleteBuffers(1, &this->renderer_id);
+            this->renderer_id = 0;
         }
-        this->renderer_id = other.renderer_id;
-        this->count       = other.count;
-        other.renderer_id = 0;
     }
-    return *this;
-}
 
-auto gkit::graphic::opengl::buffer::IndexBuffer::bind() const -> void {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->renderer_id);
-}
+    auto IndexBuffer::bind() const -> void {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->renderer_id);
+    }
 
-auto gkit::graphic::opengl::buffer::IndexBuffer::unbind() const -> void {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
+    auto IndexBuffer::unbind() const -> void {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    auto IndexBuffer::update_data(const void* data, uint32_t size) -> void {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->renderer_id);
+        if (size == this->size_) {
+            glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, data);
+        } else {
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
+            this->size_ = size;
+        }
+    }
+
+    auto IndexBuffer::update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->renderer_id);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
+    }
+
+} // namespace gkit::graphic::opengl

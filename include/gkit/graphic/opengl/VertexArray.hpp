@@ -1,71 +1,32 @@
 #pragma once
 
-#include "gkit/graphic/opengl/VertexBuffer.hpp"
-#include "gkit/graphic/opengl/VertexBufferLayout.hpp"
+#include "gkit/graphic/VertexArray.hpp"
+#include "gkit/graphic/VertexBuffer.hpp"
+#include "gkit/graphic/VertexBufferLayout.hpp"
 
 #include <cstdint>
 
 /**
- * @brief Vertex array wrapper for OpenGL vertex array objects (VAO)
+ * @brief OpenGL 后端顶点数组(VAO)
  *
- * A VertexArray stores the configuration of vertex attributes and their
- * associated buffers, binding them together for efficient rendering.
+ * 继承前端 `graphic::VertexArray`, 维护 GL 顶点属性配置。
  */
 namespace gkit::graphic::opengl {
 
-    class VertexArray {
+    class VertexArray final : public graphic::VertexArray {
     public:
-        VertexArray(const VertexArray&)                    = delete;
-        auto operator=(const VertexArray&) -> VertexArray& = delete;
-
-        /** @brief Move constructor - transfers ownership of GL vertex array
-		 *  @param other Source object to move from (will be invalidated)
-		 */
-        VertexArray(VertexArray&& other) noexcept;
-
-        /** @brief Move assignment - transfers ownership of GL vertex array
-		 *  @param other Source object to move from (will be invalidated)
-		 *  @note Releases any existing GL vertex array before taking ownership
-		 */
-        auto operator=(VertexArray&& other) noexcept -> VertexArray&;
-
-    public:
-        /**
-		 * @brief Construct a vertex array object
-		 */
         VertexArray();
 
-        /**
-		 * @brief Destructor - deletes the vertex array object
-		 */
-        ~VertexArray();
+        ~VertexArray() override;
 
-        /**
-		 * @brief Add a vertex buffer with a layout
-		 * @param vb Vertex buffer to add
-		 * @param layout Layout defining the vertex attributes
-		 */
-        auto add_buffer(const buffer::VertexBuffer& vb, const buffer::VertexBufferLayout& layout) -> void;
-
-        /**
-		 * @brief Add an instance buffer for instanced rendering
-		 * @param vb Vertex buffer containing instance data
-		 */
-        auto add_instance_buffer(const buffer::VertexBuffer& vb) -> void;
-
-        /**
-		 * @brief Bind this vertex array to the current OpenGL context
-		 */
-        auto bind() const -> void;
-
-        /**
-		 * @brief Unbind this vertex array from the current OpenGL context
-		 */
-        auto unbind() const -> void;
+        auto add_buffer(const graphic::VertexBuffer& vb, const graphic::VertexBufferLayout& layout) -> void override;
+        auto add_instance_buffer(const graphic::VertexBuffer& vb) -> void override;
+        auto bind() const -> void override;
+        auto unbind() const -> void override;
 
     private:
-        uint32_t renderer_id; // OpenGL vertex array ID
-        uint32_t attrib_index = 0; // Current attribute index for adding new attributes
+        uint32_t renderer_id  = 0; // GL 顶点数组句柄
+        uint32_t attrib_index = 0; // 当前属性索引
     };
 
 } // namespace gkit::graphic::opengl

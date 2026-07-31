@@ -1,62 +1,36 @@
 #pragma once
 
+#include "gkit/graphic/IndexBuffer.hpp"
+
 #include <cstdint>
 
-namespace gkit::graphic::opengl::buffer {
-    /**
-	* @brief Index buffer wrapper for OpenGL element array buffers
-	*
-	* An IndexBuffer stores indices that determine the order in which vertices
-	* are drawn, enabling efficient rendering of indexed geometry.
-	*/
-    class IndexBuffer {
-    public:
-        IndexBuffer(const IndexBuffer&)                    = delete;
-        auto operator=(const IndexBuffer&) -> IndexBuffer& = delete;
+/**
+ * @brief OpenGL 后端索引缓冲(EBO)
+ *
+ * 继承前端 `graphic::IndexBuffer`, 实现具体的 GL 缓冲操作。
+ */
+namespace gkit::graphic::opengl {
 
-        /** @brief Move constructor - transfers ownership of GL buffer
-		 *  @param other Source object to move from (will be invalidated)
-		 */
-        IndexBuffer(IndexBuffer&& other) noexcept;
-
-        /** @brief Move assignment - transfers ownership of GL buffer
-		 *  @param other Source object to move from (will be invalidated)
-		 *  @note Releases any existing GL buffer before taking ownership
-		 */
-        auto operator=(IndexBuffer&& other) noexcept -> IndexBuffer&;
-
+    class IndexBuffer final : public graphic::IndexBuffer {
     public:
         /**
-		 * @brief Construct an index buffer
-		 * @param data Pointer to index data
-		 * @param count Number of indices
+		 * @brief 构造索引缓冲
+		 * @param data 索引数据指针
+		 * @param count 索引数量
 		 */
-        IndexBuffer(const uint32_t* data, uint32_t count);
+        explicit IndexBuffer(const uint32_t* data, uint32_t count);
 
-        /**
-		 * @brief Destructor - deletes the index buffer
-		 */
-        ~IndexBuffer();
+        ~IndexBuffer() override;
 
-        /**
-		 * @brief Bind this index buffer to the current OpenGL context
-		 */
-        auto bind() const -> void;
-
-        /**
-		 * @brief Unbind this index buffer from the current OpenGL context
-		 */
-        auto unbind() const -> void;
-
-        /**
-		 * @brief Get the number of indices in this buffer
-		 * @return Number of indices
-		 */
-        [[nodiscard]] inline auto get_count() const -> uint32_t { return this->count; }
+        auto bind() const -> void override;
+        auto unbind() const -> void override;
+        auto update_data(const void* data, uint32_t size) -> void override;
+        auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void override;
+        [[nodiscard]] auto get_count() const -> uint32_t override { return this->count; }
 
     private:
-        uint32_t renderer_id; // OpenGL buffer ID
-        uint32_t count; // Number of indices in the buffer
+        uint32_t renderer_id = 0; // GL 缓冲句柄
+        uint32_t count       = 0; // 索引数量
     };
 
-} // namespace gkit::graphic::opengl::buffer
+} // namespace gkit::graphic::opengl
