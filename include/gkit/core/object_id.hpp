@@ -26,7 +26,7 @@ namespace gkit::core {
         ObjectId(const ObjectId& other) noexcept = default;
         ObjectId(ObjectId&& other) noexcept;
         auto operator=(const ObjectId& other) -> ObjectId& = default;
-        auto operator=(ObjectId&& other) -> ObjectId& = default;
+        auto operator=(ObjectId&& other) -> ObjectId&      = default;
 
         auto operator==(const ObjectId& other) const -> bool {
             return this->id == other.id && this->version == other.version;

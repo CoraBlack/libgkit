@@ -16,7 +16,7 @@ namespace gkit::core {
      */
     class Object {
     public:
-        Object() = default;
+        Object()          = default;
         virtual ~Object() = default;
 
         /**
