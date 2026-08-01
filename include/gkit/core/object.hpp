@@ -28,6 +28,8 @@ namespace gkit::core {
          */
         template<IsObject T, typename... Args>
         static auto create(Args&&...) noexcept -> std::unique_ptr<T>;
+
+        virtual auto class_name() -> std::string final;
     };
 
     template<IsObject T, typename... Args>
