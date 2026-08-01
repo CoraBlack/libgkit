@@ -15,7 +15,9 @@ namespace gkit::graphic {
     public:
         ~IndexBuffer() override = default;
 
-        /// @brief Number of indices
+        /**
+		 * @brief Number of indices
+		 */
         [[nodiscard]] virtual auto get_count() const -> uint32_t = 0;
     };
 

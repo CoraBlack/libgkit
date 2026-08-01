@@ -25,16 +25,24 @@ namespace gkit::graphic {
 
         virtual ~Texture() = default;
 
-        /// @brief Bind to the given slot
+        /**
+		 * @brief Bind to the given slot
+		 */
         virtual auto bind(unsigned int slot) const -> void = 0;
 
-        /// @brief Unbind
+        /**
+		 * @brief Unbind
+		 */
         virtual auto unbind() const -> void = 0;
 
-        /// @brief Texture width in pixels
+        /**
+		 * @brief Texture width in pixels
+		 */
         [[nodiscard]] virtual auto get_width() const -> int = 0;
 
-        /// @brief Texture height in pixels
+        /**
+		 * @brief Texture height in pixels
+		 */
         [[nodiscard]] virtual auto get_height() const -> int = 0;
     };
 

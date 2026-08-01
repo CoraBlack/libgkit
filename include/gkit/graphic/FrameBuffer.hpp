@@ -23,34 +23,54 @@ namespace gkit::graphic {
 
         virtual ~FrameBuffer() = default;
 
-        /// @brief Attach a color texture to the given slot
+        /**
+		 * @brief Attach a color texture to the given slot
+		 */
         virtual auto attach_color_texture(const Texture& texture, int slot) -> void = 0;
 
-        /// @brief Detach the color texture from the given slot
+        /**
+		 * @brief Detach the color texture from the given slot
+		 */
         virtual auto detach_color_texture(int slot) -> void = 0;
 
-        /// @brief Attach a depth/stencil renderbuffer
+        /**
+		 * @brief Attach a depth/stencil renderbuffer
+		 */
         virtual auto attach_depth_stencil(const RenderBuffer& rbo) -> void = 0;
 
-        /// @brief Detach the depth/stencil attachment
+        /**
+		 * @brief Detach the depth/stencil attachment
+		 */
         virtual auto detach_depth_stencil() -> void = 0;
 
-        /// @brief Check framebuffer completeness
+        /**
+		 * @brief Check framebuffer completeness
+		 */
         virtual auto check() -> void = 0;
 
-        /// @brief Set the viewport to the framebuffer's default size
+        /**
+		 * @brief Set the viewport to the framebuffer's default size
+		 */
         virtual auto set_viewport() -> void = 0;
 
-        /// @brief Set a custom viewport size
+        /**
+		 * @brief Set a custom viewport size
+		 */
         virtual auto set_viewport(int width, int height) -> void = 0;
 
-        /// @brief Set a custom viewport with offset
+        /**
+		 * @brief Set a custom viewport with offset
+		 */
         virtual auto set_viewport(int x, int y, int width, int height) -> void = 0;
 
-        /// @brief Bind as the current render target
+        /**
+		 * @brief Bind as the current render target
+		 */
         virtual auto bind() const -> void = 0;
 
-        /// @brief Unbind, reverting to the default framebuffer (screen)
+        /**
+		 * @brief Unbind, reverting to the default framebuffer (screen)
+		 */
         virtual auto unbind() const -> void = 0;
     };
 

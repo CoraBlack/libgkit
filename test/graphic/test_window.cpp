@@ -1,7 +1,7 @@
 #include "gkit/graphic/Renderer.hpp"
 #include "gkit/graphic/VertexBufferLayout.hpp"
-#include "gkit/graphic/opengl/StateManager.hpp"
 #include "gkit/graphic/opengl/Texture.hpp"
+#include "gkit/graphic/opengl/config.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -65,8 +65,7 @@ int main(int argc, char* argv[]) {
 #pragma endregion
 
     {
-        auto& renderer      = gkit::graphic::Renderer::instance();
-        auto& state_manager = gkit::graphic::opengl::StateManager::instance();
+        auto& renderer = gkit::graphic::Renderer::instance();
         renderer.init(); // default OpenGL backend
 
         auto& device = renderer.get_device();
@@ -74,9 +73,24 @@ int main(int argc, char* argv[]) {
 #pragma region triangle
         // Colored triangle vertex data (position + color)
         float tri_vertices[] = {// positions            // colors
-                                0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // top: red
-                                -0.4f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom-left: green
-                                0.4f,  -0.25f, 0.0f, 0.0f, 0.0f, 1.0f}; // bottom-right: blue
+                                0.0f,
+                                0.5f,
+                                0.0f,
+                                1.0f,
+                                0.0f,
+                                0.0f, // top: red
+                                -0.4f,
+                                -0.25f,
+                                0.0f,
+                                0.0f,
+                                1.0f,
+                                0.0f, // bottom-left: green
+                                0.4f,
+                                -0.25f,
+                                0.0f,
+                                0.0f,
+                                0.0f,
+                                1.0f}; // bottom-right: blue
 
         // index data
         unsigned int tri_indices[] = {0, 1, 2};
@@ -152,16 +166,16 @@ int main(int argc, char* argv[]) {
             post_shader->set_uniform_1i("screenTexture", 0);
             renderer.draw(*quad_vao, *quad_ib, *post_shader);
 
-            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width/2, screen_height/2);
+            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width / 2, screen_height / 2);
             tri_shader->bind();
             renderer.draw(*tri_vao, *tri_ibo, *tri_shader);
 
-            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width/4, screen_height/4);
+            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width / 4, screen_height / 4);
             post_shader->bind();
             fbo_texture.bind(0);
             post_shader->set_uniform_1i("screenTexture", 0);
             renderer.draw(*quad_vao, *quad_ib, *post_shader);
-            
+
             // Swap buffers
             SDL_GL_SwapWindow(window);
         }

@@ -15,7 +15,9 @@
 
 namespace gkit::graphic {
 
-    /// @brief Backend identifier
+    /**
+	 * @brief Backend identifier
+	 */
     enum class Backend : std::uint8_t {
         OpenGL,
         // Vulkan  // future
@@ -44,7 +46,9 @@ namespace gkit::graphic {
             -> std::unique_ptr<VertexBuffer>                                                                   = 0;
         virtual auto create_index_buffer(const uint32_t* data, uint32_t count) -> std::unique_ptr<IndexBuffer> = 0;
         virtual auto create_shader(const std::string& filepath) -> std::unique_ptr<Shader>                     = 0;
-        /// @brief Create a texture; empty until the resource module is ready (see RHI design doc §4.4/§4.5)
+        /**
+		 * @brief Create a texture; empty until the resource module is ready (see RHI design doc §4.4/§4.5)
+		 */
         virtual auto create_texture() -> std::unique_ptr<Texture>                                 = 0;
         virtual auto create_vertex_array() -> std::unique_ptr<VertexArray>                        = 0;
         virtual auto create_frame_buffer(int width, int height) -> std::unique_ptr<FrameBuffer>   = 0;
@@ -53,20 +57,28 @@ namespace gkit::graphic {
 
         // ---- Render command entry ----
 
-        /// @brief Clear the current render target
+        /**
+		 * @brief Clear the current render target
+		 */
         virtual auto clear(ClearFlags flags) -> void = 0;
 
-        /// @brief Draw indexed geometry
+        /**
+		 * @brief Draw indexed geometry
+		 */
         virtual auto draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) -> void = 0;
 
-        /// @brief Draw instanced indexed geometry
+        /**
+		 * @brief Draw instanced indexed geometry
+		 */
         virtual auto draw_instance(const VertexArray& va,
                                    const IndexBuffer& ib,
                                    const Shader& shader,
                                    uint32_t instance_count) -> void = 0;
     };
 
-    /// @brief Backend factory - the single switch point across the project
+    /**
+	 * @brief Backend factory - the single switch point across the project
+	 */
     auto create_device(Backend backend) -> std::unique_ptr<RenderDevice>;
 
 } // namespace gkit::graphic

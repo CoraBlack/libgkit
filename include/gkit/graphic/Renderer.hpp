@@ -55,7 +55,9 @@ namespace gkit::graphic {
         auto draw_instance(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, uint32_t instance_count)
             -> void;
 
-        /// @brief Access the current render device
+        /**
+		 * @brief Access the current render device
+		 */
         [[nodiscard]] auto get_device() -> RenderDevice&;
 
     private:

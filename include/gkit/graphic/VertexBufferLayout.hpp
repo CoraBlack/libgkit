@@ -57,12 +57,18 @@ namespace gkit::graphic {
             static_assert(sizeof(T) == 0, "Unsupported type for VertexBufferLayout::push");
         }
 
-        /// @brief All elements (read-only, zero copy)
+        /**
+		 * @brief Get all elements in this layout (by const reference - zero copy)
+		 * @return Const reference to vector of vertex buffer elements
+		 */
         [[nodiscard]] inline auto get_elements() const -> const std::vector<VertexBufferElement>& {
             return this->elements;
         }
 
-        /// @brief Vertex stride in bytes
+        /**
+		 * @brief Get the stride (bytes between vertices)
+		 * @return Stride in bytes
+		 */
         [[nodiscard]] inline auto get_stride() const -> uint32_t { return this->stride; }
 
     private:

@@ -13,7 +13,9 @@ namespace gkit::graphic {
     public:
         ~VertexBuffer() override = default;
 
-        /// @brief Whether this is a dynamic buffer (updated frequently; backend maps to GL_DYNAMIC_DRAW etc.)
+        /**
+		 * @brief Whether this is a dynamic buffer (updated frequently; backend maps to GL_DYNAMIC_DRAW etc.)
+		 */
         [[nodiscard]] virtual auto is_dynamic() const -> bool = 0;
     };
 

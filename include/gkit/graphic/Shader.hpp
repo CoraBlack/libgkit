@@ -29,10 +29,14 @@ namespace gkit::graphic {
 
         virtual ~Shader() = default;
 
-        /// @brief Bind the shader program to the current backend context
+        /**
+		 * @brief Bind the shader program to the current backend context
+		 */
         virtual auto bind() const -> void = 0;
 
-        /// @brief Unbind
+        /**
+		 * @brief Unbind
+		 */
         virtual auto unbind() const -> void = 0;
 
         // Uniform setters (implemented by backends, mapped to the concrete API)

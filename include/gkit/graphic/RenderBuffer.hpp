@@ -21,10 +21,14 @@ namespace gkit::graphic {
 
         virtual ~RenderBuffer() = default;
 
-        /// @brief Bind to the current backend context
+        /**
+		 * @brief Bind to the current backend context
+		 */
         virtual auto bind() const -> void = 0;
 
-        /// @brief Unbind
+        /**
+		 * @brief Unbind
+		 */
         virtual auto unbind() const -> void = 0;
     };
 

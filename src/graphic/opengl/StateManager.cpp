@@ -1,5 +1,7 @@
 #include "gkit/graphic/opengl/StateManager.hpp"
 
+#include "gkit/graphic/opengl/config.hpp"
+
 namespace gkit::graphic::opengl {
 
     auto StateManager::set_depth_test(bool enable) -> void {

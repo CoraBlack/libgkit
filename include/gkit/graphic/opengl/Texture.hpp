@@ -43,7 +43,9 @@ namespace gkit::graphic::opengl {
         [[nodiscard]] auto get_width() const -> int override { return this->width; }
         [[nodiscard]] auto get_height() const -> int override { return this->height; }
 
-        /// @brief Get the GL texture handle (backend escape hatch)
+        /**
+		 * @brief Get the GL texture handle (backend escape hatch)
+		 */
         [[nodiscard]] inline auto get_renderer_id() const -> uint32_t { return this->renderer_id; }
 
     private:
