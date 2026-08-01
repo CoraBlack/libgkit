@@ -1,6 +1,6 @@
-#include "gkit/graphic/opengl/VertexArray.hpp"
+#include "graphic/opengl/VertexArray.hpp"
 
-#include "gkit/graphic/opengl/VertexBuffer.hpp"
+#include "graphic/opengl/VertexBuffer.hpp"
 #include "gkit/math/matrix4.hpp"
 #include "gkit/math/vector4.hpp"
 

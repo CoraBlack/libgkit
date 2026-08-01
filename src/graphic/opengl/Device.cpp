@@ -1,12 +1,12 @@
-#include "gkit/graphic/opengl/Device.hpp"
+#include "graphic/opengl/Device.hpp"
 
-#include "gkit/graphic/opengl/FrameBuffer.hpp"
-#include "gkit/graphic/opengl/IndexBuffer.hpp"
-#include "gkit/graphic/opengl/RenderBuffer.hpp"
-#include "gkit/graphic/opengl/Shader.hpp"
-#include "gkit/graphic/opengl/VertexArray.hpp"
-#include "gkit/graphic/opengl/VertexBuffer.hpp"
-#include "gkit/graphic/opengl/config.hpp"
+#include "graphic/opengl/FrameBuffer.hpp"
+#include "graphic/opengl/IndexBuffer.hpp"
+#include "graphic/opengl/RenderBuffer.hpp"
+#include "graphic/opengl/Shader.hpp"
+#include "graphic/opengl/VertexArray.hpp"
+#include "graphic/opengl/VertexBuffer.hpp"
+#include "graphic/opengl/config.hpp"
 
 #include <glad/gl.h>
 

@@ -1,4 +1,4 @@
-#include "gkit/graphic/opengl/IndexBuffer.hpp"
+#include "graphic/opengl/IndexBuffer.hpp"
 
 #include <utility>
 

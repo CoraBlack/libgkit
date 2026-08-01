@@ -1,7 +1,7 @@
 #include "gkit/graphic/Renderer.hpp"
 #include "gkit/graphic/VertexBufferLayout.hpp"
-#include "gkit/graphic/opengl/Texture.hpp"
-#include "gkit/graphic/opengl/config.hpp"
+#include "graphic/opengl/Texture.hpp"
+#include "graphic/opengl/config.hpp"
 
 #include <filesystem>
 #include <iostream>

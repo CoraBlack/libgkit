@@ -1,4 +1,4 @@
-#include "gkit/graphic/opengl/Texture.hpp"
+#include "graphic/opengl/Texture.hpp"
 
 //#include <stb_image.h>
 #include <glad/gl.h>

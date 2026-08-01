@@ -1,6 +1,6 @@
-#include "gkit/graphic/opengl/StateManager.hpp"
+#include "graphic/opengl/StateManager.hpp"
 
-#include "gkit/graphic/opengl/config.hpp"
+#include "graphic/opengl/config.hpp"
 
 namespace gkit::graphic::opengl {
 

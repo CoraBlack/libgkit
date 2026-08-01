@@ -1,4 +1,4 @@
-#include "gkit/graphic/opengl/RenderBuffer.hpp"
+#include "graphic/opengl/RenderBuffer.hpp"
 
 #include <utility>
 

@@ -1,5 +1,5 @@
 #include "gkit/graphic/RenderDevice.hpp"
-#include "gkit/graphic/opengl/Device.hpp"
+#include "graphic/opengl/Device.hpp"
 
 namespace gkit::graphic {
 

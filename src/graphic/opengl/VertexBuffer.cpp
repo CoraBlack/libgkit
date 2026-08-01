@@ -1,4 +1,4 @@
-#include "gkit/graphic/opengl/VertexBuffer.hpp"
+#include "graphic/opengl/VertexBuffer.hpp"
 
 #include <utility>
 
