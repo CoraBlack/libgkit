@@ -15,18 +15,14 @@
 namespace gkit::graphic::opengl {
 
     class Shader final : public graphic::Shader {
+        friend class Device;
+
     public:
         Shader(const Shader&)                    = delete;
         auto operator=(const Shader&) -> Shader& = delete;
 
         Shader(Shader&& other) noexcept;
         auto operator=(Shader&& other) noexcept -> Shader&;
-
-        /**
-		 * @brief Construct a shader from a file
-		 * @param filepath path to the shader source file
-		 */
-        explicit Shader(const std::string& filepath);
 
         ~Shader() override;
 
@@ -43,6 +39,12 @@ namespace gkit::graphic::opengl {
         auto set_uniform_1iv(const std::string& name, int count, const int* values) -> void override;
 
     private:
+        /**
+		 * @brief Construct a shader from a file (only Device may create one)
+		 * @param filepath path to the shader source file
+		 */
+        explicit Shader(const std::string& filepath);
+
         auto parse_shader(const std::string& file_path) -> graphic::ShaderProgramSource;
         auto compile_shader(uint32_t type, const std::string& source) -> uint32_t;
         auto create_shader(const std::string& vertex_shader, const std::string& fragment_shader) -> uint32_t;

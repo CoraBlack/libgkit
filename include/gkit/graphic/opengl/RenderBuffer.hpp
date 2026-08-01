@@ -13,9 +13,9 @@
 namespace gkit::graphic::opengl {
 
     class RenderBuffer final : public graphic::RenderBuffer {
-    public:
-        explicit RenderBuffer(int width, int height);
+        friend class Device;
 
+    public:
         RenderBuffer(RenderBuffer&& other) noexcept;
         auto operator=(RenderBuffer&& other) noexcept -> RenderBuffer&;
 
@@ -30,6 +30,8 @@ namespace gkit::graphic::opengl {
         [[nodiscard]] auto get_render_id() const -> uint32_t { return this->renderer_id; }
 
     private:
+        explicit RenderBuffer(int width, int height);
+
         uint32_t renderer_id = 0; // GL renderbuffer handle
     };
 

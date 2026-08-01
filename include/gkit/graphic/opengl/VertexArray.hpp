@@ -15,9 +15,9 @@
 namespace gkit::graphic::opengl {
 
     class VertexArray final : public graphic::VertexArray {
-    public:
-        VertexArray();
+        friend class Device;
 
+    public:
         VertexArray(VertexArray&& other) noexcept;
         auto operator=(VertexArray&& other) noexcept -> VertexArray&;
 
@@ -29,6 +29,8 @@ namespace gkit::graphic::opengl {
         auto unbind() const -> void override;
 
     private:
+        VertexArray();
+
         uint32_t renderer_id  = 0; // GL vertex array handle
         uint32_t attrib_index = 0; // current attribute index
     };

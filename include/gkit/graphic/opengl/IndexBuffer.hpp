@@ -13,14 +13,9 @@
 namespace gkit::graphic::opengl {
 
     class IndexBuffer final : public graphic::IndexBuffer {
-    public:
-        /**
-		 * @brief Construct an index buffer
-		 * @param data pointer to index data
-		 * @param count number of indices
-		 */
-        explicit IndexBuffer(const uint32_t* data, uint32_t count);
+        friend class Device;
 
+    public:
         IndexBuffer(IndexBuffer&& other) noexcept;
         auto operator=(IndexBuffer&& other) noexcept -> IndexBuffer&;
 
@@ -33,6 +28,13 @@ namespace gkit::graphic::opengl {
         [[nodiscard]] auto get_count() const -> uint32_t override { return this->count; }
 
     private:
+        /**
+		 * @brief Construct an index buffer (only Device may create one)
+		 * @param data pointer to index data
+		 * @param count number of indices
+		 */
+        explicit IndexBuffer(const uint32_t* data, uint32_t count);
+
         uint32_t renderer_id = 0; // GL buffer handle
         uint32_t count       = 0; // number of indices
     };

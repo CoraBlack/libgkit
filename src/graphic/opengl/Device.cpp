@@ -4,7 +4,6 @@
 #include "gkit/graphic/opengl/IndexBuffer.hpp"
 #include "gkit/graphic/opengl/RenderBuffer.hpp"
 #include "gkit/graphic/opengl/Shader.hpp"
-#include "gkit/graphic/opengl/Texture.hpp"
 #include "gkit/graphic/opengl/VertexArray.hpp"
 #include "gkit/graphic/opengl/VertexBuffer.hpp"
 #include "gkit/graphic/opengl/config.hpp"
@@ -15,15 +14,17 @@ namespace gkit::graphic::opengl {
 
     auto Device::create_vertex_buffer(const void* data, uint32_t size, bool dynamic)
         -> std::unique_ptr<graphic::VertexBuffer> {
-        return std::make_unique<VertexBuffer>(data, size, dynamic);
+        // Direct new (not make_unique) so Device's friendship grants access to the
+        // private constructor; make_unique instantiates the new inside std::.
+        return std::unique_ptr<graphic::VertexBuffer>(new VertexBuffer(data, size, dynamic));
     }
 
     auto Device::create_index_buffer(const uint32_t* data, uint32_t count) -> std::unique_ptr<graphic::IndexBuffer> {
-        return std::make_unique<IndexBuffer>(data, count);
+        return std::unique_ptr<graphic::IndexBuffer>(new IndexBuffer(data, count));
     }
 
     auto Device::create_shader(const std::string& filepath) -> std::unique_ptr<graphic::Shader> {
-        return std::make_unique<Shader>(filepath);
+        return std::unique_ptr<graphic::Shader>(new Shader(filepath));
     }
 
     auto Device::create_texture() -> std::unique_ptr<graphic::Texture> {
@@ -32,15 +33,15 @@ namespace gkit::graphic::opengl {
     }
 
     auto Device::create_vertex_array() -> std::unique_ptr<graphic::VertexArray> {
-        return std::make_unique<VertexArray>();
+        return std::unique_ptr<graphic::VertexArray>(new VertexArray());
     }
 
     auto Device::create_frame_buffer(int width, int height) -> std::unique_ptr<graphic::FrameBuffer> {
-        return std::make_unique<FrameBuffer>(width, height);
+        return std::unique_ptr<graphic::FrameBuffer>(new FrameBuffer(width, height));
     }
 
     auto Device::create_render_buffer(int width, int height) -> std::unique_ptr<graphic::RenderBuffer> {
-        return std::make_unique<RenderBuffer>(width, height);
+        return std::unique_ptr<graphic::RenderBuffer>(new RenderBuffer(width, height));
     }
 
     auto Device::clear(ClearFlags flags) -> void {

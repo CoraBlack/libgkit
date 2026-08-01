@@ -15,9 +15,9 @@
 namespace gkit::graphic::opengl {
 
     class FrameBuffer final : public graphic::FrameBuffer {
-    public:
-        explicit FrameBuffer(int width, int height);
+        friend class Device;
 
+    public:
         FrameBuffer(FrameBuffer&& other) noexcept;
         auto operator=(FrameBuffer&& other) noexcept -> FrameBuffer&;
 
@@ -35,6 +35,8 @@ namespace gkit::graphic::opengl {
         auto unbind() const -> void override;
 
     private:
+        explicit FrameBuffer(int width, int height);
+
         uint32_t renderer_id = 0; // GL framebuffer handle
         unsigned int fb_height; // framebuffer height
         unsigned int fb_width; // framebuffer width
