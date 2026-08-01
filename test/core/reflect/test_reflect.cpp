@@ -68,10 +68,13 @@ auto test_regist_and_find() -> bool {
     assert(info->class_name == "ReflectTestObj");
     std::cout << "  find existing class: OK" << '\n';
 
+    auto* info_with_raw = ClassDB::instance().find_with_raw(typeid(ReflectTestObj).name());
+    assert(info_with_raw != nullptr);
+    std::cout << "  find existing class with raw name: OK" << '\n';
+
     auto* missing = ClassDB::instance().find("NonExistent");
     assert(missing == nullptr);
     std::cout << "  find missing class returns nullptr: OK" << '\n';
-
     return true;
 }
 

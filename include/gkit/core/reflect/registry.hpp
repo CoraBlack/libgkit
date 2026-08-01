@@ -9,6 +9,7 @@
 #include <optional>
 #include <string>
 #include <type_traits>
+#include <unordered_map>
 #include <vector>
 
 namespace gkit::core::reflect {
@@ -72,7 +73,7 @@ namespace gkit::core::reflect {
     private:
         ClassDB() = default;
         std::map<std::string, ClassInfo> classes;
-        std::map<const char*, std::string> raw2_class_name;
+        std::unordered_map<const char*, std::string> raw2_class_name;
     };
 
     // =========================================================================
