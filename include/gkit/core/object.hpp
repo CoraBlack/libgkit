@@ -2,8 +2,6 @@
 
 #include <concepts>
 #include <memory>
-#include <string_view>
-#include <typeinfo>
 #include <utility>
 
 namespace gkit::core {
