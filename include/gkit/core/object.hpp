@@ -33,9 +33,7 @@ namespace gkit::core {
         template<IsObject T, typename... Args>
         static auto create(Args&&...) noexcept -> std::unique_ptr<T>;
 
-    private:
-        /// @brief Only accessible to ObjectNode for field-snapshot expansion at tree build time.
-        [[nodiscard]] virtual auto get_class_name() const noexcept -> std::string_view { return typeid(*this).name(); }
+        virtual auto class_name() -> std::string final;
     };
 
     template<IsObject T, typename... Args>

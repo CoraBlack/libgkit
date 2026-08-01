@@ -66,12 +66,13 @@ namespace gkit::core::reflect {
                           std::function<void(T&, const Value&)> setter = nullptr) -> ClassDB&;
 
         [[nodiscard]] auto find(const std::string& class_name) const -> const ClassInfo*;
-
+        [[nodiscard]] auto find_with_raw(const char* raw_name) const -> const ClassInfo*;
         [[nodiscard]] auto create(const std::string& class_name) const -> std::unique_ptr<Object>;
 
     private:
         ClassDB() = default;
         std::map<std::string, ClassInfo> classes;
+        std::map<const char*, std::string> raw2_class_name;
     };
 
     // =========================================================================
@@ -135,6 +136,7 @@ namespace gkit::core::reflect {
         auto& info             = this->classes[class_name];
         info.class_name        = class_name;
         info.parent_class_name = parent;
+        this->raw2_class_name[typeid(T).name()] = class_name;
         if constexpr (std::is_constructible_v<T>) {
             info.factory = []() -> std::unique_ptr<Object> {
                 return Object::create<T>();

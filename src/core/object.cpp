@@ -2,10 +2,16 @@
 
 #include "gkit/core/reflect/registry.hpp"
 
-namespace gkit::core::scene {
+namespace gkit::core {
     static auto regist_holder = gkit::core::reflect::RegistHolder([]() {
         auto& classdb = gkit::core::reflect::ClassDB::instance();
         classdb.regist<Object>("Object");
         return;
     });
-} // namespace gkit::core::scene
+
+    auto Object::class_name() -> std::string {
+        auto* raw_name = typeid(*this).name();
+        auto class_info = reflect::ClassDB::instance().find_with_raw(raw_name);
+        return class_info->class_name;
+    }
+} // namespace gkit::core
