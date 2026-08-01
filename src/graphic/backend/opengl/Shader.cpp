@@ -1,4 +1,4 @@
-#include "graphic/opengl/Shader.hpp"
+#include "graphic/backend/opengl/Shader.hpp"
 
 #include "gkit/core/log.hpp"
 

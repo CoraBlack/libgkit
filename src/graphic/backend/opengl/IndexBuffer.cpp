@@ -1,4 +1,4 @@
-#include "graphic/opengl/IndexBuffer.hpp"
+#include "graphic/backend/opengl/IndexBuffer.hpp"
 
 #include <utility>
 

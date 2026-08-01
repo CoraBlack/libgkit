@@ -1,4 +1,4 @@
-#include "graphic/opengl/RenderBuffer.hpp"
+#include "graphic/backend/opengl/RenderBuffer.hpp"
 
 #include <utility>
 

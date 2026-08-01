@@ -1,12 +1,12 @@
-#include "graphic/opengl/Device.hpp"
+#include "graphic/backend/opengl/Device.hpp"
 
-#include "graphic/opengl/FrameBuffer.hpp"
-#include "graphic/opengl/IndexBuffer.hpp"
-#include "graphic/opengl/RenderBuffer.hpp"
-#include "graphic/opengl/Shader.hpp"
-#include "graphic/opengl/VertexArray.hpp"
-#include "graphic/opengl/VertexBuffer.hpp"
-#include "graphic/opengl/config.hpp"
+#include "graphic/backend/opengl/FrameBuffer.hpp"
+#include "graphic/backend/opengl/IndexBuffer.hpp"
+#include "graphic/backend/opengl/RenderBuffer.hpp"
+#include "graphic/backend/opengl/Shader.hpp"
+#include "graphic/backend/opengl/VertexArray.hpp"
+#include "graphic/backend/opengl/VertexBuffer.hpp"
+#include "graphic/backend/opengl/config.hpp"
 
 #include <glad/gl.h>
 

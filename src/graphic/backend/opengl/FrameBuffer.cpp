@@ -1,8 +1,8 @@
-#include "graphic/opengl/FrameBuffer.hpp"
+#include "graphic/backend/opengl/FrameBuffer.hpp"
 
 #include "gkit/core/log.hpp"
-#include "graphic/opengl/RenderBuffer.hpp"
-#include "graphic/opengl/Texture.hpp"
+#include "graphic/backend/opengl/RenderBuffer.hpp"
+#include "graphic/backend/opengl/Texture.hpp"
 
 #include <utility>
 
