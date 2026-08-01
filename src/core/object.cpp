@@ -9,7 +9,7 @@ namespace gkit::core {
         return;
     });
 
-    auto Object::class_name() -> std::string {
+    auto Object::class_name() const -> std::string {
         auto* raw_name = typeid(*this).name();
         auto class_info = reflect::ClassDB::instance().find_with_raw(raw_name);
         return class_info->class_name;
