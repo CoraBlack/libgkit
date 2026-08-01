@@ -17,8 +17,14 @@ namespace gkit::graphic {
         Buffer(const Buffer&)                    = delete;
         auto operator=(const Buffer&) -> Buffer& = delete;
 
-        Buffer(Buffer&&) noexcept                    = default;
-        auto operator=(Buffer&&) noexcept -> Buffer& = default;
+        Buffer(Buffer&& other) noexcept : size(other.size) { other.size = 0; }
+        auto operator=(Buffer&& other) noexcept -> Buffer& {
+            if (this != &other) {
+                this->size = other.size;
+                other.size = 0;
+            }
+            return *this;
+        }
 
         virtual ~Buffer() = default;
 

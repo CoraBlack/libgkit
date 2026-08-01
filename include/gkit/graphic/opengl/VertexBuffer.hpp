@@ -22,6 +22,9 @@ namespace gkit::graphic::opengl {
 		 */
         explicit VertexBuffer(const void* data, uint32_t size, bool dynamic = false);
 
+        VertexBuffer(VertexBuffer&& other) noexcept;
+        auto operator=(VertexBuffer&& other) noexcept -> VertexBuffer&;
+
         ~VertexBuffer() override;
 
         auto bind() const -> void override;

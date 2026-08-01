@@ -1,5 +1,7 @@
 #include "gkit/graphic/opengl/IndexBuffer.hpp"
 
+#include <utility>
+
 #include <glad/gl.h>
 
 namespace gkit::graphic::opengl {
@@ -10,6 +12,24 @@ namespace gkit::graphic::opengl {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), data, GL_STATIC_DRAW);
         this->count = count;
         this->size  = count * sizeof(uint32_t);
+    }
+
+    IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept :
+        graphic::IndexBuffer(std::move(other)), renderer_id(other.renderer_id), count(other.count) {
+        other.renderer_id = 0;
+    }
+
+    auto IndexBuffer::operator=(IndexBuffer&& other) noexcept -> IndexBuffer& {
+        if (this != &other) {
+            if (this->renderer_id != 0) {
+                glDeleteBuffers(1, &this->renderer_id);
+            }
+            graphic::IndexBuffer::operator=(std::move(other));
+            this->renderer_id = other.renderer_id;
+            this->count       = other.count;
+            other.renderer_id = 0;
+        }
+        return *this;
     }
 
     IndexBuffer::~IndexBuffer() {

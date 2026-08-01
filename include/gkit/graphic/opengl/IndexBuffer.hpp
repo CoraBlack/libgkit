@@ -21,6 +21,9 @@ namespace gkit::graphic::opengl {
 		 */
         explicit IndexBuffer(const uint32_t* data, uint32_t count);
 
+        IndexBuffer(IndexBuffer&& other) noexcept;
+        auto operator=(IndexBuffer&& other) noexcept -> IndexBuffer&;
+
         ~IndexBuffer() override;
 
         auto bind() const -> void override;

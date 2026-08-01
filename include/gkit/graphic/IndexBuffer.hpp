@@ -3,6 +3,7 @@
 #include "gkit/graphic/Buffer.hpp"
 
 #include <cstdint>
+#include <utility>
 
 namespace gkit::graphic {
 
@@ -13,6 +14,18 @@ namespace gkit::graphic {
 	 */
     class IndexBuffer : public Buffer {
     public:
+        IndexBuffer()                                      = default;
+        IndexBuffer(const IndexBuffer&)                    = delete;
+        auto operator=(const IndexBuffer&) -> IndexBuffer& = delete;
+
+        IndexBuffer(IndexBuffer&& other) noexcept : Buffer(std::move(other)) {}
+        auto operator=(IndexBuffer&& other) noexcept -> IndexBuffer& {
+            if (this != &other) {
+                Buffer::operator=(std::move(other));
+            }
+            return *this;
+        }
+
         ~IndexBuffer() override = default;
 
         /**

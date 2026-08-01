@@ -18,6 +18,9 @@ namespace gkit::graphic::opengl {
     public:
         VertexArray();
 
+        VertexArray(VertexArray&& other) noexcept;
+        auto operator=(VertexArray&& other) noexcept -> VertexArray&;
+
         ~VertexArray() override;
 
         auto add_buffer(const graphic::VertexBuffer& vb, const graphic::VertexBufferLayout& layout) -> void override;

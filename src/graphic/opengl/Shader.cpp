@@ -19,7 +19,7 @@ namespace gkit::graphic::opengl {
     }
 
     Shader::Shader(Shader&& other) noexcept :
-        renderer_id(other.renderer_id), file_path(std::move(other.file_path)),
+        graphic::Shader(std::move(other)), renderer_id(other.renderer_id), file_path(std::move(other.file_path)),
         uniform_location_cache(std::move(other.uniform_location_cache)) {
         other.renderer_id = 0;
     }
@@ -27,6 +27,7 @@ namespace gkit::graphic::opengl {
     auto Shader::operator=(Shader&& other) noexcept -> Shader& {
         if (this != &other) {
             glDeleteProgram(this->renderer_id);
+            graphic::Shader::operator=(std::move(other));
             this->renderer_id            = other.renderer_id;
             this->file_path              = std::move(other.file_path);
             this->uniform_location_cache = std::move(other.uniform_location_cache);

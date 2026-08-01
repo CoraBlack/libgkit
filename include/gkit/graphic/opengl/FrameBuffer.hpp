@@ -18,6 +18,9 @@ namespace gkit::graphic::opengl {
     public:
         explicit FrameBuffer(int width, int height);
 
+        FrameBuffer(FrameBuffer&& other) noexcept;
+        auto operator=(FrameBuffer&& other) noexcept -> FrameBuffer&;
+
         ~FrameBuffer() override;
 
         auto attach_color_texture(const graphic::Texture& texture, int slot) -> void override;

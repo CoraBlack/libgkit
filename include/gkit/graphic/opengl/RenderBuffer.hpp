@@ -16,6 +16,9 @@ namespace gkit::graphic::opengl {
     public:
         explicit RenderBuffer(int width, int height);
 
+        RenderBuffer(RenderBuffer&& other) noexcept;
+        auto operator=(RenderBuffer&& other) noexcept -> RenderBuffer&;
+
         ~RenderBuffer() override;
 
         auto bind() const -> void override;

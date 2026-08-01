@@ -33,8 +33,8 @@ gkit::graphic::opengl::Texture::~Texture() {
 }
 
 gkit::graphic::opengl::Texture::Texture(Texture&& other) noexcept :
-    renderer_id(other.renderer_id), filepath(std::move(other.filepath)), local_buffer(other.local_buffer),
-    width(other.width), height(other.height), bpp(other.bpp), type(other.type) {
+    graphic::Texture(std::move(other)), renderer_id(other.renderer_id), filepath(std::move(other.filepath)),
+    local_buffer(other.local_buffer), width(other.width), height(other.height), bpp(other.bpp), type(other.type) {
     other.renderer_id  = 0;
     other.local_buffer = nullptr;
 }
@@ -42,6 +42,7 @@ gkit::graphic::opengl::Texture::Texture(Texture&& other) noexcept :
 auto gkit::graphic::opengl::Texture::operator=(Texture&& other) noexcept -> Texture& {
     if (this != &other) {
         glDeleteTextures(1, &this->renderer_id);
+        graphic::Texture::operator=(std::move(other));
         this->renderer_id  = other.renderer_id;
         this->filepath     = std::move(other.filepath);
         this->local_buffer = other.local_buffer;

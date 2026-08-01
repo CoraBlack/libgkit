@@ -1,5 +1,7 @@
 #include "gkit/graphic/opengl/VertexBuffer.hpp"
 
+#include <utility>
+
 #include <glad/gl.h>
 
 namespace gkit::graphic::opengl {
@@ -14,6 +16,24 @@ namespace gkit::graphic::opengl {
         }
         this->size    = size;
         this->dynamic = dynamic;
+    }
+
+    VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept :
+        graphic::VertexBuffer(std::move(other)), renderer_id(other.renderer_id), dynamic(other.dynamic) {
+        other.renderer_id = 0;
+    }
+
+    auto VertexBuffer::operator=(VertexBuffer&& other) noexcept -> VertexBuffer& {
+        if (this != &other) {
+            if (this->renderer_id != 0) {
+                glDeleteBuffers(1, &this->renderer_id);
+            }
+            graphic::VertexBuffer::operator=(std::move(other));
+            this->renderer_id = other.renderer_id;
+            this->dynamic     = other.dynamic;
+            other.renderer_id = 0;
+        }
+        return *this;
     }
 
     VertexBuffer::~VertexBuffer() {

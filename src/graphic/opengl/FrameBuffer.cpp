@@ -4,12 +4,36 @@
 #include "gkit/graphic/opengl/RenderBuffer.hpp"
 #include "gkit/graphic/opengl/Texture.hpp"
 
+#include <utility>
+
 #include <glad/gl.h>
 
 namespace gkit::graphic::opengl {
 
     FrameBuffer::FrameBuffer(int width, int height) : fb_width(width), fb_height(height) {
         glGenFramebuffers(1, &this->renderer_id);
+    }
+
+    FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept :
+        graphic::FrameBuffer(std::move(other)), renderer_id(other.renderer_id), fb_height(other.fb_height),
+        fb_width(other.fb_width), left_x(other.left_x), bottom_y(other.bottom_y) {
+        other.renderer_id = 0;
+    }
+
+    auto FrameBuffer::operator=(FrameBuffer&& other) noexcept -> FrameBuffer& {
+        if (this != &other) {
+            if (this->renderer_id != 0) {
+                glDeleteFramebuffers(1, &this->renderer_id);
+            }
+            graphic::FrameBuffer::operator=(std::move(other));
+            this->renderer_id = other.renderer_id;
+            this->fb_height   = other.fb_height;
+            this->fb_width    = other.fb_width;
+            this->left_x      = other.left_x;
+            this->bottom_y    = other.bottom_y;
+            other.renderer_id = 0;
+        }
+        return *this;
     }
 
     FrameBuffer::~FrameBuffer() {

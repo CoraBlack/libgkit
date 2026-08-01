@@ -4,6 +4,8 @@
 #include "gkit/math/matrix4.hpp"
 #include "gkit/math/vector4.hpp"
 
+#include <utility>
+
 #include <glad/gl.h>
 
 namespace {
@@ -24,6 +26,24 @@ namespace gkit::graphic::opengl {
 
     VertexArray::VertexArray() {
         glGenVertexArrays(1, &this->renderer_id);
+    }
+
+    VertexArray::VertexArray(VertexArray&& other) noexcept :
+        graphic::VertexArray(std::move(other)), renderer_id(other.renderer_id), attrib_index(other.attrib_index) {
+        other.renderer_id = 0;
+    }
+
+    auto VertexArray::operator=(VertexArray&& other) noexcept -> VertexArray& {
+        if (this != &other) {
+            if (this->renderer_id != 0) {
+                glDeleteVertexArrays(1, &this->renderer_id);
+            }
+            graphic::VertexArray::operator=(std::move(other));
+            this->renderer_id  = other.renderer_id;
+            this->attrib_index = other.attrib_index;
+            other.renderer_id  = 0;
+        }
+        return *this;
     }
 
     VertexArray::~VertexArray() {

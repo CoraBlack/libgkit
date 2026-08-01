@@ -2,6 +2,8 @@
 
 #include "gkit/graphic/Buffer.hpp"
 
+#include <utility>
+
 namespace gkit::graphic {
 
     /**
@@ -11,6 +13,18 @@ namespace gkit::graphic {
 	 */
     class VertexBuffer : public Buffer {
     public:
+        VertexBuffer()                                       = default;
+        VertexBuffer(const VertexBuffer&)                    = delete;
+        auto operator=(const VertexBuffer&) -> VertexBuffer& = delete;
+
+        VertexBuffer(VertexBuffer&& other) noexcept : Buffer(std::move(other)) {}
+        auto operator=(VertexBuffer&& other) noexcept -> VertexBuffer& {
+            if (this != &other) {
+                Buffer::operator=(std::move(other));
+            }
+            return *this;
+        }
+
         ~VertexBuffer() override = default;
 
         /**
