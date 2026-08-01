@@ -46,7 +46,15 @@ namespace gkit::core {
      */
     using Number = std::variant<std::int64_t, float>;
 
+    /**
+     * @brief JSON string type
+     */
     using String = std::string;
+
+    /**
+    * @brief JSON bool type
+    */
+    using Bool  = bool;
 
     /**
      * @brief JSON array type - ordered collection of values
@@ -61,9 +69,9 @@ namespace gkit::core {
 
     template<typename T>
     concept IsValueType =
-        std::same_as<std::remove_cv_t<T>, bool> || std::is_convertible_v<std::remove_cv_t<T>, Number> ||
-        std::same_as<std::remove_cv_t<T>, String> || std::is_convertible_v<std::remove_cv_t<T>, Array> ||
-        std::is_convertible_v<std::remove_cv_t<T>, Map>;
+        std::same_as<std::remove_cvref_t<T>, bool> || std::is_convertible_v<std::remove_cvref_t<T>, Number> ||
+        std::same_as<std::remove_cvref_t<T>, String> || std::is_convertible_v<std::remove_cvref_t<T>, Array> ||
+        std::is_convertible_v<std::remove_cvref_t<T>, Map>;
 
     /**
      * @brief Dynamically typed value container capable of holding null, bool,
@@ -75,7 +83,7 @@ namespace gkit::core {
          * @brief Variant storage backing the Value. Object is held via std::unique_ptr
          *        for exclusive ownership and automatic lifetime management.
          */
-        using Storage = std::variant<Null, bool, Number, std::string, Array, Map, UniqueObject, ObjectId>;
+        using Storage = std::variant<Null, Bool, Number, String, Array, Map, UniqueObject, ObjectId>;
 
     public: // Constructors
         Value() noexcept = default;
