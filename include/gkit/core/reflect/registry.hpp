@@ -2,6 +2,7 @@
 
 #include "gkit/core/object.hpp"
 #include "gkit/core/templates/singleton.hpp"
+#include "gkit/core/unique_object.hpp"
 #include "gkit/core/value.hpp"
 
 #include <functional>
@@ -26,8 +27,9 @@ namespace gkit::core::reflect {
     public:
         using Getter  = std::function<Value(const void*)>;
         using Setter  = std::function<void(void*, const Value&)>;
-        using Factory = std::function<std::unique_ptr<Object>()>;
+        using Factory = std::function<UniqueObject()>;
 
+        Factory factory;
         std::string class_name;
         std::string parent_class_name;
         std::vector<FieldDesc> fields;
@@ -39,8 +41,6 @@ namespace gkit::core::reflect {
 
         template<typename Fn>
         auto for_each_field(Fn&& fn) const -> void;
-
-        Factory factory;
 
     private:
         friend class ClassDB;
@@ -68,7 +68,7 @@ namespace gkit::core::reflect {
 
         [[nodiscard]] auto find(const std::string& class_name) const -> const ClassInfo*;
         [[nodiscard]] auto find_with_raw(const char* raw_name) const -> const ClassInfo*;
-        [[nodiscard]] auto create(const std::string& class_name) const -> std::unique_ptr<Object>;
+        [[nodiscard]] auto create(const std::string& class_name) const noexcept -> std::optional<UniqueObject>;
 
     private:
         ClassDB() = default;
@@ -139,8 +139,8 @@ namespace gkit::core::reflect {
         info.parent_class_name = parent;
         this->raw2_class_name[typeid(T).name()] = class_name;
         if constexpr (std::is_constructible_v<T>) {
-            info.factory = []() -> std::unique_ptr<Object> {
-                return Object::create<T>();
+            info.factory = []() -> UniqueObject {
+                return UniqueObject::create<T>();
             };
         }
         return *this;

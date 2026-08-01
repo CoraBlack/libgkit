@@ -8,10 +8,8 @@
 #include <utility>
 
 namespace gkit::core {
-    UniqueObject::UniqueObject(std::string&& class_name) noexcept : id(ObjectIdAllocator::instance().new_one()) {
-        (void)class_name;
-        auto& db = reflect::ClassDB::instance();
-        // TODO: cora - wait for factory method from feature/reflection
+    auto UniqueObject::create_with_classname(const std::string& class_name) noexcept -> std::optional<UniqueObject> {
+        return reflect::ClassDB::instance().create(class_name);
     }
 
     UniqueObject::UniqueObject(UniqueObject&& other) noexcept : id(std::move(other.id)) {
