@@ -7,15 +7,17 @@
 
 namespace gkit::core {
     class Object;
+    class ObjectPool;
 
     template<class T>
     concept IsObject = std::derived_from<T, Object>;
 
     /**
      * @brief The base object in libgkit,
-     * and should create it with func @ref gkit::core::scene::Object::create<T>().
+     * and should create it with func @ref gkit::core::UniqueObject::create<T>(...);
      */
     class Object {
+        friend ObjectPool;
     public:
         Object()          = default;
         virtual ~Object() = default;
@@ -27,19 +29,9 @@ namespace gkit::core {
          * @param name The name of the instance.
          * @return A unique pointer to the instance. If the type can't be created, return nullptr.
          */
-        template<IsObject T, typename... Args>
-        static auto create(Args&&...) noexcept -> std::unique_ptr<T>;
+        /* template<IsObject T, typename... Args>
+        static auto create(Args&&...) noexcept -> UniqueObject; */
 
         virtual auto class_name() const -> std::string final;
     };
-
-    template<IsObject T, typename... Args>
-    auto Object::create(Args&&... args) noexcept -> std::unique_ptr<T> {
-        try {
-            auto ptr = std::make_unique<T>(std::forward<Args>(args)...);
-            return ptr;
-        } catch (...) {
-            return nullptr;
-        }
-    }
 } // namespace gkit::core
