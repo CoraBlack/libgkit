@@ -42,6 +42,11 @@ namespace gkit::core {
     struct Null {};
 
     /**
+    * @brief JSON bool type
+    */
+    using Bool  = bool;
+
+    /**
      * @brief JSON number type - holds either integer or floating-point
      */
     using Number = std::variant<std::int64_t, float>;
@@ -50,11 +55,6 @@ namespace gkit::core {
      * @brief JSON string type
      */
     using String = std::string;
-
-    /**
-    * @brief JSON bool type
-    */
-    using Bool  = bool;
 
     /**
      * @brief JSON array type - ordered collection of values
