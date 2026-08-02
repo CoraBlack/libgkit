@@ -32,33 +32,43 @@ public:
 
 const char* SeralizeObject::c_name = "SeralizeObject";
 
-class Json : public SerdeBase {
-    auto kv_connect() -> std::string override { return ":"; }
+class Json final : public SerdeBase {
+    auto wrapper(gkit::core::Type type, const std::string& key) -> WrapperPair override {
+        std::string begin;
+        if (!key.empty()) {
+            begin += "\"" + key + "\":";
+        }
 
-    auto key_wrapper(const std::string& name) -> WrapperPair override { return {"\"", "\""}; }
+        std::string end;
+        if (type == gkit::core::Type::Array) {
+            begin += "[";
+            end = "]";
+        } else if (type == gkit::core::Type::Map || type == gkit::core::Type::Object) {
+            begin += "{";
+            end = "}";
+        }
 
-    auto array_wrapper(const std::string& name) -> WrapperPair override { return {"[", "]"}; }
+        return {begin, end};
+    }
 
-    auto map_wrapper(const std::string& name) -> WrapperPair override { return {"{", "}"}; }
+    auto element_gap(gkit::core::Type /*type*/) -> std::string override { return ","; }
 
-    auto object_wrapper(const std::string& name) -> WrapperPair override { return {"{", "}"}; }
-
-    auto array_ele_gap() -> std::string override { return ","; }
-
-    auto map_ele_gap() -> std::string override { return ","; }
-
-    auto object_ele_gap() -> std::string override { return ","; }
-
-    auto value_wrapper(const std::string& raw_val, gkit::core::Type type) -> std::string override {
-        switch (type) {
+    auto leaf_value(const Value& v) -> std::string override {
+        switch (v.type()) {
         case gkit::core::Type::String: {
-            return "\"" + raw_val + "\"";
+            return "\"" + v.as_string() + "\"";
+        }
+        case gkit::core::Type::Bool: {
+            return v.as_bool() ? "true" : "false";
+        }
+        case gkit::core::Type::Number: {
+            return v.is_number_float() ? std::to_string(v.as_float()) : std::to_string(v.as_int64());
         }
         case gkit::core::Type::Null: {
             return "null";
         }
         default: {
-            return raw_val;
+            return {};
         }
         }
     }
