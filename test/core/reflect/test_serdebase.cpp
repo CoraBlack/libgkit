@@ -88,5 +88,21 @@ auto main() -> int {
         return 1;
     }
 
+    // ObjectId values do not participate in (de)serialization for now.
+    auto obj2 = gkit::core::UniqueObject::create<SeralizeObject>();
+
+    const auto ref_str = json.seralize("ref", Value(obj2.get_id()));
+    if (!ref_str.empty()) {
+        std::cerr << "expected ObjectId to be skipped, got: " << ref_str << '\n';
+        return 1;
+    }
+
+    const gkit::core::Array mixed = {Value(1), Value(obj2.get_id()), Value(2)};
+    const auto mixed_str          = json.seralize("mixed", Value(mixed));
+    if (mixed_str != "\"mixed\":[1,2]") {
+        std::cerr << "unexpected mixed array output: " << mixed_str << '\n';
+        return 1;
+    }
+
     return 0;
 }

@@ -10,47 +10,43 @@
 
 namespace gkit::core::reflect {
     /**
-     * SerdeStruct
+     * @brief Expand an object's registered fields into @p node's children.
+     * ObjectId-typed field values do not participate in (de)serialization for now.
      */
-    SerdeStruct::SerdeStruct(const ObjectId v) noexcept {
-        if (!v.available()) return;
-        this->serde_root = std::make_unique<SerdeNode>("", "", Type::Object);
+    static void expand_object_children(SerdeNode& node, const gkit::core::Object* obj_ptr) {
+        if (obj_ptr == nullptr) return;
 
-        // TODO(impl) cora -replace deref_from by ObjectId::deref or dereference operator
-        auto* v_ptr = ObjectPool::instance().deref_from(v);
-        if (v_ptr == nullptr) return;
-
-        auto& db         = ClassDB::instance();
-        auto* class_info = db.find(v_ptr->class_name());
+        auto& db               = ClassDB::instance();
+        const auto* class_info = db.find(obj_ptr->class_name());
         if (class_info == nullptr) return;
 
         class_info->for_each_field(
-            [this, &class_info, v_ptr](const FieldDesc& field, const auto&, const auto*) -> void {
-                auto val_opt = class_info->get_field(v_ptr, field.name);
+            [&node, obj_ptr, class_info](const FieldDesc& field, const auto&, const auto*) -> void {
+                auto val_opt = class_info->get_field(obj_ptr, field.name);
                 if (!val_opt.has_value()) return;
+                if (val_opt.value().type() == Type::ObjectId) return;
 
-                this->serde_root->add_child(SerdeNode(field.name, val_opt.value()));
+                node.add_child(SerdeNode(field.name, val_opt.value()));
             });
-
-        this->available_flag = true;
     }
 
     /**
-     * @brief Encode a leaf node value as a plain (Json-ish) string.
-     * Format-neutral storage means String values carry no quotes.
+     * SerdeStruct
      */
-    static auto format_leaf(const SerdeNode& node) -> std::string {
-        switch (node.get_type()) {
-        case Type::String: {
-            return "\"" + node.get_val() + "\"";
-        }
-        case Type::Null: {
-            return "null";
-        }
-        default: {
-            return node.get_val();
-        }
-        }
+    SerdeStruct::SerdeStruct(Value v) noexcept { // NOLINT(performance-unnecessary-value-param)
+        this->serde_root     = std::make_unique<SerdeNode>("", std::move(v));
+        this->available_flag = true;
+    }
+
+    SerdeStruct::SerdeStruct(const ObjectId v) noexcept {
+        if (!v.available()) return;
+
+        auto* obj_ptr = ObjectPool::instance().deref_from(v);
+        if (obj_ptr == nullptr) return;
+
+        this->serde_root = std::make_unique<SerdeNode>("", Type::Object);
+        expand_object_children(*this->serde_root, obj_ptr);
+        this->available_flag = true;
     }
 
     /**
@@ -59,49 +55,48 @@ namespace gkit::core::reflect {
     SerdeNode::SerdeNode(const std::string& k, const Value& v) noexcept {
         this->key  = k;
         this->type = v.type();
-        if (this->type == Type::Object) {
-            const auto* obj        = v.as_object_ptr();
-            auto& db               = ClassDB::instance();
-            const auto* class_info = db.find(obj->class_name());
-            class_info->for_each_field(
-                [this, &obj, &class_info](const FieldDesc& field, const auto&, const auto*) -> void {
-                    auto val_opt = class_info->get_field(obj, field.name);
-                    if (val_opt.has_value()) {
-                        this->add_child(SerdeNode(field.name, val_opt.value()));
-                    }
-                });
-        } else if (this->type == Type::Array) {
+        switch (this->type) {
+        case Type::Object: {
+            const auto* obj = v.as_object_ptr();
+            if (obj == nullptr) return;
+
+            expand_object_children(*this, obj);
+            break;
+        }
+
+        case Type::ObjectId: {
+            // ObjectId values do not participate in (de)serialization for now.
+            return;
+        }
+
+        case Type::Array: {
             const auto& arr = v.as_array();
-            for (const auto& v : arr) {
-                this->add_child(SerdeNode("", v));
+            for (const auto& item : arr) {
+                if (item.type() == Type::ObjectId) continue;
+                this->add_child(SerdeNode("", item));
             }
-        } else if (this->type == Type::Map) {
+            break;
+        }
+
+        case Type::Map: {
             const auto& map = v.as_map();
             for (const auto& p : map) {
+                if (p.second.type() == Type::ObjectId) continue;
                 this->add_child(SerdeNode(p.first, p.second));
             }
-        } else {
-            // Basic data type
-            // test impl
-            if (this->type == Type::Null) {
-                this->val = "";
-            } else if (this->type == Type::Bool) {
-                this->val = v.as_bool() ? "true" : "false";
-            } else if (this->type == Type::Number) {
-                this->val = [this, &v]() -> std::string {
-                    if (v.is_number_float()) {
-                        return std::to_string(v.as_float());
-                    } else {
-                        return std::to_string(v.as_int64());
-                    }
-                }();
-            } else if (this->type == Type::String) {
-                this->val = v.as_string();
-            }
+            break;
+        }
+
+        default: {
+            // Basic data type: keep the payload in value.
+            this->value = v;
+            break;
+        }
         }
     }
 
-    SerdeNode::SerdeNode(const std::string& k, const std::string& v, Type t) noexcept {
+    SerdeNode::SerdeNode(const std::string& k, Type t) noexcept {
+        this->key  = k;
         this->type = t;
     }
 
