@@ -19,9 +19,6 @@ namespace gkit::core::reflect {
         explicit SerdeStruct(const ObjectId v) noexcept;
         ~SerdeStruct() = default;
 
-        auto to_string() const -> std::string;
-        /* static auto from_string(const std::string& str) -> SerdeStruct; */
-
         [[nodiscard]] inline auto available() -> bool { return this->available_flag; }
         [[nodiscard]] inline auto root() const -> const SerdeNode& { return *this->serde_root; }
     }; // class SerdeStruct

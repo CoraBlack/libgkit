@@ -9,10 +9,6 @@
 #include <utility>
 
 namespace gkit::core::reflect {
-    /* static auto to_json_string(const Value& v) noexcept -> std::string {
-
-    } */
-
     /**
      * SerdeStruct
      */
@@ -55,43 +51,6 @@ namespace gkit::core::reflect {
             return node.get_val();
         }
         }
-    }
-
-    auto SerdeStruct::to_string() const -> std::string {
-        auto res = std::string();
-
-        auto gap         = ' ';
-        auto begin_end   = std::pair<char, char>();
-        const auto& root = this->serde_root;
-        if (root->type == Type::Array) {
-            gap              = ',';
-            begin_end.first  = '[';
-            begin_end.second = ']';
-        } else if (root->type == Type::Map || root->type == Type::Object) {
-            gap              = ',';
-            begin_end.first  = '{';
-            begin_end.second = '}';
-        }
-
-        res.push_back(begin_end.first);
-        for (auto it = root->children.cbegin(); it != root->children.cend(); ++it) {
-            const auto& node = *it;
-            if (root->type == Type::Array) {
-                res += format_leaf(*node);
-            } else if (root->type == Type::Map || root->type == Type::Object) {
-                res += "\"";
-                res += node->key;
-                res += "\":";
-                res += format_leaf(*node);
-            }
-
-            if (it + 1 != root->children.cend()) {
-                res.push_back(gap);
-            }
-        }
-
-        res.push_back(begin_end.second);
-        return res;
     }
 
     /**
