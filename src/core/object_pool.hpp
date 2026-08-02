@@ -17,16 +17,16 @@ namespace gkit::core {
         ~ObjectPool() = default;
 
     public:
-        template<IsObject T>
-        auto create() noexcept -> std::optional<std::pair<ObjectId, Object*>>;
+        template<IsObject T, class... Args>
+        auto create(Args&&...) noexcept -> std::optional<std::pair<ObjectId, Object*>>;
         auto release(const ObjectId& drop_id) noexcept -> void;
         auto deref_from(const ObjectId& id) noexcept -> Object*;
     };
 
-    template<IsObject T>
-    auto ObjectPool::create() noexcept -> std::optional<std::pair<ObjectId, Object*>> {
+    template<IsObject T, class... Args>
+    auto ObjectPool::create(Args&&... args) noexcept -> std::optional<std::pair<ObjectId, Object*>> {
         try {
-            auto* obj_ptr = new T();
+            auto* obj_ptr = new T(std::forward(args)...);
             auto obj_id   = ObjectIdAllocator::instance().new_one();
             this->id_instance_map.emplace(obj_id, obj_ptr);
             return std::make_pair(std::move(obj_id), std::move(obj_ptr));
