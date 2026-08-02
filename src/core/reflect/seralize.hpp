@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-
 namespace gkit::core::reflect {
     class SerdeNode;
 
@@ -23,7 +22,8 @@ namespace gkit::core::reflect {
         auto to_string() const -> std::string;
         /* static auto from_string(const std::string& str) -> SerdeStruct; */
 
-        inline auto available() -> bool { return this->available_flag; }
+        [[nodiscard]] inline auto available() -> bool { return this->available_flag; }
+        [[nodiscard]] inline auto root() const -> const SerdeNode& { return *this->serde_root; }
     }; // class SerdeStruct
 
     class SerdeNode {
@@ -41,9 +41,16 @@ namespace gkit::core::reflect {
         explicit SerdeNode(const std::string& k, const Value& v) noexcept;
         explicit SerdeNode(const std::string& k, const std::string& v, Type t) noexcept;
         SerdeNode(const SerdeNode&) = delete;
-        SerdeNode(SerdeNode&&) = default;
-        ~SerdeNode() noexcept = default;
+        SerdeNode(SerdeNode&&)      = default;
+        ~SerdeNode() noexcept       = default;
 
         auto add_child(SerdeNode&& child) -> void;
+
+        [[nodiscard]] inline auto get_key() const -> const std::string& { return this->key; }
+        [[nodiscard]] inline auto get_val() const -> const std::string& { return this->val; }
+        [[nodiscard]] inline auto get_type() const -> Type { return this->type; }
+        [[nodiscard]] inline auto get_children() const -> const std::vector<std::unique_ptr<SerdeNode>>& {
+            return this->children;
+        }
     }; // class SerdeNode
 } // namespace gkit::core::reflect

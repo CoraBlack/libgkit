@@ -2,6 +2,7 @@
 #include "gkit/core/object.hpp"
 #include "gkit/core/reflect/registry.hpp"
 #include "gkit/core/unique_object.hpp"
+
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -9,8 +10,8 @@
 using gkit::core::UniqueObject;
 
 class SeralizeObject : public gkit::core::Object {
-    int64_t num = 10;
-    float f_num = 20.f;
+    int64_t num     = 10;
+    float f_num     = 20.f;
     std::string str = "Hello my girl";
 
 public:
@@ -24,7 +25,7 @@ public:
     }
 };
 
-const char* SeralizeObject::c_name  = "SeralizeObject";
+const char* SeralizeObject::c_name = "SeralizeObject";
 
 auto init() -> void {
     SeralizeObject::regist_method();

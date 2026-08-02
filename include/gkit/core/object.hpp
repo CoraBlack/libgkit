@@ -1,8 +1,8 @@
 #pragma once
 
 #include <concepts>
-#include <string>
 #include <memory>
+#include <string>
 #include <utility>
 
 namespace gkit::core {
@@ -23,6 +23,7 @@ namespace gkit::core {
     class Object {
         friend class gkit::core::reflect::detail::ObjectNode;
         friend ObjectPool;
+
     public:
         Object()          = default;
         virtual ~Object() = default;
