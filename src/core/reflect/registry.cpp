@@ -1,5 +1,7 @@
 #include "gkit/core/reflect/registry.hpp"
+#include "gkit/core/unique_object.hpp"
 
+#include <optional>
 #include <utility>
 
 namespace gkit::core::reflect {
@@ -12,13 +14,22 @@ namespace gkit::core::reflect {
         return nullptr;
     }
 
-    auto ClassDB::create(const std::string& class_name) const -> std::unique_ptr<Object> {
-        auto it = this->classes.find(class_name);
-        if (it == this->classes.end()) {
+    auto ClassDB::find_with_raw(const char* raw_name) const -> const ClassInfo* {
+        auto it = this->raw2_class_name.find(raw_name);
+        if (it == this->raw2_class_name.end()) {
             return nullptr;
         }
+
+        return this->find(it->second);
+    }
+
+    auto ClassDB::create(const std::string& class_name) const noexcept -> std::optional<UniqueObject> {
+        auto it = this->classes.find(class_name);
+        if (it == this->classes.end()) {
+            return std::nullopt;
+        }
         if (!it->second.factory) {
-            return nullptr;
+            return std::nullopt;
         }
         return it->second.factory();
     }

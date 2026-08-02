@@ -2,6 +2,7 @@
 
 #include "gkit/core/object.hpp"
 #include "gkit/core/templates/singleton.hpp"
+#include "gkit/core/unique_object.hpp"
 #include "gkit/core/value.hpp"
 
 #include <functional>
@@ -9,6 +10,7 @@
 #include <optional>
 #include <string>
 #include <type_traits>
+#include <unordered_map>
 #include <vector>
 
 namespace gkit::core::reflect {
@@ -25,8 +27,9 @@ namespace gkit::core::reflect {
     public:
         using Getter  = std::function<Value(const void*)>;
         using Setter  = std::function<void(void*, const Value&)>;
-        using Factory = std::function<std::unique_ptr<Object>()>;
+        using Factory = std::function<UniqueObject()>;
 
+        Factory factory;
         std::string class_name;
         std::string parent_class_name;
         std::vector<FieldDesc> fields;
@@ -38,8 +41,6 @@ namespace gkit::core::reflect {
 
         template<typename Fn>
         auto for_each_field(Fn&& fn) const -> void;
-
-        Factory factory;
 
     private:
         friend class ClassDB;
@@ -66,12 +67,13 @@ namespace gkit::core::reflect {
                           std::function<void(T&, const Value&)> setter = nullptr) -> ClassDB&;
 
         [[nodiscard]] auto find(const std::string& class_name) const -> const ClassInfo*;
-
-        [[nodiscard]] auto create(const std::string& class_name) const -> std::unique_ptr<Object>;
+        [[nodiscard]] auto find_with_raw(const char* raw_name) const -> const ClassInfo*;
+        [[nodiscard]] auto create(const std::string& class_name) const noexcept -> std::optional<UniqueObject>;
 
     private:
         ClassDB() = default;
         std::map<std::string, ClassInfo> classes;
+        std::unordered_map<const char*, std::string> raw2_class_name;
     };
 
     // =========================================================================
@@ -135,9 +137,10 @@ namespace gkit::core::reflect {
         auto& info             = this->classes[class_name];
         info.class_name        = class_name;
         info.parent_class_name = parent;
+        this->raw2_class_name[typeid(T).name()] = class_name;
         if constexpr (std::is_constructible_v<T>) {
-            info.factory = []() -> std::unique_ptr<Object> {
-                return Object::create<T>();
+            info.factory = []() -> UniqueObject {
+                return UniqueObject::create<T>();
             };
         }
         return *this;

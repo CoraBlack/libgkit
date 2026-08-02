@@ -68,10 +68,13 @@ auto test_regist_and_find() -> bool {
     assert(info->class_name == "ReflectTestObj");
     std::cout << "  find existing class: OK" << '\n';
 
+    auto* info_with_raw = ClassDB::instance().find_with_raw(typeid(ReflectTestObj).name());
+    assert(info_with_raw != nullptr);
+    std::cout << "  find existing class with raw name: OK" << '\n';
+
     auto* missing = ClassDB::instance().find("NonExistent");
     assert(missing == nullptr);
     std::cout << "  find missing class returns nullptr: OK" << '\n';
-
     return true;
 }
 
@@ -269,10 +272,10 @@ auto test_create_object() -> bool {
     std::cout << "=== Test: create object by class name ===" << '\n';
 
     auto obj = ClassDB::instance().create("ReflectTestObj");
-    assert(obj != nullptr);
+    assert(obj.has_value());
     std::cout << "  create existing class: OK" << '\n';
 
-    auto* typed = dynamic_cast<ReflectTestObj*>(obj.get());
+    auto* typed = dynamic_cast<ReflectTestObj*>(obj.value().get());
     assert(typed != nullptr);
     assert(typed->active == true);
     assert(typed->count == 0);
@@ -281,12 +284,12 @@ auto test_create_object() -> bool {
     std::cout << "  created object has default values: OK" << '\n';
 
     auto bad = ClassDB::instance().create("NonExistent");
-    assert(bad == nullptr);
+    assert(!bad.has_value());
     std::cout << "  create non-existent class returns nullptr: OK" << '\n';
 
     auto child = ClassDB::instance().create("ChildObj");
-    assert(child != nullptr);
-    auto* child_typed = dynamic_cast<ChildObj*>(child.get());
+    assert(child.has_value());
+    auto* child_typed = dynamic_cast<ChildObj*>(child.value().get());
     assert(child_typed != nullptr);
     assert(child_typed->label == "default");
     assert(child_typed->weight == 0.0f);
