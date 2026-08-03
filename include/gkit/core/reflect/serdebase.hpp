@@ -26,12 +26,12 @@ namespace gkit::core::reflect {
          * @throws std::invalid_argument if the id is not available.
          * @return Empty string when the object tree cannot be built.
          */
-        [[nodiscard]] auto seralize(const ObjectId& id) -> std::string;
+        [[nodiscard]] auto to_string(const ObjectId& id) -> std::string;
 
         /**
          * @brief Serialize a single value node (with optional key).
          */
-        [[nodiscard]] auto seralize(const std::string& key, const Value& v) -> std::string;
+        [[nodiscard]] auto to_string(const std::string& key, const Value& v) -> std::string;
 
         // =====================================================================
         // Format hooks (pure virtual)

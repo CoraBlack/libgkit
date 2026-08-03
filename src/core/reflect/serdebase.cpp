@@ -46,7 +46,7 @@ namespace gkit::core::reflect {
 
     } // namespace
 
-    auto SerdeBase::seralize(const ObjectId& id) -> std::string {
+    auto SerdeBase::to_string(const ObjectId& id) -> std::string {
         if (!id.available()) {
             throw std::invalid_argument("id is not available");
         }
@@ -59,7 +59,7 @@ namespace gkit::core::reflect {
         return render_node(ss.root(), *this);
     }
 
-    auto SerdeBase::seralize(const std::string& key, const Value& v) -> std::string {
+    auto SerdeBase::to_string(const std::string& key, const Value& v) -> std::string {
         return render_node(SerdeNode(key, v), *this);
     }
 
