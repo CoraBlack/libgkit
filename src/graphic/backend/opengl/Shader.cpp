@@ -183,20 +183,20 @@ namespace gkit::graphic::opengl {
         glUniform4f(get_uniform_location(name), v0, v1, v2, v3);
     }
 
-    auto Shader::set_uniform_mat_4f(const std::string& name, const float* matrix) -> void {
-        glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, matrix);
+    auto Shader::set_uniform_mat_4f(const std::string& name, const gkit::math::Matrix4& mat4) -> void {
+        glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, mat4.data());
     }
 
-    auto Shader::set_uniform_mat_3f(const std::string& name, const float* matrix) -> void {
-        glUniformMatrix3fv(get_uniform_location(name), 1, GL_FALSE, matrix);
+    auto Shader::set_uniform_mat_3f(const std::string& name, const gkit::math::Matrix3& mat3) -> void {
+        glUniformMatrix3fv(get_uniform_location(name), 1, GL_FALSE, mat3.data());
     }
 
-    auto Shader::set_uniform_vec_4f(const std::string& name, const float* vector4) -> void {
-        glUniform4fv(get_uniform_location(name), 1, vector4);
+    auto Shader::set_uniform_vec_4f(const std::string& name, const gkit::math::Vector4& vec4) -> void {
+        glUniform4fv(get_uniform_location(name), 1, &vec4.x);
     }
 
-    auto Shader::set_uniform_vec_3f(const std::string& name, const float* vector3) -> void {
-        glUniform3fv(get_uniform_location(name), 1, vector3);
+    auto Shader::set_uniform_vec_3f(const std::string& name, const gkit::math::Vector3& vec3) -> void {
+        glUniform3fv(get_uniform_location(name), 1, &vec3.x);
     }
 
     auto Shader::set_uniform_1iv(const std::string& name, const int sz, const int* ind) -> void {

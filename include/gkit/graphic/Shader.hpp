@@ -1,5 +1,10 @@
 #pragma once
 
+#include "gkit/math/matrix3.hpp"
+#include "gkit/math/matrix4.hpp"
+#include "gkit/math/vector3.hpp"
+#include "gkit/math/vector4.hpp"
+
 #include <string>
 
 /**
@@ -44,10 +49,10 @@ namespace gkit::graphic {
         virtual auto set_uniform_1i(const std::string& name, int value) -> void                              = 0;
         virtual auto set_uniform_1f(const std::string& name, float value) -> void                            = 0;
         virtual auto set_uniform_4f(const std::string& name, float v0, float v1, float v2, float v3) -> void = 0;
-        virtual auto set_uniform_vec_4f(const std::string& name, const float* vec4) -> void                  = 0;
-        virtual auto set_uniform_vec_3f(const std::string& name, const float* vec3) -> void                  = 0;
-        virtual auto set_uniform_mat_4f(const std::string& name, const float* mat4) -> void                  = 0;
-        virtual auto set_uniform_mat_3f(const std::string& name, const float* mat3) -> void                  = 0;
+        virtual auto set_uniform_vec_4f(const std::string& name, const math::Vector4& vec4) -> void          = 0;
+        virtual auto set_uniform_vec_3f(const std::string& name, const math::Vector3& vec3) -> void          = 0;
+        virtual auto set_uniform_mat_4f(const std::string& name, const math::Matrix4& mat4) -> void          = 0;
+        virtual auto set_uniform_mat_3f(const std::string& name, const math::Matrix3& mat3) -> void          = 0;
         virtual auto set_uniform_1iv(const std::string& name, int count, const int* values) -> void          = 0;
     };
 

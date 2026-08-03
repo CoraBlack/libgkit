@@ -32,10 +32,10 @@ namespace gkit::graphic::opengl {
         auto set_uniform_1i(const std::string& name, int value) -> void override;
         auto set_uniform_1f(const std::string& name, float value) -> void override;
         auto set_uniform_4f(const std::string& name, float v0, float v1, float v2, float v3) -> void override;
-        auto set_uniform_vec_4f(const std::string& name, const float* vec4) -> void override;
-        auto set_uniform_vec_3f(const std::string& name, const float* vec3) -> void override;
-        auto set_uniform_mat_4f(const std::string& name, const float* mat4) -> void override;
-        auto set_uniform_mat_3f(const std::string& name, const float* mat3) -> void override;
+        auto set_uniform_vec_4f(const std::string& name, const gkit::math::Vector4& vec4) -> void override;
+        auto set_uniform_vec_3f(const std::string& name, const gkit::math::Vector3& vec3) -> void override;
+        auto set_uniform_mat_4f(const std::string& name, const gkit::math::Matrix4& mat4) -> void override;
+        auto set_uniform_mat_3f(const std::string& name, const gkit::math::Matrix3& mat3) -> void override;
         auto set_uniform_1iv(const std::string& name, int count, const int* values) -> void override;
 
     private:
