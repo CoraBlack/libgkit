@@ -11,13 +11,14 @@
 namespace gkit::test {
     class TestRunner {
         std::vector<std::function<bool()>> test_funcs;
-        
+
     public:
         TestRunner()  = default;
         ~TestRunner() = default;
 
-        auto add_test_func(std::function<bool()>&& func) {
+        auto add_test_func(std::function<bool()>&& func) -> TestRunner& {
             this->test_funcs.emplace_back(std::move(func));
+            return *this;
         }
 
         auto run() -> void {
