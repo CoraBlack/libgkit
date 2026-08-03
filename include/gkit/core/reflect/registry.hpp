@@ -89,6 +89,10 @@ namespace gkit::core::reflect {
                     return Value(val);
                 } else if constexpr (std::is_same_v<F, std::string>) {
                     return Value(val);
+                } else if constexpr (std::is_same_v<F, gkit::core::Array>) {
+                    return Value(val);
+                } else if constexpr (std::is_same_v<F, gkit::core::Map>) {
+                    return Value(val);
                 } else if constexpr (std::is_integral_v<F>) {
                     return Value(static_cast<std::int64_t>(val));
                 } else if constexpr (std::is_floating_point_v<F>) {
@@ -106,6 +110,10 @@ namespace gkit::core::reflect {
                     val = v.as_bool();
                 } else if constexpr (std::is_same_v<F, std::string>) {
                     val = v.as_string();
+                } else if constexpr (std::is_same_v<F, gkit::core::Array>) {
+                    val = v.as_array();
+                } else if constexpr (std::is_same_v<F, gkit::core::Map>) {
+                    val = v.as_map();
                 } else if constexpr (std::is_integral_v<F>) {
                     val = static_cast<F>(v.as_int64());
                 } else if constexpr (std::is_floating_point_v<F>) {
@@ -122,6 +130,10 @@ namespace gkit::core::reflect {
                 return Type::Number;
             } else if constexpr (std::is_same_v<F, std::string>) {
                 return Type::String;
+            } else if constexpr (std::is_same_v<F, gkit::core::Array>) {
+                return Type::Array;
+            } else if constexpr (std::is_same_v<F, gkit::core::Map>) {
+                return Type::Map;
             } else {
                 return Type::Null;
             }
@@ -134,9 +146,9 @@ namespace gkit::core::reflect {
 
     template<IsObject T>
     auto ClassDB::regist(const std::string& class_name, const std::string& parent) -> ClassDB& {
-        auto& info             = this->classes[class_name];
-        info.class_name        = class_name;
-        info.parent_class_name = parent;
+        auto& info                              = this->classes[class_name];
+        info.class_name                         = class_name;
+        info.parent_class_name                  = parent;
         this->raw2_class_name[typeid(T).name()] = class_name;
         if constexpr (std::is_constructible_v<T>) {
             info.factory = []() -> UniqueObject {

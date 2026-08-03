@@ -1,8 +1,8 @@
 #pragma once
 
 #include <concepts>
-#include <string>
 #include <memory>
+#include <string>
 #include <utility>
 
 namespace gkit::core {
@@ -12,12 +12,18 @@ namespace gkit::core {
     template<class T>
     concept IsObject = std::derived_from<T, Object>;
 
+    namespace reflect::detail {
+        class ObjectNode;
+    }
+
     /**
      * @brief The base object in libgkit,
      * and should create it with func @ref gkit::core::UniqueObject::create<T>(...);
      */
     class Object {
+        friend class gkit::core::reflect::detail::ObjectNode;
         friend ObjectPool;
+
     public:
         Object()          = default;
         virtual ~Object() = default;
