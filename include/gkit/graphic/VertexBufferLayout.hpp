@@ -5,27 +5,22 @@
 #include <vector>
 
 /**
- * @brief Vertex element data types (abstracted from API-specific enums)
+ * @brief Vertex element data type (backend-agnostic)
  */
 enum class VertexElementType : std::uint8_t {
-    Float  = 0, // Maps to GL_FLOAT (4 bytes)
-    Uint32 = 1, // Maps to GL_UNSIGNED_INT (4 bytes)
-    Uint8  = 2, // Maps to GL_UNSIGNED_BYTE (1 byte)
+    Float  = 0, // 4-byte float
+    Uint32 = 1, // 4-byte unsigned int
+    Uint8  = 2, // 1-byte unsigned byte
 };
 
-/**
- * @brief Structure representing a single element in a vertex buffer layout
- *
- * Describes one attribute in the vertex data, including its type, count,
- * and whether it should be normalized.
- */
-namespace gkit::graphic::opengl::buffer {
+namespace gkit::graphic {
 
+    /**
+	 * @brief A single attribute element in a vertex layout
+	 */
     struct VertexBufferElement {
         /**
-		 * @brief Get the size in bytes of an OpenGL data type
-		 * @param type OpenGL data type
-		 * @return Size in bytes
+		 * @brief Size in bytes of an element type
 		 */
         static constexpr auto get_size_of_type(VertexElementType type) -> uint32_t {
             switch (type) {
@@ -40,25 +35,22 @@ namespace gkit::graphic::opengl::buffer {
             }
         }
 
-        VertexElementType type; // Vertex element type
-        uint32_t count; // Number of components in this element
-        unsigned char normalized; // Whether the data should be normalized
+        VertexElementType type; // element type
+        uint32_t count; // number of components
+        unsigned char normalized; // whether to normalize
     };
 
     /**
-	 * @brief Vertex buffer layout class for defining vertex attribute configurations
-	 *
-	 * Defines how vertex data is organized in memory, specifying the type and
-	 * count of each attribute and the stride between consecutive vertices.
+	 * @brief Vertex buffer layout (frontend definition; backends configure vertex input from it)
 	 */
     class VertexBufferLayout {
     public:
         VertexBufferLayout() = default;
 
         /**
-		 * @brief Add an element to the layout (unsupported type - compile-time error)
-		 * @tparam T Data type
-		 * @param count Number of components
+		 * @brief Add an attribute element (unsupported types trigger a compile-time error)
+		 * @tparam T data type
+		 * @param count number of components
 		 */
         template<typename T>
         auto push(uint32_t count) -> void {
@@ -80,14 +72,12 @@ namespace gkit::graphic::opengl::buffer {
         [[nodiscard]] inline auto get_stride() const -> uint32_t { return this->stride; }
 
     private:
-        std::vector<VertexBufferElement> elements; // List of vertex elements
-        uint32_t stride = 0; // Bytes between consecutive vertices
+        std::vector<VertexBufferElement> elements;
+        uint32_t stride = 0;
     };
 
-    /**
-	 * @brief Template specialization for pushing float elements
-	 * @param count Number of float components (1-4)
-	 */
+    // Template specializations
+
     template<>
     inline auto VertexBufferLayout::push<float>(uint32_t count) -> void {
         assert(count > 0 && "VertexBufferLayout::push count must be greater than 0");
@@ -95,10 +85,6 @@ namespace gkit::graphic::opengl::buffer {
         this->stride += VertexBufferElement::get_size_of_type(VertexElementType::Float) * count;
     }
 
-    /**
-	 * @brief Template specialization for pushing unsigned int elements
-	 * @param count Number of unsigned int components
-	 */
     template<>
     inline auto VertexBufferLayout::push<uint32_t>(uint32_t count) -> void {
         assert(count > 0 && "VertexBufferLayout::push count must be greater than 0");
@@ -106,10 +92,6 @@ namespace gkit::graphic::opengl::buffer {
         this->stride += VertexBufferElement::get_size_of_type(VertexElementType::Uint32) * count;
     }
 
-    /**
-	 * @brief Template specialization for pushing unsigned byte elements
-	 * @param count Number of unsigned byte components
-	 */
     template<>
     inline auto VertexBufferLayout::push<unsigned char>(uint32_t count) -> void {
         assert(count > 0 && "VertexBufferLayout::push count must be greater than 0");
@@ -117,4 +99,4 @@ namespace gkit::graphic::opengl::buffer {
         this->stride += VertexBufferElement::get_size_of_type(VertexElementType::Uint8) * count;
     }
 
-} // namespace gkit::graphic::opengl::buffer
+} // namespace gkit::graphic

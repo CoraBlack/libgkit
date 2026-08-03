@@ -1,18 +1,18 @@
 #pragma once
 
 #include "gkit/core/templates/singleton.hpp"
-#include "gkit/graphic/Shader.hpp"
-#include "gkit/graphic/opengl/IndexBuffer.hpp"
-#include "gkit/graphic/opengl/VertexArray.hpp"
-#include "gkit/graphic/opengl/config.hpp"
+#include "gkit/graphic/RenderDevice.hpp"
+#include "gkit/graphic/config.hpp"
 
 #include <cstdint>
+#include <memory>
 
 /**
  * @brief Renderer class providing public rendering interface
  *
  * The Renderer provides a unified interface for rendering operations.
  * Uses singleton pattern for global access.
+ * Holds a RenderDevice selected via init(Backend).
  */
 namespace gkit::graphic {
 
@@ -24,12 +24,18 @@ namespace gkit::graphic {
 
     public:
         /**
+		 * @brief Select the render backend and create the device (defaults to OpenGL)
+		 * @param backend backend identifier
+		 */
+        auto init(Backend backend = Backend::OpenGL) -> void;
+
+        /**
 		 * @brief Clear the current framebuffer
 		 *
 		 * @param flags Bitmask specifying which buffers to clear (e.g., ClearFlags::Color | ClearFlags::Depth)
 		 *              Defaults to ClearFlags::All (clears all buffers)
 		 */
-        auto clear(opengl::ClearFlags flags = opengl::ClearFlags::All) const -> void;
+        auto clear(ClearFlags flags = ClearFlags::All) -> void;
 
         /**
 		 * @brief Draw indexed geometry
@@ -37,9 +43,7 @@ namespace gkit::graphic {
 		 * @param ib Index buffer containing indices
 		 * @param shader Shader program to use for rendering
 		 */
-        auto draw(const gkit::graphic::opengl::VertexArray& va,
-                  const gkit::graphic::opengl::buffer::IndexBuffer& ib,
-                  const gkit::graphic::Shader& shader) const -> void;
+        auto draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) -> void;
 
         /**
 		 * @brief Draw multiple instances of indexed geometry
@@ -48,10 +52,16 @@ namespace gkit::graphic {
 		 * @param shader Shader program to use for rendering
 		 * @param instance_count Number of instances to draw
 		 */
-        auto draw_instance(const gkit::graphic::opengl::VertexArray& va,
-                           const gkit::graphic::opengl::buffer::IndexBuffer& ib,
-                           const gkit::graphic::Shader& shader,
-                           uint32_t instance_count) const -> void;
+        auto draw_instance(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, uint32_t instance_count)
+            -> void;
+
+        /**
+		 * @brief Access the current render device
+		 */
+        [[nodiscard]] auto get_device() -> RenderDevice&;
+
+    private:
+        std::unique_ptr<RenderDevice> device;
     };
 
 } // namespace gkit::graphic

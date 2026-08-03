@@ -1,4 +1,6 @@
-#include "gkit/graphic/opengl/StateManager.hpp"
+#include "graphic/backend/opengl/StateManager.hpp"
+
+#include "graphic/backend/opengl/config.hpp"
 
 namespace gkit::graphic::opengl {
 
@@ -131,7 +133,7 @@ namespace gkit::graphic::opengl {
         } else {
             glDisable(GL_DEPTH_TEST);
         }
-        glDepthFunc(static_cast<GLenum>(this->depth_state.compare_func));
+        glDepthFunc(to_gl_compare_func(this->depth_state.compare_func));
         glDepthMask(this->depth_state.write_mask ? GL_TRUE : GL_FALSE);
     }
 
@@ -141,11 +143,11 @@ namespace gkit::graphic::opengl {
         } else {
             glDisable(GL_BLEND);
         }
-        glBlendFuncSeparate(static_cast<GLenum>(this->blend_state.src_rgb),
-                            static_cast<GLenum>(this->blend_state.dst_rgb),
-                            static_cast<GLenum>(this->blend_state.src_alpha),
-                            static_cast<GLenum>(this->blend_state.dst_alpha));
-        glBlendEquation(static_cast<GLenum>(this->blend_state.equation));
+        glBlendFuncSeparate(to_gl_blend_func(this->blend_state.src_rgb),
+                            to_gl_blend_func(this->blend_state.dst_rgb),
+                            to_gl_blend_func(this->blend_state.src_alpha),
+                            to_gl_blend_func(this->blend_state.dst_alpha));
+        glBlendEquation(to_gl_blend_equation(this->blend_state.equation));
     }
 
     auto StateManager::apply_cull_face_state() -> void {
@@ -154,8 +156,8 @@ namespace gkit::graphic::opengl {
         } else {
             glDisable(GL_CULL_FACE);
         }
-        glCullFace(static_cast<GLenum>(this->cull_face_state.mode));
-        glFrontFace(static_cast<GLenum>(this->cull_face_state.front_face));
+        glCullFace(to_gl_cull_face_mode(this->cull_face_state.mode));
+        glFrontFace(to_gl_front_face(this->cull_face_state.front_face));
     }
 
     auto StateManager::apply_stencil_state() -> void {
@@ -164,12 +166,12 @@ namespace gkit::graphic::opengl {
         } else {
             glDisable(GL_STENCIL_TEST);
         }
-        glStencilFunc(static_cast<GLenum>(this->stencil_state.compare_func),
+        glStencilFunc(to_gl_compare_func(this->stencil_state.compare_func),
                       this->stencil_state.ref,
                       this->stencil_state.read_mask);
-        glStencilOp(static_cast<GLenum>(this->stencil_state.fail),
-                    static_cast<GLenum>(this->stencil_state.z_fail),
-                    static_cast<GLenum>(this->stencil_state.z_pass));
+        glStencilOp(to_gl_stencil_op(this->stencil_state.fail),
+                    to_gl_stencil_op(this->stencil_state.z_fail),
+                    to_gl_stencil_op(this->stencil_state.z_pass));
         glStencilMask(this->stencil_state.write_mask);
     }
 
