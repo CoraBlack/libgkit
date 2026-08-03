@@ -8,7 +8,6 @@
 #include <utility>
 #include <vector>
 
-
 namespace gkit::test {
     class TestRunner {
         std::vector<std::function<bool()>> test_funcs;
@@ -46,7 +45,8 @@ namespace gkit::test {
 
     auto assert_if(bool cond, const std::string& failed_msg) -> void {
         if (!cond) {
-            std::cout << failed_msg << '\n';
+            std::cout.flush();
+            std::cerr << failed_msg << '\n';
             std::abort();
         }
     }
