@@ -2,17 +2,19 @@ set (GKIT_GRAPHIC "gkit_graphic")
 
 set (GRAPHIC_SRC
     "./Renderer.cpp"
-    "./Shader.cpp"
+    "./create_device.cpp"
 
-    # OpenGL module
-    "./opengl/FrameBuffer.cpp"
-    "./opengl/IndexBuffer.cpp"
-    "./opengl/RenderBuffer.cpp"
-    "./opengl/StateManager.cpp"
-    "./opengl/Texture.cpp"
-    "./opengl/VertexArray.cpp"
-    "./opengl/VertexBuffer.cpp"
-    "./opengl/config.cpp"
+    # Backend implementations (one subdirectory per graphics API)
+    "./backend/opengl/Device.cpp"
+    "./backend/opengl/FrameBuffer.cpp"
+    "./backend/opengl/IndexBuffer.cpp"
+    "./backend/opengl/RenderBuffer.cpp"
+    "./backend/opengl/Shader.cpp"
+    "./backend/opengl/StateManager.cpp"
+    "./backend/opengl/Texture.cpp"
+    "./backend/opengl/VertexArray.cpp"
+    "./backend/opengl/VertexBuffer.cpp"
+    "./backend/opengl/config.cpp"
 )
 
 add_library(${GKIT_GRAPHIC} OBJECT ${GRAPHIC_SRC})

@@ -1,32 +1,35 @@
 #include "gkit/graphic/Renderer.hpp"
 
-#include "gkit/graphic/Shader.hpp"
-#include "gkit/graphic/opengl/IndexBuffer.hpp"
-#include "gkit/graphic/opengl/VertexArray.hpp"
-#include "gkit/graphic/opengl/config.hpp"
+#include "gkit/graphic/RenderDevice.hpp"
 
-#include <glad/gl.h>
+namespace gkit::graphic {
 
-auto gkit::graphic::Renderer::clear(opengl::ClearFlags flags) const -> void {
-    auto mask = static_cast<GLbitfield>(flags);
-    glClear(mask);
-}
+    auto Renderer::init(Backend backend) -> void {
+        this->device = create_device(backend);
+    }
 
-auto gkit::graphic::Renderer::draw(const gkit::graphic::opengl::VertexArray& va,
-                                   const gkit::graphic::opengl::buffer::IndexBuffer& ib,
-                                   const gkit::graphic::Shader& shader) const -> void {
-    shader.bind();
-    va.bind();
-    ib.bind();
-    glDrawElements(GL_TRIANGLES, ib.get_count(), GL_UNSIGNED_INT, nullptr);
-}
+    auto Renderer::clear(ClearFlags flags) -> void {
+        this->get_device().clear(flags);
+    }
 
-auto gkit::graphic::Renderer::draw_instance(const gkit::graphic::opengl::VertexArray& va,
-                                            const gkit::graphic::opengl::buffer::IndexBuffer& ib,
-                                            const gkit::graphic::Shader& shader,
-                                            uint32_t instance_count) const -> void {
-    shader.bind();
-    va.bind();
-    ib.bind();
-    glDrawElementsInstanced(GL_TRIANGLES, ib.get_count(), GL_UNSIGNED_INT, nullptr, instance_count);
-}
+    auto Renderer::draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) -> void {
+        this->get_device().draw(va, ib, shader);
+    }
+
+    auto Renderer::draw_instance(const VertexArray& va,
+                                 const IndexBuffer& ib,
+                                 const Shader& shader,
+                                 uint32_t instance_count) -> void {
+        this->get_device().draw_instance(va, ib, shader, instance_count);
+    }
+
+    auto Renderer::get_device() -> RenderDevice& {
+        // Lazily create the default device so callers don't have to ensure
+        // init() was called before get_device().
+        if (this->device == nullptr) {
+            this->device = create_device(Backend::OpenGL);
+        }
+        return *this->device;
+    }
+
+} // namespace gkit::graphic

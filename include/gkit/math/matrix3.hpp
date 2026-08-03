@@ -74,6 +74,12 @@ namespace gkit::math {
             return std::tie(m[0][0], m[1][0], m[2][0], m[0][1], m[1][1], m[2][1], m[0][2], m[1][2], m[2][2]);
         }
 
+        /// @brief Get raw data pointer (column-major, 9 floats)
+        /// @note Layout is column-major (m[col][row]); pass directly to
+        ///       OpenGL/Vulkan with GL_FALSE. Row-major backends must transpose first.
+        inline auto data() noexcept -> float* { return &m[0][0]; }
+        [[nodiscard]] inline auto data() const noexcept -> const float* { return &m[0][0]; }
+
     public: // Static factory methods
         /// @brief Create rotation matrix from Euler angles (radians)
         /// @param pitch Rotation around X-axis (radians)

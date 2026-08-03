@@ -11,6 +11,8 @@ set (CORE_SRC
 
     # Reflect module
     "./reflect/registry.cpp"
+    "./reflect/seralize.cpp"
+    "./reflect/serdebase.cpp"
 
     "./log.cpp"
     "./object_id.cpp"

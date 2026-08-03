@@ -1,4 +1,4 @@
-#include "gkit/graphic/opengl/config.hpp"
+#include "graphic/backend/opengl/config.hpp"
 
 #include <glad/gl.h>
 
