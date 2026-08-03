@@ -1,4 +1,7 @@
-#include <iostream>
+#include "test_utils.hpp"
+
+#include <cstdint>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -6,7 +9,9 @@
 
 using gkit::core::Log;
 
-auto main() -> int {
+auto test_concurrent_logging() -> bool {
+    gkit::test::logln("=== concurrent logging ===");
+
     auto& logger = Log::instance();
     logger.set_log_file_path("./test_log.txt");
 
@@ -35,14 +40,16 @@ auto main() -> int {
     const std::uint64_t total =
         static_cast<std::uint64_t>(producer_count) * static_cast<std::uint64_t>(logs_per_thread);
 
-    std::cout << "total=" << total << " enqueued=" << s.enqueued << " dropped=" << s.dropped_full
-              << " processed=" << s.processed << '\n';
+    gkit::test::logln("  total={} enqueued={} dropped={} processed={}", total, s.enqueued, s.dropped_full, s.processed);
 
-    if (s.enqueued + s.dropped_full != total) {
-        std::cerr << "stats mismatch" << '\n';
-        return 1;
-    }
+    gkit::test::assert_if(s.enqueued + s.dropped_full == total, "stats mismatch: enqueued + dropped != total");
+    gkit::test::logln("  Finished logging");
+    return true;
+}
 
-    std::cout << "Finished logging" << '\n';
+auto main() -> int {
+    auto test_runner = gkit::test::TestRunner().add_test_func(test_concurrent_logging);
+
+    test_runner.run();
     return 0;
 }
