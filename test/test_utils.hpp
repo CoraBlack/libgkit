@@ -1,12 +1,13 @@
 #pragma once
 
+#include <cstdlib>
+#include <format>
 #include <functional>
 #include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
-#include <format>
-#include <cstdlib>
+
 
 namespace gkit::test {
     class TestRunner {
@@ -22,7 +23,7 @@ namespace gkit::test {
         }
 
         auto run() -> void {
-            auto res = true;
+            auto res        = true;
             auto fail_count = 0;
             auto test_count = this->test_funcs.size();
 
@@ -43,15 +44,19 @@ namespace gkit::test {
         }
     };
 
-    auto assert(bool cond, std::string failed_msg) -> void { // NOLINT(performance-unnecessary-value-param)
+    auto assert_if(bool cond, const std::string& failed_msg) -> void {
         if (!cond) {
             std::cout << failed_msg << '\n';
             std::abort();
         }
     }
 
+    auto assert_ifnot(bool cond, const std::string& failed_msg) -> void {
+        assert_if(!cond, failed_msg);
+    }
+
     template<class... Args>
-    auto logln(const char* fmt, Args&&... args) -> void {
+    auto logln(std::format_string<Args...> fmt, Args&&... args) -> void {
         std::cout << std::format(fmt, std::forward<Args>(args)...) << '\n';
     }
 } // namespace gkit::test
