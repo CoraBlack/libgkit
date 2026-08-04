@@ -41,10 +41,12 @@ namespace gkit::graphic {
         /**
 		 * @brief Enqueue a draw from a reusable render object
 		 * @param obj Render object (geometry + material + state)
-		 * @note Enqueued into the render queue; executed on flush(). Shader is
-		 *       non-const because uniforms are mutated during execution.
+		 * @param target render target (nullptr = screen)
+		 * @param viewport viewport to use for this draw (per-target size)
+		 * @note Enqueued into the render queue; executed on flush(). The object is
+		 *       non-const because its GPU resources are lazily uploaded on execute.
 		 */
-        auto draw(const RenderObject& obj) -> void;
+        auto draw(RenderObject& obj, const FrameBuffer* target, const Viewport& viewport) -> void;
 
         /**
 		 * @brief Execute the queued render commands (sort + apply state + draw)

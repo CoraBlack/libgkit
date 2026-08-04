@@ -12,8 +12,17 @@ namespace gkit::graphic {
         this->get_device().clear(flags);
     }
 
-    auto Renderer::draw(const RenderObject& obj) -> void {
-        this->queue.submit(obj.to_command());
+    auto Renderer::draw(RenderObject& obj, const FrameBuffer* target, const Viewport& viewport) -> void {
+        RenderCommand cmd;
+        cmd.object         = &obj; // lazily uploaded on execute
+        cmd.target         = target;
+        cmd.viewport       = viewport;
+        cmd.instance_count = obj.instance_count;
+        cmd.transparent    = obj.transparent;
+        cmd.depth_key      = obj.depth_key;
+        cmd.clear          = obj.clear;
+        cmd.clear_flags    = obj.clear_flags;
+        this->queue.submit(cmd);
     }
 
     auto Renderer::flush() -> void {

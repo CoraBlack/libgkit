@@ -2,6 +2,7 @@ set (GKIT_GRAPHIC "gkit_graphic")
 
 set (GRAPHIC_SRC
     "./Renderer.cpp"
+    "./RenderObject.cpp"
     "./RenderQueue.cpp"
     "./create_device.cpp"
 

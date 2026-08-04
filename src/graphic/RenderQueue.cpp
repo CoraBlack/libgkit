@@ -1,5 +1,7 @@
 #include "gkit/graphic/render/RenderQueue.hpp"
 
+#include "gkit/graphic/render/RenderObject.hpp"
+
 #include <algorithm>
 #include <variant>
 
@@ -8,10 +10,10 @@ namespace gkit::graphic {
     namespace {
 
         /// @brief Bind a texture slot to the shader sampler unit
-        auto bind_textures(const RenderCommand& cmd) -> void {
-            for (uint32_t i = 0; i < cmd.texture_count && i < MAX_TEXTURE_SLOTS; ++i) {
-                if (cmd.textures[i] != nullptr) {
-                    cmd.textures[i]->bind(i);
+        auto bind_textures(const Material& material) -> void {
+            for (uint32_t i = 0; i < material.texture_count && i < MAX_TEXTURE_SLOTS; ++i) {
+                if (material.textures[i] != nullptr) {
+                    material.textures[i]->bind(i);
                 }
             }
         }
@@ -38,15 +40,15 @@ namespace gkit::graphic {
                 value);
         }
 
-        /// @brief Apply simple-path uniforms (per-name list)
-        auto apply_uniforms(const RenderCommand& cmd) -> void {
-            if (cmd.shader == nullptr) {
+        /// @brief Apply material uniforms (simple path)
+        auto apply_uniforms(const Material& material) -> void {
+            if (material.shader == nullptr) {
                 return;
             }
-            for (const auto& [name, value] : cmd.uniforms.values) {
-                apply_uniform_value(*cmd.shader, name, value);
+            for (const auto& [name, value] : material.uniforms.values) {
+                apply_uniform_value(*material.shader, name, value);
             }
-            // TODO(Step 6+/UBO): upload cmd.ubo via a UniformBuffer backend once implemented.
+            // TODO(graphic): upload material.ubo via a UniformBuffer backend once implemented.
         }
 
         /// @brief Sort comparator: framebuffer commands first, then by state/transparency
@@ -54,9 +56,9 @@ namespace gkit::graphic {
             // Render targets (FBO) must be drawn before screen commands, otherwise
             // post-processing cannot sample the FBO attachment. So target=null (screen)
             // sorts after any non-null target. Then group by state (reduce switches).
-            // Within the same target, opaque front-to-back / transparent back-to-front.
+            const bool blend_enabled   = (cmd.object != nullptr) && cmd.object->state.blend.enabled;
             const uint64_t target_rank = (cmd.target != nullptr) ? 0 : 1; // FBO before screen
-            return (target_rank << 56) | (static_cast<uint64_t>(cmd.state.blend.enabled) << 48) |
+            return (target_rank << 56) | (static_cast<uint64_t>(blend_enabled) << 48) |
                    (static_cast<uint64_t>(cmd.transparent) << 40);
         }
 
@@ -77,6 +79,11 @@ namespace gkit::graphic {
 
         const FrameBuffer* last_target = nullptr;
         for (const auto& cmd : this->commands) {
+            if (cmd.object == nullptr) {
+                continue;
+            }
+            const Material& material = cmd.object->material;
+
             // Switch render target: unbind the previous FBO (reverting to screen)
             // before binding a different target. target=null means screen, reached
             // by unbinding the previous FBO.
@@ -98,20 +105,21 @@ namespace gkit::graphic {
                 device.clear(cmd.clear_flags);
             }
 
-            device.apply_state(cmd.state);
+            device.apply_state(cmd.object->state);
 
-            if (cmd.shader != nullptr) {
-                cmd.shader->bind();
+            // Lazily upload geometry and bind shader/textures/uniforms.
+            const auto& vao = cmd.object->ensure_uploaded(device);
+            const auto& ibo = cmd.object->index_buffer();
+            if (material.shader != nullptr) {
+                material.shader->bind();
             }
-            bind_textures(cmd);
-            apply_uniforms(cmd);
+            bind_textures(material);
+            apply_uniforms(material);
 
-            if (cmd.vertex_array != nullptr && cmd.index_buffer != nullptr && cmd.shader != nullptr) {
-                if (cmd.instance_count > 1) {
-                    device.draw_instance(*cmd.vertex_array, *cmd.index_buffer, *cmd.shader, cmd.instance_count);
-                } else {
-                    device.draw(*cmd.vertex_array, *cmd.index_buffer, *cmd.shader);
-                }
+            if (cmd.instance_count > 1) {
+                device.draw_instance(vao, ibo, *material.shader, cmd.instance_count);
+            } else {
+                device.draw(vao, ibo, *material.shader);
             }
         }
 
