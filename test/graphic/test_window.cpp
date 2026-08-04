@@ -70,12 +70,29 @@ int main(int argc, char* argv[]) {
 
         auto& device = renderer.get_device();
 
+        gkit::graphic::RenderQueue command_queue;
+
 #pragma region triangle
         // Colored triangle vertex data (position + color)
         float tri_vertices[] = {// positions            // colors
-                                0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // top: red
-                                -0.4f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom-left: green
-                                0.4f,  -0.25f, 0.0f, 0.0f, 0.0f, 1.0f}; // bottom-right: blue
+                                0.0f,
+                                0.5f,
+                                0.0f,
+                                1.0f,
+                                0.0f,
+                                0.0f, // top: red
+                                -0.4f,
+                                -0.25f,
+                                0.0f,
+                                0.0f,
+                                1.0f,
+                                0.0f, // bottom-left: green
+                                0.4f,
+                                -0.25f,
+                                0.0f,
+                                0.0f,
+                                0.0f,
+                                1.0f}; // bottom-right: blue
 
         // index data
         unsigned int tri_indices[] = {0, 1, 2};
@@ -136,30 +153,50 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            fbo->bind();
             fbo->set_viewport(0, 0, screen_width, screen_height);
             renderer.clear(gkit::graphic::ClearFlags::All);
-            // 1. Render to framebuffer
-            tri_shader->bind();
-            renderer.draw(*tri_vao, *tri_ibo, *tri_shader);
 
-            // 2. Render to screen (post-processing)
-            fbo->unbind();
-            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width, screen_height);
-            post_shader->bind();
-            fbo_texture.bind(0);
-            post_shader->set_uniform_1i("screenTexture", 0);
-            renderer.draw(*quad_vao, *quad_ib, *post_shader);
+            // 1. Render triangle to framebuffer (target = fbo)
+            {
+                gkit::graphic::RenderCommand cmd;
+                cmd.target        = fbo.get();
+                cmd.vertex_array  = tri_vao.get();
+                cmd.index_buffer  = tri_ibo.get();
+                cmd.shader        = tri_shader.get();
+                cmd.textures[0]   = nullptr;
+                cmd.texture_count = 0;
+                cmd.transparent   = false;
+                command_queue.submit(cmd);
+            }
 
-            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width / 2, screen_height / 2);
-            tri_shader->bind();
-            renderer.draw(*tri_vao, *tri_ibo, *tri_shader);
+            // 2. Render post-processing quad to screen (target = nullptr, sample fbo_texture)
+            {
+                gkit::graphic::RenderCommand cmd;
+                cmd.target        = nullptr;
+                cmd.vertex_array  = quad_vao.get();
+                cmd.index_buffer  = quad_ib.get();
+                cmd.shader        = post_shader.get();
+                cmd.textures[0]   = &fbo_texture;
+                cmd.texture_count = 1;
+                cmd.transparent   = false;
+                cmd.uniforms.values.push_back({"screenTexture", 0});
+                command_queue.submit(cmd);
+            }
 
-            gkit::graphic::opengl::viewport::set_viewport(0, 0, screen_width / 4, screen_height / 4);
-            post_shader->bind();
-            fbo_texture.bind(0);
-            post_shader->set_uniform_1i("screenTexture", 0);
-            renderer.draw(*quad_vao, *quad_ib, *post_shader);
+            // 3. Small triangle overlay (screen)
+            {
+                gkit::graphic::RenderCommand cmd;
+                cmd.target        = nullptr;
+                cmd.vertex_array  = tri_vao.get();
+                cmd.index_buffer  = tri_ibo.get();
+                cmd.shader        = tri_shader.get();
+                cmd.textures[0]   = nullptr;
+                cmd.texture_count = 0;
+                cmd.transparent   = false;
+                command_queue.submit(cmd);
+            }
+
+            command_queue.flush(renderer.get_device());
 
             // Swap buffers
             SDL_GL_SwapWindow(window);

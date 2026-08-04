@@ -2,6 +2,7 @@
 
 #include "gkit/core/templates/singleton.hpp"
 #include "gkit/graphic/RenderDevice.hpp"
+#include "gkit/graphic/RenderQueue.hpp"
 #include "gkit/graphic/config.hpp"
 
 #include <cstdint>
@@ -38,22 +39,29 @@ namespace gkit::graphic {
         auto clear(ClearFlags flags = ClearFlags::All) -> void;
 
         /**
-		 * @brief Draw indexed geometry
+		 * @brief Enqueue an indexed draw
 		 * @param va Vertex array containing vertex data
 		 * @param ib Index buffer containing indices
 		 * @param shader Shader program to use for rendering
+		 * @note Enqueued into the render queue; executed on flush(). Shader is
+		 *       non-const because uniforms are mutated during execution.
 		 */
-        auto draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) -> void;
+        auto draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader) -> void;
 
         /**
-		 * @brief Draw multiple instances of indexed geometry
+		 * @brief Enqueue an instanced indexed draw
 		 * @param va Vertex array containing vertex data
 		 * @param ib Index buffer containing indices
 		 * @param shader Shader program to use for rendering
 		 * @param instance_count Number of instances to draw
 		 */
-        auto draw_instance(const VertexArray& va, const IndexBuffer& ib, const Shader& shader, uint32_t instance_count)
+        auto draw_instance(const VertexArray& va, const IndexBuffer& ib, Shader& shader, uint32_t instance_count)
             -> void;
+
+        /**
+		 * @brief Execute the queued render commands (sort + apply state + draw)
+		 */
+        auto flush() -> void;
 
         /**
 		 * @brief Access the current render device
@@ -62,6 +70,7 @@ namespace gkit::graphic {
 
     private:
         std::unique_ptr<RenderDevice> device;
+        RenderQueue queue;
     };
 
 } // namespace gkit::graphic
