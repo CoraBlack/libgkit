@@ -49,6 +49,10 @@ namespace gkit::graphic::opengl {
         glClear(mask);
     }
 
+    auto Device::apply_state(const graphic::RenderState& state) -> void {
+        this->state_manager.apply(state);
+    }
+
     auto Device::draw(const graphic::VertexArray& va, const graphic::IndexBuffer& ib, const graphic::Shader& shader)
         -> void {
         shader.bind();

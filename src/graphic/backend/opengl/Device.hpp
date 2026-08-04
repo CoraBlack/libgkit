@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gkit/graphic/RenderDevice.hpp"
+#include "graphic/backend/opengl/StateManager.hpp"
 
 #include <memory>
 #include <string>
@@ -9,7 +10,7 @@
  * @brief OpenGL backend render device
  *
  * Inherits frontend `graphic::RenderDevice`; implements the resource factory
- * and GL render commands.
+ * and GL render commands. Owns a StateManager for incremental state application.
  */
 namespace gkit::graphic::opengl {
 
@@ -29,12 +30,16 @@ namespace gkit::graphic::opengl {
         auto create_render_buffer(int width, int height) -> std::unique_ptr<graphic::RenderBuffer> override;
 
         auto clear(ClearFlags flags) -> void override;
+        auto apply_state(const graphic::RenderState& state) -> void override;
         auto draw(const graphic::VertexArray& va, const graphic::IndexBuffer& ib, const graphic::Shader& shader)
             -> void override;
         auto draw_instance(const graphic::VertexArray& va,
                            const graphic::IndexBuffer& ib,
                            const graphic::Shader& shader,
                            uint32_t instance_count) -> void override;
+
+    private:
+        StateManager state_manager; // Incremental GL state application
     };
 
 } // namespace gkit::graphic::opengl

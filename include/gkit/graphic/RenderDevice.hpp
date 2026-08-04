@@ -3,6 +3,7 @@
 #include "gkit/graphic/FrameBuffer.hpp"
 #include "gkit/graphic/IndexBuffer.hpp"
 #include "gkit/graphic/RenderBuffer.hpp"
+#include "gkit/graphic/RenderState.hpp"
 #include "gkit/graphic/Shader.hpp"
 #include "gkit/graphic/Texture.hpp"
 #include "gkit/graphic/VertexArray.hpp"
@@ -61,6 +62,14 @@ namespace gkit::graphic {
 		 * @brief Clear the current render target
 		 */
         virtual auto clear(ClearFlags flags) -> void = 0;
+
+        /**
+		 * @brief Apply a render state snapshot incrementally
+		 *
+		 * Backends compare against the previously applied state and only change
+		 * what differs (see RHI design doc §6 / render queue design §3.4).
+		 */
+        virtual auto apply_state(const RenderState& state) -> void = 0;
 
         /**
 		 * @brief Draw indexed geometry
