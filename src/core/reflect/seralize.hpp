@@ -33,9 +33,10 @@ namespace gkit::core::reflect {
 
     class SerdeStruct final {
         bool available_flag = false;
-        std::unique_ptr<SerdeNode> serde_root{};
+        std::unique_ptr<SerdeNode> serde_root = nullptr;
 
     public:
+        SerdeStruct() = default;
         explicit SerdeStruct(Value v) noexcept;
         explicit SerdeStruct(const ObjectId v) noexcept;
         ~SerdeStruct() = default;
