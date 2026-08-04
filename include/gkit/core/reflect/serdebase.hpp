@@ -3,6 +3,7 @@
 #include "gkit/core/object_id.hpp"
 #include "gkit/core/value.hpp"
 
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -16,35 +17,36 @@ namespace gkit::core::reflect {
      * (Json / Xml / Toml ...) by overriding the wrapper / gap / leaf hooks.
      */
     class SerdeBase {
+        struct SerdeData;
+        std::unique_ptr<SerdeData> data;
+
     public:
         using WrapperPair = std::pair<std::string, std::string>;
 
-        virtual ~SerdeBase() = default;
+        SerdeBase();
+        virtual ~SerdeBase();
+
+        auto from(const ObjectId& id) -> void;
+        auto from(const Value& v) -> void;
 
         /**
-         * @brief Serialize an object (by id) into the target format.
-         * @throws std::invalid_argument if the id is not available.
-         * @return Empty string when the object tree cannot be built.
+         * @brief Serialize serdedata to string.
+         * @return Empty string when the SerdeBase cannot be built.
          */
-        [[nodiscard]] auto to_string(const ObjectId& id) -> std::string;
-
-        /**
-         * @brief Serialize a single value node (with optional key).
-         */
-        [[nodiscard]] auto to_string(const std::string& key, const Value& v) -> std::string;
+        [[nodiscard]] auto to_string() const noexcept -> std::string;
 
         // =====================================================================
         // Format hooks (pure virtual)
         // =====================================================================
 
         /// @brief Begin/end delimiters around a node (keyed or unkeyed).
-        virtual auto wrapper(Type type, const std::string& key) -> WrapperPair = 0;
+        virtual auto wrapper(Type type, const std::string& key) const -> WrapperPair = 0;
 
         /// @brief Separator between sibling elements of a container.
-        virtual auto element_gap(Type type) -> std::string = 0;
+        virtual auto element_gap(Type type) const -> std::string = 0;
 
         /// @brief Encode a leaf value into the target format.
-        virtual auto leaf_value(const Value& v) -> std::string = 0;
+        virtual auto leaf_value(const Value& v) const -> std::string = 0;
     };
 
 } // namespace gkit::core::reflect

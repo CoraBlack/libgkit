@@ -1,15 +1,18 @@
 #include "gkit/core/reflect/serdebase.hpp"
 
 #include "core/reflect/seralize.hpp"
+#include "seralize.hpp"
 
+#include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace gkit::core::reflect {
 
     namespace {
 
-        auto render_node(const SerdeNode& node, SerdeBase& base) -> std::string {
+        auto render_node(const SerdeNode& node, const SerdeBase& base) -> std::string {
             // ObjectId values do not participate in (de)serialization for now.
             if (node.get_type() == Type::ObjectId) {
                 return {};
@@ -46,21 +49,31 @@ namespace gkit::core::reflect {
 
     } // namespace
 
-    auto SerdeBase::to_string(const ObjectId& id) -> std::string {
+    struct SerdeBase::SerdeData {
+        SerdeStruct ss {};
+    };
+
+    SerdeBase::SerdeBase() : data(std::make_unique<SerdeData>()) {}
+    SerdeBase::~SerdeBase() {}
+
+    auto SerdeBase::from(const ObjectId& id) -> void {
         if (!id.available()) {
             throw std::invalid_argument("id is not available");
         }
+        this->data->ss.from(id);
+    }
 
-        SerdeStruct ss(id);
+    auto SerdeBase::from(const Value& v) -> void {
+        this->data->ss.from(v);
+    }
+
+    auto SerdeBase::to_string() const noexcept -> std::string {
+        auto& ss = this->data->ss;
         if (!ss.available()) {
             return {};
         }
 
         return render_node(ss.root(), *this);
-    }
-
-    auto SerdeBase::to_string(const std::string& key, const Value& v) -> std::string {
-        return render_node(SerdeNode(key, v), *this);
     }
 
 } // namespace gkit::core::reflect
