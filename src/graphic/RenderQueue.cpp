@@ -56,7 +56,7 @@ namespace gkit::graphic {
             // Render targets (FBO) must be drawn before screen commands, otherwise
             // post-processing cannot sample the FBO attachment. So target=null (screen)
             // sorts after any non-null target. Then group by state (reduce switches).
-            const bool blend_enabled   = (cmd.object != nullptr) && cmd.object->state.blend.enabled;
+            const bool blend_enabled   = cmd.state.blend.enabled;
             const uint64_t target_rank = (cmd.target != nullptr) ? 0 : 1; // FBO before screen
             return (target_rank << 56) | (static_cast<uint64_t>(blend_enabled) << 48) |
                    (static_cast<uint64_t>(cmd.transparent) << 40);
@@ -97,22 +97,26 @@ namespace gkit::graphic {
                 }
             }
 
-            // GL viewport is global state; each command sets its own per-target viewport.
-            device.set_viewport(cmd.viewport);
+            // GL viewport is global state; each command sets its own viewport,
+            // defaulting to the render target size when none was specified.
+            const Viewport vp = cmd.viewport.value_or(
+                cmd.target != nullptr ? Viewport{.x=0, .y=0, .width=cmd.target->width(), .height=cmd.target->height()}
+                                      : Viewport{.x=0, .y=0, .width=static_cast<int>(SCR_WIDTH), .height=static_cast<int>(SCR_HEIGHT)});
+            device.set_viewport(vp);
 
             // Clear the currently bound target (FBO or screen) if the command asks for it.
             if (cmd.clear) {
                 device.clear(cmd.clear_flags);
             }
 
-            device.apply_state(cmd.object->state);
+            device.apply_state(cmd.state);
 
             // Lazily upload geometry and bind shader/textures/uniforms.
+            // Shader validity is enforced at enqueue time (Renderer::draw), so the
+            // program is guaranteed non-null and valid here.
             const auto& vao = cmd.object->ensure_uploaded(device);
             const auto& ibo = cmd.object->index_buffer();
-            if (material.shader != nullptr) {
-                material.shader->bind();
-            }
+            material.shader->bind();
             bind_textures(material);
             apply_uniforms(material);
 

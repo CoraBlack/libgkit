@@ -1,4 +1,5 @@
 #include "gkit/graphic/VertexBufferLayout.hpp"
+#include "gkit/graphic/config.hpp"
 #include "gkit/graphic/render/Renderer.hpp"
 #include "graphic/backend/opengl/Texture.hpp"
 
@@ -147,6 +148,11 @@ int main(int argc, char* argv[]) {
                     }
                 }
             }
+
+            // Clear the default framebuffer (screen) every frame. The default
+            // framebuffer content is undefined at startup; clearing once per frame
+            // keeps regions outside the post-process quad deterministic.
+            renderer.clear(gkit::graphic::ClearFlags::Color);
 
             // Submit reusable render objects; Renderer enqueues them and flush() executes.
             // Draw 1: triangle to the FBO (target = fbo)

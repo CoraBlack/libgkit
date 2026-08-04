@@ -1,9 +1,11 @@
 #pragma once
 
 #include "gkit/graphic/config.hpp"
+#include "gkit/graphic/render/RenderState.hpp"
 #include "gkit/graphic/resource/FrameBuffer.hpp"
 
 #include <cstdint>
+#include <optional>
 
 namespace gkit::graphic {
 
@@ -27,13 +29,15 @@ namespace gkit::graphic {
 	 * @brief A single draw command referencing a render object
 	 *
 	 * Value type; references (not owns) the RenderObject and its target.
-	 * Geometry/material/state are read from the RenderObject; the command only
-	 * carries per-draw controls (target, viewport, clear, sorting metadata).
+	 * The command carries a snapshot of the geometry's render state (so two
+	 * commands can share one RenderObject with different states) plus per-draw
+	 * controls (target, viewport, clear, sorting metadata).
 	 */
     struct RenderCommand {
         const FrameBuffer* target = nullptr; // Render target (nullptr = screen)
-        RenderObject* object      = nullptr; // Geometry + material + state source (lazily uploaded on execute)
-        Viewport viewport; // Viewport to set before drawing (per-target size)
+        RenderObject* object      = nullptr; // Geometry + material source (lazily uploaded on execute)
+        std::optional<Viewport> viewport; // Viewport to set before drawing; empty = target size
+        RenderState state; // Render state snapshot (applied before drawing)
         uint32_t instance_count = 1; // 1 = non-instanced
         bool transparent        = false; // Sort front-to-back (opaque) or back-to-front (transparent)
         float depth_key         = 0.0f; // Depth sort key (filled by upper layer)

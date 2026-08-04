@@ -16,7 +16,7 @@ namespace gkit::graphic::opengl {
 
     class Device final : public graphic::RenderDevice {
     public:
-        Device()           = default;
+        Device();
         ~Device() override = default;
 
         auto create_vertex_buffer(const void* data, uint32_t size, bool dynamic)

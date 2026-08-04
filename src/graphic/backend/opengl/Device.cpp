@@ -12,6 +12,10 @@
 
 namespace gkit::graphic::opengl {
 
+    Device::Device() {
+        this->state_manager.force_apply_all();
+    }
+
     auto Device::create_vertex_buffer(const void* data, uint32_t size, bool dynamic)
         -> std::unique_ptr<graphic::VertexBuffer> {
         // Direct new (not make_unique) so Device's friendship grants access to the

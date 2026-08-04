@@ -29,6 +29,8 @@ namespace gkit::graphic::opengl {
         auto bind() const -> void override;
         auto unbind() const -> void override;
 
+        [[nodiscard]] auto is_valid() const -> bool override;
+
         auto set_uniform_1i(const std::string& name, int value) -> void override;
         auto set_uniform_1f(const std::string& name, float value) -> void override;
         auto set_uniform_4f(const std::string& name, float v0, float v1, float v2, float v3) -> void override;
