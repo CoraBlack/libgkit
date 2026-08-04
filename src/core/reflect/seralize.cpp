@@ -6,6 +6,7 @@
 #include "gkit/core/value.hpp"
 
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <utility>
 
@@ -40,6 +41,16 @@ namespace gkit::core::reflect {
 
     SerdeStruct::SerdeStruct(const ObjectId v) noexcept {
         this->from(v);
+    }
+
+    auto SerdeStruct::operator[](const std::string& key) -> Value& {
+        for (const auto& node : this->serde_root->get_children()) {
+            if (node->get_key() == key) {
+                return node->get_value();
+            }
+        }
+
+        throw std::invalid_argument("element not found");
     }
 
     auto SerdeStruct::from(Value v) noexcept -> void { // NOLINT(performance-unnecessary-value-param)

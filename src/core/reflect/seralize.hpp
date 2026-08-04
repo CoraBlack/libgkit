@@ -25,6 +25,7 @@ namespace gkit::core::reflect {
 
         [[nodiscard]] inline auto get_key() const -> const std::string& { return this->key; }
         [[nodiscard]] inline auto get_type() const -> Type { return this->type; }
+        [[nodiscard]] inline auto get_value() -> Value& { return this->value; }
         [[nodiscard]] inline auto get_value() const -> const Value& { return this->value; }
         [[nodiscard]] inline auto get_children() const -> const std::vector<std::unique_ptr<SerdeNode>>& {
             return this->children;
@@ -40,6 +41,8 @@ namespace gkit::core::reflect {
         explicit SerdeStruct(Value v) noexcept;
         explicit SerdeStruct(const ObjectId v) noexcept;
         ~SerdeStruct() = default;
+
+        auto operator[](const std::string& key) -> Value&; 
 
         auto from(Value v) noexcept -> void;
         auto from(const ObjectId v) noexcept -> void;
