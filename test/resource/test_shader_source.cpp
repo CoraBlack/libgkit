@@ -1,6 +1,6 @@
-#include <cassert>
+#include "test_utils.hpp"
+
 #include <filesystem>
-#include <iostream>
 #include <string_view>
 
 #include <gkit/resource/resource_loader.hpp>
@@ -19,88 +19,76 @@ namespace {
 
 } // anonymous namespace
 
-auto test_load_vertex_and_fragment() -> void {
-    std::cout << "=== Test: Load Vertex and Fragment Shader ===" << '\n';
+auto test_load_vertex_and_fragment() -> bool {
+    gkit::test::logln("=== Test: Load Vertex and Fragment Shader ===");
 
     const auto path = resource_dir() / "basic.shader";
     auto result     = gkit::resource::ResourceLoader::instance().load<gkit::resource::ShaderSource>(path);
 
-    assert(result.has_value());
+    gkit::test::assert_if(result.has_value(), "load<ShaderSource> must succeed");
     const auto& shader = result.value();
-    assert(shader->is_loaded());
+    gkit::test::assert_if(shader->is_loaded(), "shader must be loaded");
 
-    // Print raw file content
     auto full = shader->source();
-    std::cout << "\n--- Raw Shader Source ---\n" << full << "--- End Raw Source ---\n" << '\n';
+    gkit::test::assert_if(full.find("#shader vertex") != std::string_view::npos, "source must contain vertex marker");
+    gkit::test::assert_if(full.find("#shader fragment") != std::string_view::npos,
+                          "source must contain fragment marker");
+    gkit::test::logln("  raw source:\n{}", full);
 
-    // Print per-stage sources
-    std::cout << "--- Vertex Shader ---\n"
-              << shader->get_source(gkit::resource::ShaderStage::Vertex) << "--- End Vertex Shader ---\n"
-              << '\n';
-    std::cout << "--- Fragment Shader ---\n"
-              << shader->get_source(gkit::resource::ShaderStage::Fragment) << "--- End Fragment Shader ---\n"
-              << '\n';
-
-    assert(full.find("#shader vertex") != std::string_view::npos);
-    assert(full.find("#shader fragment") != std::string_view::npos);
-
-    // Per-stage access
-    assert(shader->has_stage(gkit::resource::ShaderStage::Vertex));
-    assert(shader->has_stage(gkit::resource::ShaderStage::Fragment));
+    gkit::test::assert_if(shader->has_stage(gkit::resource::ShaderStage::Vertex), "vertex stage must exist");
+    gkit::test::assert_if(shader->has_stage(gkit::resource::ShaderStage::Fragment), "fragment stage must exist");
 
     auto vs = shader->get_source(gkit::resource::ShaderStage::Vertex);
-    assert(vs.find("gl_Position") != std::string_view::npos);
-    assert(vs.find("aPos") != std::string_view::npos);
+    gkit::test::assert_if(vs.find("gl_Position") != std::string_view::npos, "vertex source must contain gl_Position");
+    gkit::test::assert_if(vs.find("aPos") != std::string_view::npos, "vertex source must contain aPos");
+    gkit::test::logln("  vertex shader:\n{}", vs);
 
     auto fs = shader->get_source(gkit::resource::ShaderStage::Fragment);
-    assert(fs.find("FragColor") != std::string_view::npos);
+    gkit::test::assert_if(fs.find("FragColor") != std::string_view::npos, "fragment source must contain FragColor");
+    gkit::test::logln("  fragment shader:\n{}", fs);
 
-    std::cout << "  Vertex and fragment stages parsed correctly: OK" << '\n';
-    std::cout << "Test passed!" << '\n' << '\n';
+    gkit::test::logln("  vertex and fragment stages parsed correctly");
+    return true;
 }
 
-auto test_cache_returns_same_instance() -> void {
-    std::cout << "=== Test: Cache Returns Same Instance ===" << '\n';
+auto test_cache_returns_same_instance() -> bool {
+    gkit::test::logln("=== Test: Cache Returns Same Instance ===");
 
     const auto path = resource_dir() / "basic.shader";
 
     auto first  = gkit::resource::ResourceLoader::instance().load<gkit::resource::ShaderSource>(path);
     auto second = gkit::resource::ResourceLoader::instance().load<gkit::resource::ShaderSource>(path);
 
-    assert(first.has_value());
-    assert(second.has_value());
+    gkit::test::assert_if(first.has_value(), "first load must succeed");
+    gkit::test::assert_if(second.has_value(), "second load must succeed");
+    gkit::test::assert_if(first.value().get() == second.value().get(),
+                          "loading same path twice must return cached instance");
 
-    // Same pointer — cached instance
-    assert(first.value().get() == second.value().get());
-
-    std::cout << "  Loading same path twice returns cached instance: OK" << '\n';
-    std::cout << "Test passed!" << '\n' << '\n';
+    gkit::test::logln("  loading same path twice returns cached instance");
+    return true;
 }
 
-auto test_load_missing_file() -> void {
-    std::cout << "=== Test: Load Missing File ===" << '\n';
+auto test_load_missing_file() -> bool {
+    gkit::test::logln("=== Test: Load Missing File ===");
 
     auto result = gkit::resource::ResourceLoader::instance().load<gkit::resource::ShaderSource>(
         resource_dir() / "does_not_exist.shader");
 
-    assert(!result.has_value());
-
-    std::cout << "  Missing file returns nullopt: OK" << '\n';
-    std::cout << "Test passed!" << '\n' << '\n';
+    gkit::test::assert_if(!result.has_value(), "loading missing file must return nullopt");
+    gkit::test::logln("  missing file returns nullopt");
+    return true;
 }
 
 auto main() -> int {
-    std::cout << "========================================" << '\n';
-    std::cout << "   gkit::resource::ShaderSource Tests   " << '\n';
-    std::cout << "========================================" << '\n' << '\n';
+    gkit::test::logln("========================================");
+    gkit::test::logln("   gkit::resource::ShaderSource Tests   ");
+    gkit::test::logln("========================================");
 
-    test_load_vertex_and_fragment();
-    test_cache_returns_same_instance();
-    test_load_missing_file();
+    auto test_runner = gkit::test::TestRunner()
+                           .add_test_func(test_load_vertex_and_fragment)
+                           .add_test_func(test_cache_returns_same_instance)
+                           .add_test_func(test_load_missing_file);
 
-    std::cout << "========================================" << '\n';
-    std::cout << "         ALL TESTS PASSED!             " << '\n';
-    std::cout << "========================================" << '\n';
-
+    test_runner.run();
     return 0;
 }

@@ -1,15 +1,19 @@
-#include "min_window_for_input_test.hpp"
+#include "./min_window_for_input_test.hpp"
+#include "test_utils.hpp"
 
 #include <core/misc/sdl_event_dispatcher.hpp>
 #include <cstdint>
 #include <cstdio>
+#include <iostream>
 
 #include <gkit/core/input/input.hpp>
 
-auto main() -> int {
+auto test_mouse_input_loop() -> bool {
     using gkit::input::Action;
     using gkit::input::Mod;
     using gkit::input::MouseChord;
+
+    gkit::test::logln("=== mouse input interactive loop (press Q to quit) ===");
 
     auto win               = gkit::test::Window{};
     auto& input            = gkit::Input::instance();
@@ -68,4 +72,13 @@ auto main() -> int {
             std::printf("Mouse wheel x = %f, y = %f\n", x, y);
         }
     }
+
+    return true;
+}
+
+auto main() -> int {
+    auto test_runner = gkit::test::TestRunner().add_test_func(test_mouse_input_loop);
+
+    test_runner.run();
+    return 0;
 }

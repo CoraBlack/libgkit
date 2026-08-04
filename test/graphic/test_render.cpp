@@ -2,6 +2,7 @@
 #include "gkit/graphic/config.hpp"
 #include "gkit/graphic/render/Renderer.hpp"
 #include "graphic/backend/opengl/Texture.hpp"
+#include "test_utils.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -9,17 +10,17 @@
 #include "SDL3/SDL.h"
 #include <glad/gl.h>
 
-int main(int argc, char* argv[]) {
-    // Get executable directory for resource paths
-    std::filesystem::path exe_path = argv[0];
-    // exe at bin/.../test/test_window.exe, go up 4 levels to reach project root
-    std::filesystem::path resource_base = exe_path.parent_path().parent_path().parent_path().parent_path() / "test";
+namespace fs = std::filesystem;
+
+auto test_render_loop() -> bool {
+    // Resource files live in <project>/test/graphic/, same folder as this source file
+    fs::path resource_base = fs::path(__FILE__).parent_path();
 
 #pragma region Init
     // Initialize SDL
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << '\n';
-        return 1;
+        return false;
     }
 
     // Request OpenGL 4.6 Core Profile
@@ -36,7 +37,7 @@ int main(int argc, char* argv[]) {
     if (window == nullptr) {
         std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << '\n';
         SDL_Quit();
-        return 1;
+        return false;
     }
 
     // Create OpenGL context
@@ -45,7 +46,7 @@ int main(int argc, char* argv[]) {
         std::cerr << "OpenGL context could not be created! SDL_Error: " << SDL_GetError() << '\n';
         SDL_DestroyWindow(window);
         SDL_Quit();
-        return 1;
+        return false;
     }
 
     // Initialize GLAD
@@ -54,7 +55,7 @@ int main(int argc, char* argv[]) {
         SDL_GL_DestroyContext(gl_context);
         SDL_DestroyWindow(window);
         SDL_Quit();
-        return 1;
+        return false;
     }
 
     // Print OpenGL version
@@ -84,7 +85,7 @@ int main(int argc, char* argv[]) {
         tri_layout.push<float>(3); // color
 
         // load shader source
-        auto tri_shader = device.create_shader((resource_base / "graphic" / "color_triangle.shader").string());
+        auto tri_shader = device.create_shader((resource_base / "color_triangle.shader").string());
 
         // Full-screen quad vertex data (post-processing).
         // z = 0.2 (farthest): it depth-tests first and writes the deepest value,
@@ -102,10 +103,10 @@ int main(int argc, char* argv[]) {
         quad_layout.push<float>(2);
 
         // load post-processing shader
-        auto post_shader = device.create_shader((resource_base / "graphic" / "post_process.shader").string());
+        auto post_shader = device.create_shader((resource_base / "post_process.shader").string());
 
         // load alpha-blended triangle shader (u_alpha uniform controls opacity)
-        auto alpha_shader = device.create_shader((resource_base / "graphic" / "alpha_triangle.shader").string());
+        auto alpha_shader = device.create_shader((resource_base / "alpha_triangle.shader").string());
 #pragma endregion
 
 #pragma region framebuffer
@@ -264,6 +265,13 @@ int main(int argc, char* argv[]) {
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-    std::cout << "Window closed successfully" << '\n';
+    gkit::test::logln("window closed successfully");
+    return true;
+}
+
+auto main() -> int {
+    auto test_runner = gkit::test::TestRunner().add_test_func(test_render_loop);
+
+    test_runner.run();
     return 0;
 }

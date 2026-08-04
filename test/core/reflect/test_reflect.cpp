@@ -1,9 +1,11 @@
 #include "gkit/core/object.hpp"
 #include "gkit/core/reflect/registry.hpp"
+#include "test_utils.hpp"
 
 #include <cassert>
 #include <iostream>
 #include <string>
+
 
 using gkit::core::Object;
 using gkit::core::Value;
@@ -61,20 +63,20 @@ auto init_reflect() -> void {
 // =========================================================================
 
 auto test_regist_and_find() -> bool {
-    std::cout << "=== Test: regist and find ===" << '\n';
+    gkit::test::logln("=== Test: regist and find ===");
 
     auto* info = ClassDB::instance().find("ReflectTestObj");
-    assert(info != nullptr);
-    assert(info->class_name == "ReflectTestObj");
-    std::cout << "  find existing class: OK" << '\n';
+    gkit::test::assert_if(info != nullptr, "Class info of ReflectTestObj from ClassDB is null");
+    gkit::test::assert_if(info->class_name == "ReflectTestObj", "Class name is not experted");
+    gkit::test::logln("  find existing class: OK");
 
     auto* info_with_raw = ClassDB::instance().find_with_raw(typeid(ReflectTestObj).name());
-    assert(info_with_raw != nullptr);
-    std::cout << "  find existing class with raw name: OK" << '\n';
+    gkit::test::assert_if(info_with_raw != nullptr, "Failed to get ClassInfo with raw name");
+    gkit::test::logln("  find existing class with raw name: OK");
 
     auto* missing = ClassDB::instance().find("NonExistent");
-    assert(missing == nullptr);
-    std::cout << "  find missing class returns nullptr: OK" << '\n';
+    gkit::test::assert_if(missing == nullptr, "Find result is not experted(nullptr)");
+    gkit::test::logln("  find missing class returns nullptr: OK");
     return true;
 }
 
@@ -305,22 +307,18 @@ auto test_create_object() -> bool {
 auto main() -> int {
     init_reflect();
 
-    auto ok = true;
-    ok &= test_regist_and_find();
-    ok &= test_add_field();
-    ok &= test_get_field();
-    ok &= test_set_field();
-    ok &= test_readonly_property();
-    ok &= test_parent_inheritance();
-    ok &= test_for_each_field_inheritance();
-    ok &= test_get_field_inherited();
-    ok &= test_set_field_inherited();
-    ok &= test_create_object();
+    auto test_runner = gkit::test::TestRunner()
+                           .add_test_func(test_regist_and_find)
+                           .add_test_func(test_add_field)
+                           .add_test_func(test_get_field)
+                           .add_test_func(test_set_field)
+                           .add_test_func(test_readonly_property)
+                           .add_test_func(test_parent_inheritance)
+                           .add_test_func(test_for_each_field_inheritance)
+                           .add_test_func(test_get_field_inherited)
+                           .add_test_func(test_set_field_inherited)
+                           .add_test_func(test_create_object);
 
-    if (ok) {
-        std::cout << '\n' << "All tests passed." << '\n';
-        return 0;
-    }
-    std::cerr << '\n' << "Some tests failed." << '\n';
-    return 1;
+    test_runner.run();
+    return 0;
 }

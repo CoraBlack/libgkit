@@ -1,9 +1,9 @@
-#include "gkit/math/constants.hpp"
+#include "test_utils.hpp"
 
 #include <format>
-#include <iostream>
 #include <string>
 
+#include <gkit/math/constants.hpp>
 #include <gkit/math/matrix3.hpp>
 #include <gkit/math/vector3.hpp>
 
@@ -24,87 +24,106 @@ auto mat_str(const Matrix3& mat) -> std::string {
                        m22);
 }
 
-auto main() -> int {
-    std::cout << "=== Matrix3 Test ===" << '\n';
+auto test_identity_and_vector() -> bool {
+    gkit::test::logln("=== identity matrix ===");
 
-    // Test 1: Identity matrix
-    std::cout << "\n1. Identity matrix:" << '\n';
     auto identity = Matrix3::identity();
-    std::cout << mat_str(identity) << '\n';
+    gkit::test::logln("  {}", mat_str(identity));
 
-    // Test 2: Matrix * Vector (should preserve vector)
-    std::cout << "\n2. Identity * Vector:" << '\n';
     Vector3 v{1.0f, 2.0f, 3.0f};
     auto result = identity * v;
-    std::cout << "v = (1, 2, 3)" << '\n';
-    std::cout << "result = (" << result.x << ", " << result.y << ", " << result.z << ")" << '\n';
+    gkit::test::assert_if(result.x == 1.0f && result.y == 2.0f && result.z == 3.0f, "identity * vector failed");
+    gkit::test::logln("  identity * (1, 2, 3) = ({}, {}, {})", result.x, result.y, result.z);
 
-    // Test 3: Determinant of identity should be 1
-    std::cout << "\n3. Determinant test:" << '\n';
-    std::cout << "det(identity) = " << Matrix3::determinant(identity) << " (expected: 1)" << '\n';
+    gkit::test::assert_if(Matrix3::determinant(identity) == 1.0f, "det(identity) must be 1");
+    gkit::test::logln("  det(identity) = {}", Matrix3::determinant(identity));
+    return true;
+}
 
-    // Test 4: Rotation matrix (90 degrees around X)
-    std::cout << "\n4. Rotation X (90 degrees):" << '\n';
+auto test_rotation() -> bool {
+    gkit::test::logln("=== rotation matrix ===");
+
     auto rot_x = Matrix3::rotation_x(gkit::math::PI_32 / 2.0f);
-    std::cout << mat_str(rot_x) << '\n';
+    gkit::test::logln("  {}", mat_str(rot_x));
 
-    // Verify: Rotating (0, 1, 0) around X by 90 degrees should give (0, 0, 1)
     Vector3 up{0.0f, 1.0f, 0.0f};
     auto rotated = rot_x * up;
-    std::cout << "rot_x * (0,1,0) = (" << rotated.x << ", " << rotated.y << ", " << rotated.z << ")" << '\n';
-    std::cout << "expected: (0, 0, 1)" << '\n';
+    gkit::test::logln("  rot_x * (0,1,0) = ({}, {}, {}) (expected: (0, 0, 1))", rotated.x, rotated.y, rotated.z);
+    gkit::test::assert_if(std::abs(rotated.x) < 1e-4f && std::abs(rotated.y) < 1e-4f &&
+                              std::abs(rotated.z - 1.0f) < 1e-4f,
+                          "rotation_x(90) * (0,1,0) must be ~(0,0,1)");
 
-    // Test 5: Rotation matrix determinant should be 1
-    std::cout << "\n5. det(rotation_x) = " << Matrix3::determinant(rot_x) << " (expected: 1)" << '\n';
+    gkit::test::assert_if(std::abs(Matrix3::determinant(rot_x) - 1.0f) < 1e-4f, "det(rotation_x) must be 1");
+    gkit::test::logln("  det(rotation_x) = {} (expected: 1)", Matrix3::determinant(rot_x));
+    return true;
+}
 
-    // Test 6: Inverse of identity is identity
-    std::cout << "\n6. Inverse test:" << '\n';
+auto test_inverse() -> bool {
+    gkit::test::logln("=== inverse ===");
+
+    auto identity     = Matrix3::identity();
     auto inv_identity = Matrix3::inverse(identity);
-    if (inv_identity.has_value()) {
-        std::cout << "inverse(identity):" << '\n';
-        std::cout << mat_str(inv_identity.value()) << '\n';
-    }
+    gkit::test::assert_if(inv_identity.has_value(), "inverse(identity) must have a value");
+    gkit::test::logln("  inverse(identity): {}", mat_str(inv_identity.value()));
 
-    // Test 7: Rotation * inverse should be identity
+    auto rot_x     = Matrix3::rotation_x(gkit::math::PI_32 / 2.0f);
     auto inv_rot_x = Matrix3::inverse(rot_x);
-    if (inv_rot_x.has_value()) {
-        auto composed = rot_x * inv_rot_x.value();
-        std::cout << "rotation_x * inverse(rotation_x):" << '\n';
-        std::cout << mat_str(composed) << '\n';
-    }
+    gkit::test::assert_if(inv_rot_x.has_value(), "inverse(rotation_x) must have a value");
 
-    // Test 8: Scaling matrix
-    std::cout << "\n8. Scaling (2, 3, 4):" << '\n';
+    auto composed = rot_x * inv_rot_x.value();
+    gkit::test::logln("  rotation_x * inverse(rotation_x): {}", mat_str(composed));
+    auto [c00, c10, c20, c01, c11, c21, c02, c12, c22] = composed.properties();
+    gkit::test::assert_if(std::abs(c00 - 1.0f) < 1e-4f && std::abs(c11 - 1.0f) < 1e-4f && std::abs(c22 - 1.0f) < 1e-4f,
+                          "rotation * inverse must be identity");
+    return true;
+}
+
+auto test_scale_transpose_diagonal() -> bool {
+    gkit::test::logln("=== scale, transpose, diagonal ===");
+
     auto scale = Matrix3::scaling(2.0f, 3.0f, 4.0f);
-    std::cout << mat_str(scale) << '\n';
+    gkit::test::logln("  {}", mat_str(scale));
 
-    // Test 9: Transpose
-    std::cout << "\n9. Transpose test:" << '\n';
     auto transposed = Matrix3::transpose(scale);
-    std::cout << "transpose(scale):" << '\n';
-    std::cout << mat_str(transposed) << '\n';
+    gkit::test::logln("  transpose(scale): {}", mat_str(transposed));
+    gkit::test::assert_if(std::abs(transposed.m[0][0] - 2.0f) < 1e-4f && std::abs(transposed.m[1][1] - 3.0f) < 1e-4f &&
+                              std::abs(transposed.m[2][2] - 4.0f) < 1e-4f,
+                          "transpose of diagonal must be itself");
 
-    // Test 10: From diagonal
-    std::cout << "\n10. From diagonal (5.0f):" << '\n';
     auto diag = Matrix3::from_diagonal(5.0f);
-    std::cout << mat_str(diag) << '\n';
+    gkit::test::logln("  from_diagonal(5.0f): {}", mat_str(diag));
+    auto [d00, d10, d20, d01, d11, d21, d02, d12, d22] = diag.properties();
+    gkit::test::assert_if(d00 == 5.0f && d11 == 5.0f && d22 == 5.0f, "from_diagonal failed");
+    return true;
+}
 
-    // Test 11: Matrix multiplication
-    std::cout << "\n11. Matrix multiplication:" << '\n';
+auto test_multiplication_and_orthogonality() -> bool {
+    gkit::test::logln("=== matrix multiplication and orthogonality ===");
+
     auto a = Matrix3::rotation_x(1.0f);
     auto b = Matrix3::rotation_y(1.0f);
     auto c = a * b;
-    std::cout << "rotation_x(1) * rotation_y(1):" << '\n';
-    std::cout << mat_str(c) << '\n';
+    gkit::test::logln("  rotation_x(1) * rotation_y(1): {}", mat_str(c));
 
-    // Test 12: Orthogonality check (R * R^T = I)
-    std::cout << "\n12. Orthogonality test (rotation matrix):" << '\n';
     auto r     = Matrix3::rotation_z(0.5f);
     auto rt    = Matrix3::transpose(r);
     auto ortho = r * rt;
-    std::cout << "R * R^T:" << '\n';
-    std::cout << mat_str(ortho) << '\n';
+    gkit::test::logln("  R * R^T: {}", mat_str(ortho));
 
-    std::cout << "\nAll tests completed!" << '\n';
+    auto [m00, m10, m20, m01, m11, m21, m02, m12, m22] = ortho.properties();
+    gkit::test::assert_if(std::abs(m00 - 1.0f) < 1e-4f && std::abs(m11 - 1.0f) < 1e-4f && std::abs(m22 - 1.0f) < 1e-4f,
+                          "rotation matrix must be orthonormal");
+    return true;
+}
+
+auto main() -> int {
+    auto test_runner = gkit::test::TestRunner()
+                           .add_test_func(test_identity_and_vector)
+                           .add_test_func(test_rotation)
+                           .add_test_func(test_inverse)
+                           .add_test_func(test_scale_transpose_diagonal)
+                           .add_test_func(test_multiplication_and_orthogonality);
+
+    test_runner.run();
     return 0;
 }
