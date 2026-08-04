@@ -36,6 +36,8 @@ namespace gkit::graphic {
         uint32_t instance_count                                = 1; // 1 = non-instanced
         bool transparent                                       = false; // Sorting class
         float depth_key                                        = 0.0f; // Depth sort key
+        bool clear                                             = false; // Whether to clear the target before drawing
+        ClearFlags clear_flags                                 = ClearFlags::All; // What to clear when clear is set
 
         /// @brief Build a draw command from this object
         auto to_command() const -> RenderCommand {
@@ -53,6 +55,8 @@ namespace gkit::graphic {
             cmd.instance_count = this->instance_count;
             cmd.transparent    = this->transparent;
             cmd.depth_key      = this->depth_key;
+            cmd.clear          = this->clear;
+            cmd.clear_flags    = this->clear_flags;
             return cmd;
         }
     };

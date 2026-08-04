@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gkit/graphic/config.hpp"
 #include "gkit/graphic/render/RenderState.hpp"
 #include "gkit/graphic/resource/FrameBuffer.hpp"
 #include "gkit/graphic/resource/IndexBuffer.hpp"
@@ -56,6 +57,8 @@ namespace gkit::graphic {
         uint32_t instance_count                                = 1; // 1 = non-instanced
         bool transparent = false; // Sort front-to-back (opaque) or back-to-front (transparent)
         float depth_key  = 0.0f; // Depth sort key (filled by upper layer)
+        bool clear       = false; // Whether to clear the target before drawing
+        ClearFlags clear_flags = ClearFlags::All; // What to clear when clear is set
     };
 
 } // namespace gkit::graphic

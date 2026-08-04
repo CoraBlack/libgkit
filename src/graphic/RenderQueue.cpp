@@ -93,6 +93,11 @@ namespace gkit::graphic {
             // GL viewport is global state; each command sets its own per-target viewport.
             device.set_viewport(cmd.viewport);
 
+            // Clear the currently bound target (FBO or screen) if the command asks for it.
+            if (cmd.clear) {
+                device.clear(cmd.clear_flags);
+            }
+
             device.apply_state(cmd.state);
 
             if (cmd.shader != nullptr) {

@@ -132,6 +132,7 @@ int main(int argc, char* argv[]) {
         triangle_to_fbo.index_buffer = tri_ibo.get();
         triangle_to_fbo.shader       = tri_shader.get();
         triangle_to_fbo.viewport     = {0, 0, fbo_width, fbo_height}; // FBO size
+        triangle_to_fbo.clear        = true; // clear FBO color/depth before drawing
 
         gkit::graphic::RenderObject post_quad;
         post_quad.target        = nullptr; // screen
@@ -148,7 +149,7 @@ int main(int argc, char* argv[]) {
         overlay_triangle.vertex_array = tri_vao.get();
         overlay_triangle.index_buffer = tri_ibo.get();
         overlay_triangle.shader       = tri_shader.get();
-        overlay_triangle.viewport     = {0, 0, screen_width, screen_height}; // window size
+        overlay_triangle.viewport     = {0, 0, screen_width/2, screen_height/2}; // window size
 #pragma endregion
 
         // Main loop
@@ -166,12 +167,12 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            renderer.clear(gkit::graphic::ClearFlags::All);
+            //renderer.clear(gkit::graphic::ClearFlags::All);
 
             // Submit reusable render objects; Renderer enqueues them and flush() executes.
             renderer.draw(triangle_to_fbo); // 1. Triangle to framebuffer
             renderer.draw(post_quad); // 2. Post-processing quad to screen (samples fbo)
-            //renderer.draw(overlay_triangle); // 3. Small triangle overlay
+            renderer.draw(overlay_triangle); // 3. Small triangle overlay
 
             renderer.flush();
 
