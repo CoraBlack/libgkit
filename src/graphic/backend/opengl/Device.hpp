@@ -31,6 +31,7 @@ namespace gkit::graphic::opengl {
 
         auto clear(ClearFlags flags) -> void override;
         auto apply_state(const graphic::RenderState& state) -> void override;
+        auto set_viewport(const graphic::Viewport& viewport) -> void override;
         auto draw(const graphic::VertexArray& va, const graphic::IndexBuffer& ib, const graphic::Shader& shader)
             -> void override;
         auto draw_instance(const graphic::VertexArray& va,

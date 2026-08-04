@@ -27,6 +27,7 @@ namespace gkit::graphic {
         const VertexArray* vertex_array = nullptr;
         const IndexBuffer* index_buffer = nullptr;
         Shader* shader                  = nullptr; // Non-const: uniforms mutated on execute
+        Viewport viewport; // Viewport to set before drawing (per-target size)
         RenderState state; // State snapshot
         UniformData uniforms; // Simple-path per-name uniforms
         UboBlock ubo; // Batch-path UBO reference
@@ -46,6 +47,7 @@ namespace gkit::graphic {
             cmd.state          = this->state;
             cmd.uniforms       = this->uniforms;
             cmd.ubo            = this->ubo;
+            cmd.viewport       = this->viewport;
             cmd.textures       = this->textures;
             cmd.texture_count  = this->texture_count;
             cmd.instance_count = this->instance_count;

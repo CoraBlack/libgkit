@@ -14,6 +14,20 @@
 namespace gkit::graphic {
 
     /**
+	 * @brief Viewport rectangle for a render command
+	 *
+	 * Each command carries its own viewport so FBO-targeted commands use the
+	 * FBO size while screen commands use the window size (GL viewport is global
+	 * state, so it must be set per command).
+	 */
+    struct Viewport {
+        int x      = 0; // Left coordinate
+        int y      = 0; // Bottom coordinate
+        int width  = 0; // Viewport width
+        int height = 0; // Viewport height
+    };
+
+    /**
 	 * @brief Engine-declared texture slot limit (fixed conservative value)
 	 *
 	 * Most shaders fit within 8 slots; not chasing hardware limits
@@ -33,6 +47,7 @@ namespace gkit::graphic {
         const VertexArray* vertex_array = nullptr;
         const IndexBuffer* index_buffer = nullptr;
         Shader* shader                  = nullptr; // Non-const: uniforms are mutated during execution
+        Viewport viewport; // Viewport to set before drawing (per-target size)
         RenderState state; // State snapshot (sorting key)
         UniformData uniforms; // Simple-path per-name uniforms (see design §5.1)
         UboBlock ubo; // Batch-path UBO reference (see design §5.2)

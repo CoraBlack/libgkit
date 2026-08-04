@@ -53,6 +53,10 @@ namespace gkit::graphic::opengl {
         this->state_manager.apply(state);
     }
 
+    auto Device::set_viewport(const graphic::Viewport& viewport) -> void {
+        glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+    }
+
     auto Device::draw(const graphic::VertexArray& va, const graphic::IndexBuffer& ib, const graphic::Shader& shader)
         -> void {
         shader.bind();

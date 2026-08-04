@@ -6,7 +6,6 @@
 #include "gkit/graphic/render/RenderObject.hpp"
 #include "gkit/graphic/render/RenderQueue.hpp"
 
-#include <cstdint>
 #include <memory>
 
 /**
@@ -40,30 +39,12 @@ namespace gkit::graphic {
         auto clear(ClearFlags flags = ClearFlags::All) -> void;
 
         /**
-		 * @brief Enqueue an indexed draw
-		 * @param va Vertex array containing vertex data
-		 * @param ib Index buffer containing indices
-		 * @param shader Shader program to use for rendering
+		 * @brief Enqueue a draw from a reusable render object
+		 * @param obj Render object (geometry + material + state)
 		 * @note Enqueued into the render queue; executed on flush(). Shader is
 		 *       non-const because uniforms are mutated during execution.
 		 */
-        auto draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader) -> void;
-
-        /**
-		 * @brief Enqueue a draw from a reusable render object
-		 * @param obj Render object (geometry + material + state)
-		 */
         auto draw(const RenderObject& obj) -> void;
-
-        /**
-		 * @brief Enqueue an instanced indexed draw
-		 * @param va Vertex array containing vertex data
-		 * @param ib Index buffer containing indices
-		 * @param shader Shader program to use for rendering
-		 * @param instance_count Number of instances to draw
-		 */
-        auto draw_instance(const VertexArray& va, const IndexBuffer& ib, Shader& shader, uint32_t instance_count)
-            -> void;
 
         /**
 		 * @brief Execute the queued render commands (sort + apply state + draw)

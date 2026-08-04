@@ -1,7 +1,6 @@
 #include "gkit/graphic/VertexBufferLayout.hpp"
 #include "gkit/graphic/render/Renderer.hpp"
 #include "graphic/backend/opengl/Texture.hpp"
-#include "graphic/backend/opengl/config.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -113,9 +112,12 @@ int main(int argc, char* argv[]) {
 #pragma endregion
 
 #pragma region framebuffer
-        auto fbo = device.create_frame_buffer(gkit::graphic::SCR_WIDTH, gkit::graphic::SCR_HEIGHT);
+        // FBO is half the window size.
+        const int fbo_width  = screen_width;
+        const int fbo_height = screen_height;
+        auto fbo = device.create_frame_buffer(fbo_width, fbo_height);
         gkit::graphic::opengl::Texture fbo_texture(" ", gkit::graphic::TextureType::TextureFramebuffer);
-        auto rbo = device.create_render_buffer(gkit::graphic::SCR_WIDTH, gkit::graphic::SCR_HEIGHT);
+        auto rbo = device.create_render_buffer(fbo_width, fbo_height);
         fbo->attach_color_texture(fbo_texture, 0);
         fbo->attach_depth_stencil(*rbo);
         fbo->check();
@@ -129,6 +131,7 @@ int main(int argc, char* argv[]) {
         triangle_to_fbo.vertex_array = tri_vao.get();
         triangle_to_fbo.index_buffer = tri_ibo.get();
         triangle_to_fbo.shader       = tri_shader.get();
+        triangle_to_fbo.viewport     = {0, 0, fbo_width, fbo_height}; // FBO size
 
         gkit::graphic::RenderObject post_quad;
         post_quad.target        = nullptr; // screen
@@ -138,12 +141,14 @@ int main(int argc, char* argv[]) {
         post_quad.textures[0]   = &fbo_texture;
         post_quad.texture_count = 1;
         post_quad.uniforms.values.push_back({"screenTexture", 0});
+        post_quad.viewport = {0, 0, screen_width, screen_height}; // window size
 
         gkit::graphic::RenderObject overlay_triangle;
         overlay_triangle.target       = nullptr; // screen
         overlay_triangle.vertex_array = tri_vao.get();
         overlay_triangle.index_buffer = tri_ibo.get();
         overlay_triangle.shader       = tri_shader.get();
+        overlay_triangle.viewport     = {0, 0, screen_width, screen_height}; // window size
 #pragma endregion
 
         // Main loop
@@ -161,13 +166,12 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            fbo->set_viewport(0, 0, screen_width, screen_height);
             renderer.clear(gkit::graphic::ClearFlags::All);
 
             // Submit reusable render objects; Renderer enqueues them and flush() executes.
             renderer.draw(triangle_to_fbo); // 1. Triangle to framebuffer
             renderer.draw(post_quad); // 2. Post-processing quad to screen (samples fbo)
-            renderer.draw(overlay_triangle); // 3. Small triangle overlay
+            //renderer.draw(overlay_triangle); // 3. Small triangle overlay
 
             renderer.flush();
 

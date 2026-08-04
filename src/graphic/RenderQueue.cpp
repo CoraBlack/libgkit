@@ -49,15 +49,15 @@ namespace gkit::graphic {
             // TODO(Step 6+/UBO): upload cmd.ubo via a UniformBuffer backend once implemented.
         }
 
-        /// @brief Sort comparator: group by render target, then by state/transparency
+        /// @brief Sort comparator: framebuffer commands first, then by state/transparency
         auto sort_key(const RenderCommand& cmd) -> uint64_t {
-            // Render target first: commands targeting the same FBO/screen must stay
-            // together (target switching is costly and order-sensitive).
-            // Then group by state (reduce state switches), then transparency class.
-            const uint64_t target_hash =
-                (cmd.target != nullptr) ? (reinterpret_cast<uint64_t>(cmd.target) & 0xFFFF) : 0;
-            return (target_hash << 48) | (static_cast<uint64_t>(cmd.state.blend.enabled) << 40) |
-                   (static_cast<uint64_t>(cmd.transparent) << 32);
+            // Render targets (FBO) must be drawn before screen commands, otherwise
+            // post-processing cannot sample the FBO attachment. So target=null (screen)
+            // sorts after any non-null target. Then group by state (reduce switches).
+            // Within the same target, opaque front-to-back / transparent back-to-front.
+            const uint64_t target_rank = (cmd.target != nullptr) ? 0 : 1; // FBO before screen
+            return (target_rank << 56) | (static_cast<uint64_t>(cmd.state.blend.enabled) << 48) |
+                   (static_cast<uint64_t>(cmd.transparent) << 40);
         }
 
     } // namespace
@@ -75,12 +75,23 @@ namespace gkit::graphic {
                 return key_a < key_b;
             });
 
+        const FrameBuffer* last_target = nullptr;
         for (const auto& cmd : this->commands) {
-            if (cmd.target != nullptr) {
-                cmd.target->bind();
-            } else {
-                // Default framebuffer (screen). FBO unbind reverts to screen.
+            // Switch render target: unbind the previous FBO (reverting to screen)
+            // before binding a different target. target=null means screen, reached
+            // by unbinding the previous FBO.
+            if (cmd.target != last_target) {
+                if (last_target != nullptr) {
+                    last_target->unbind();
+                }
+                last_target = cmd.target;
+                if (cmd.target != nullptr) {
+                    cmd.target->bind();
+                }
             }
+
+            // GL viewport is global state; each command sets its own per-target viewport.
+            device.set_viewport(cmd.viewport);
 
             device.apply_state(cmd.state);
 
@@ -97,6 +108,11 @@ namespace gkit::graphic {
                     device.draw(*cmd.vertex_array, *cmd.index_buffer, *cmd.shader);
                 }
             }
+        }
+
+        // End of frame: leave the default framebuffer bound (screen).
+        if (last_target != nullptr) {
+            last_target->unbind();
         }
         this->commands.clear();
     }

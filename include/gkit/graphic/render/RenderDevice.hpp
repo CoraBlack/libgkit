@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gkit/graphic/config.hpp"
+#include "gkit/graphic/render/RenderCommand.hpp"
 #include "gkit/graphic/render/RenderState.hpp"
 #include "gkit/graphic/resource/FrameBuffer.hpp"
 #include "gkit/graphic/resource/IndexBuffer.hpp"
@@ -70,6 +71,11 @@ namespace gkit::graphic {
 		 * what differs (see RHI design doc §6 / render queue design §3.4).
 		 */
         virtual auto apply_state(const RenderState& state) -> void = 0;
+
+        /**
+		 * @brief Set the viewport (GL viewport is global state, set per command)
+		 */
+        virtual auto set_viewport(const Viewport& viewport) -> void = 0;
 
         /**
 		 * @brief Draw indexed geometry
