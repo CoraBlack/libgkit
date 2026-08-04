@@ -2,6 +2,7 @@
 
 #include "gkit/core/templates/singleton.hpp"
 #include "gkit/graphic/RenderDevice.hpp"
+#include "gkit/graphic/RenderObject.hpp"
 #include "gkit/graphic/RenderQueue.hpp"
 #include "gkit/graphic/config.hpp"
 
@@ -47,6 +48,12 @@ namespace gkit::graphic {
 		 *       non-const because uniforms are mutated during execution.
 		 */
         auto draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader) -> void;
+
+        /**
+		 * @brief Enqueue a draw from a reusable render object
+		 * @param obj Render object (geometry + material + state)
+		 */
+        auto draw(const RenderObject& obj) -> void;
 
         /**
 		 * @brief Enqueue an instanced indexed draw

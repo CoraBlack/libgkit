@@ -20,6 +20,10 @@ namespace gkit::graphic {
         this->queue.submit(cmd);
     }
 
+    auto Renderer::draw(const RenderObject& obj) -> void {
+        this->queue.submit(obj.to_command());
+    }
+
     auto Renderer::draw_instance(const VertexArray& va, const IndexBuffer& ib, Shader& shader, uint32_t instance_count)
         -> void {
         RenderCommand cmd;

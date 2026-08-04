@@ -75,24 +75,9 @@ int main(int argc, char* argv[]) {
 #pragma region triangle
         // Colored triangle vertex data (position + color)
         float tri_vertices[] = {// positions            // colors
-                                0.0f,
-                                0.5f,
-                                0.0f,
-                                1.0f,
-                                0.0f,
-                                0.0f, // top: red
-                                -0.4f,
-                                -0.25f,
-                                0.0f,
-                                0.0f,
-                                1.0f,
-                                0.0f, // bottom-left: green
-                                0.4f,
-                                -0.25f,
-                                0.0f,
-                                0.0f,
-                                0.0f,
-                                1.0f}; // bottom-right: blue
+                                0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, // top: red
+                                -0.4f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom-left: green
+                                0.4f,  -0.25f, 0.0f, 0.0f, 0.0f, 1.0f}; // bottom-right: blue
 
         // index data
         unsigned int tri_indices[] = {0, 1, 2};
