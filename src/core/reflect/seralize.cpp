@@ -1,6 +1,7 @@
 #include "core/reflect/seralize.hpp"
 
 #include "core/object_pool.hpp"
+#include "gkit/core/object_id.hpp"
 #include "gkit/core/reflect/registry.hpp"
 #include "gkit/core/value.hpp"
 
@@ -34,11 +35,19 @@ namespace gkit::core::reflect {
      * SerdeStruct
      */
     SerdeStruct::SerdeStruct(Value v) noexcept { // NOLINT(performance-unnecessary-value-param)
+        this->from(std::move(v));
+    }
+
+    SerdeStruct::SerdeStruct(const ObjectId v) noexcept {
+        this->from(v);
+    }
+
+    auto SerdeStruct::from(Value v) noexcept -> void { // NOLINT(performance-unnecessary-value-param)
         this->serde_root     = std::make_unique<SerdeNode>("", std::move(v));
         this->available_flag = true;
     }
 
-    SerdeStruct::SerdeStruct(const ObjectId v) noexcept {
+    auto SerdeStruct::from(ObjectId v) noexcept -> void {
         if (!v.available()) return;
 
         auto* obj_ptr = ObjectPool::instance().deref_from(v);

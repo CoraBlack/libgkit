@@ -41,6 +41,8 @@ namespace gkit::core::reflect {
         explicit SerdeStruct(const ObjectId v) noexcept;
         ~SerdeStruct() = default;
 
+        auto from(Value v) noexcept -> void;
+        auto from(const ObjectId v) noexcept -> void;
         [[nodiscard]] inline auto available() -> bool { return this->available_flag; }
         [[nodiscard]] inline auto root() const -> const SerdeNode& { return *this->serde_root; }
     };
