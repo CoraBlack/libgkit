@@ -86,12 +86,14 @@ int main(int argc, char* argv[]) {
         // load shader source
         auto tri_shader = device.create_shader((resource_base / "graphic" / "color_triangle.shader").string());
 
-        // Full-screen quad vertex data (post-processing)
+        // Full-screen quad vertex data (post-processing).
+        // z = 0.2 (farthest): it depth-tests first and writes the deepest value,
+        // so the later triangles (z = 0.1 and z = 0) depth-test against it.
         std::vector<float> quad_vertices = {// positions                    // tex coords
-                                            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 
-                                            1.0f,  -1.0f, 0.0f, 1.0f, 0.0f,
-                                            1.0f,  1.0f,  0.0f, 1.0f, 1.0f, 
-                                            -1.0f, 1.0f,  0.0f, 0.0f, 1.0f};
+                                            -1.0f, -1.0f, 0.2f, 0.0f, 0.0f,
+                                            1.0f,  -1.0f, 0.2f, 1.0f, 0.0f,
+                                            1.0f,  1.0f,  0.2f, 1.0f, 1.0f,
+                                            -1.0f, 1.0f,  0.2f, 0.0f, 1.0f};
 
         std::vector<uint32_t> quad_indices = {0, 1, 2, 2, 3, 0};
 
@@ -101,6 +103,9 @@ int main(int argc, char* argv[]) {
 
         // load post-processing shader
         auto post_shader = device.create_shader((resource_base / "graphic" / "post_process.shader").string());
+
+        // load alpha-blended triangle shader (u_alpha uniform controls opacity)
+        auto alpha_shader = device.create_shader((resource_base / "graphic" / "alpha_triangle.shader").string());
 #pragma endregion
 
 #pragma region framebuffer
@@ -129,9 +134,81 @@ int main(int argc, char* argv[]) {
         post_material.texture_count = 1;
         post_material.uniforms.values.push_back({"screenTexture", 0});
 
+        // Opaque objects enable depth testing so they write their depth and the
+        // translucent triangle is really depth-tested against them (a disabled
+        // depth test does not write the depth buffer, which would leave it empty).
         gkit::graphic::RenderObject triangle_obj(tri_vertices, tri_indices, tri_layout, tri_material);
+        triangle_obj.state.depth.enabled = true;
 
         gkit::graphic::RenderObject quad_obj(quad_vertices, quad_indices, quad_layout, post_material);
+        quad_obj.state.depth.enabled = true;
+
+        // Transparent triangle: reuses the triangle's shape (positions + colors),
+        // offset 50 px toward the bottom-left (NDC: 500 px window → 1 px = 0.004,
+        // 50 px = 0.2). z = 0.1 sits between the quad (z = 0.2, farthest) and the
+        // comparison triangle (z = 0, nearest), so depth testing decides the layering
+        // among the three. It blends with what is already on screen
+        // (SrcAlpha / OneMinusSrcAlpha, u_alpha = 0.8 → 0.8·src + 0.2·dst).
+        const float px_to_ndc = 2.0f / static_cast<float>(screen_width); // 1 px in NDC
+        const float offset_x  = -50.0f * px_to_ndc;
+        const float offset_y  = -50.0f * px_to_ndc;
+        std::vector<float> alpha_vertices;
+        for (std::size_t v = 0; v < tri_vertices.size(); v += 6) {
+            alpha_vertices.push_back(tri_vertices[v] + offset_x); // position x
+            alpha_vertices.push_back(tri_vertices[v + 1] + offset_y); // position y
+            alpha_vertices.push_back(0.1f); // position z: between quad (0.2) and comparison triangle (0)
+            // reuse the original colors (indices 3..5)
+            alpha_vertices.insert(alpha_vertices.end(), tri_vertices.begin() + v + 3, tri_vertices.begin() + v + 6);
+        }
+
+        gkit::graphic::Material alpha_material;
+        alpha_material.shader = alpha_shader.get();
+        alpha_material.uniforms.values.push_back({"u_alpha", 0.8f});
+
+        gkit::graphic::RenderObject alpha_triangle_obj(alpha_vertices, tri_indices, tri_layout, alpha_material);
+        alpha_triangle_obj.state.depth.enabled   = true; // depth-tests against quad + comparison triangle
+        alpha_triangle_obj.state.blend.enabled   = true;
+        alpha_triangle_obj.state.blend.src_rgb   = gkit::graphic::BlendFunc::SrcAlpha;
+        alpha_triangle_obj.state.blend.dst_rgb   = gkit::graphic::BlendFunc::OneMinusSrcAlpha;
+        alpha_triangle_obj.state.blend.src_alpha = gkit::graphic::BlendFunc::SrcAlpha;
+        alpha_triangle_obj.state.blend.dst_alpha = gkit::graphic::BlendFunc::OneMinusSrcAlpha;
+        alpha_triangle_obj.transparent           = true; // sorted after opaque, back-to-front
+        alpha_triangle_obj.depth_key             = 0.0f; // nearest transparent → drawn last
+
+        // Stencil-mask triangle: offset 50 px right and 50 px up, written into the
+        // FBO as a stencil=1 region (color is irrelevant — the FBO color is cleared
+        // right after). Depth test stays disabled so it writes no depth and can't
+        // reject the later masked triangle.
+        const float right_offset = 50.0f * px_to_ndc;
+        const float up_offset    = 35.0f * px_to_ndc;
+        std::vector<float> stencil_vertices;
+        for (std::size_t v = 0; v < tri_vertices.size(); v += 6) {
+            stencil_vertices.push_back(tri_vertices[v] + right_offset); // position x + 50 px
+            stencil_vertices.push_back(tri_vertices[v + 1] + up_offset); // position y + 50 px
+            stencil_vertices.push_back(tri_vertices[v + 2]); // position z unchanged
+            // reuse the original colors (indices 3..5)
+            stencil_vertices.insert(stencil_vertices.end(), tri_vertices.begin() + v + 3, tri_vertices.begin() + v + 6);
+        }
+
+        gkit::graphic::RenderObject stencil_triangle_obj(stencil_vertices, tri_indices, tri_layout, tri_material);
+        stencil_triangle_obj.state.stencil.enabled      = true;
+        stencil_triangle_obj.state.stencil.compare_func = gkit::graphic::CompareFunc::Always; // always pass, just write
+        stencil_triangle_obj.state.stencil.ref          = 1;
+        stencil_triangle_obj.state.stencil.write_mask   = 0xFF;
+        stencil_triangle_obj.state.stencil.fail         = gkit::graphic::StencilOp::Keep;
+        stencil_triangle_obj.state.stencil.z_fail       = gkit::graphic::StencilOp::Keep;
+        stencil_triangle_obj.state.stencil.z_pass       = gkit::graphic::StencilOp::Replace; // write stencil=ref=1
+
+        // Triangle drawn after the stencil mask: NotEqual(1) rejects fragments
+        // inside the mask region, leaving a hole there and drawing elsewhere.
+        gkit::graphic::RenderObject masked_triangle_obj(tri_vertices, tri_indices, tri_layout, tri_material);
+        masked_triangle_obj.state.depth.enabled       = true;
+        masked_triangle_obj.state.stencil.enabled     = true;
+        masked_triangle_obj.state.stencil.compare_func = gkit::graphic::CompareFunc::Notequal; // stencil==1 fails
+        masked_triangle_obj.state.stencil.ref          = 1;
+        masked_triangle_obj.state.stencil.fail         = gkit::graphic::StencilOp::Keep;
+        masked_triangle_obj.state.stencil.z_fail       = gkit::graphic::StencilOp::Keep;
+        masked_triangle_obj.state.stencil.z_pass       = gkit::graphic::StencilOp::Keep;
 #pragma endregion
 
         // Main loop
@@ -149,20 +226,31 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            // Clear the default framebuffer (screen) every frame. The default
-            // framebuffer content is undefined at startup; clearing once per frame
-            // keeps regions outside the post-process quad deterministic.
-            renderer.clear(gkit::graphic::ClearFlags::Color);
+            // Clear the default framebuffer (screen) every frame. Depth is cleared
+            // too: the translucent triangle depth-tests, so a stale depth buffer
+            // would reject it on later frames.
+            renderer.clear(gkit::graphic::ClearFlags::ColorDepth);
 
             // Submit reusable render objects; Renderer enqueues them and flush() executes.
-            // Draw 1: triangle to the FBO (target = fbo)
-            triangle_obj.clear = true; // clear the FBO color/depth before drawing
-            renderer.draw(triangle_obj, fbo.get());
-            // Draw 2: post-processing quad to screen (samples fbo texture)
+            // FBO stencil-mask pass:
+            // Draw 1: clear the FBO (color+depth+stencil) then write stencil=1 in the
+            //         mask triangle's region (offset 50 px up; color is irrelevant).
+            stencil_triangle_obj.clear = true; // clears color+depth+stencil (All)
+            renderer.draw(stencil_triangle_obj, fbo.get());
+            // Draw 2: clear only the FBO color (keeps the stencil marks), then draw the
+            //         triangle with stencil NotEqual(1): fragments inside the stencil
+            //         region are rejected, leaving a hole.
+            masked_triangle_obj.clear       = true;
+            masked_triangle_obj.clear_flags = gkit::graphic::ClearFlags::Color;
+            renderer.draw(masked_triangle_obj, fbo.get());
+            // Draw 3: post-processing quad to screen (samples fbo texture)
             renderer.draw(quad_obj);
-            // Draw 3:triangle to screen (no post-processing, just for comparison)
+            // Draw 4:triangle to screen (no post-processing, just for comparison)
             triangle_obj.clear = false;
             renderer.draw(triangle_obj, nullptr, gkit::graphic::Viewport{.x=0, .y=0, .width=screen_width / 2, .height=screen_height / 2});
+            // Draw 5: translucent triangle blended over the screen (depth-tested on
+            // top of the FBO quad; transparent flag sorts it last, so it's the top layer).
+            renderer.draw(alpha_triangle_obj);
 
             renderer.flush();
 
