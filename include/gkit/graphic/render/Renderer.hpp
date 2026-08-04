@@ -41,12 +41,15 @@ namespace gkit::graphic {
         /**
 		 * @brief Enqueue a draw from a reusable render object
 		 * @param obj Render object (geometry + material + state)
-		 * @param target render target (nullptr = screen)
-		 * @param viewport viewport to use for this draw (per-target size)
+		 * @param target render target (default nullptr = screen)
+		 * @param viewport viewport to use for this draw (default full window)
 		 * @note Enqueued into the render queue; executed on flush(). The object is
 		 *       non-const because its GPU resources are lazily uploaded on execute.
 		 */
-        auto draw(RenderObject& obj, const FrameBuffer* target, const Viewport& viewport) -> void;
+        auto draw(RenderObject& obj,
+                  const FrameBuffer* target = nullptr,
+                  const Viewport& viewport  = Viewport{0, 0, static_cast<int>(SCR_WIDTH), static_cast<int>(SCR_HEIGHT)})
+            -> void;
 
         /**
 		 * @brief Execute the queued render commands (sort + apply state + draw)

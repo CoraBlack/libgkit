@@ -72,24 +72,9 @@ int main(int argc, char* argv[]) {
 #pragma region triangle
         // Colored triangle vertex data (position + color)
         std::vector<float> tri_vertices = {// positions            // colors
-                                           0.0f,
-                                           0.5f,
-                                           0.0f,
-                                           1.0f,
-                                           0.0f,
-                                           0.0f, // top: red
-                                           -0.4f,
-                                           -0.25f,
-                                           0.0f,
-                                           0.0f,
-                                           1.0f,
-                                           0.0f, // bottom-left: green
-                                           0.4f,
-                                           -0.25f,
-                                           0.0f,
-                                           0.0f,
-                                           0.0f,
-                                           1.0f}; // bottom-right: blue
+                                           0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // top: red
+                                           -0.4f, -0.25f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom-left: green
+                                           0.4f, -0.25f,  0.0f, 0.0f, 0.0f, 1.0f}; // bottom-right: blue
 
         std::vector<uint32_t> tri_indices = {0, 1, 2};
 
@@ -102,8 +87,10 @@ int main(int argc, char* argv[]) {
 
         // Full-screen quad vertex data (post-processing)
         std::vector<float> quad_vertices = {// positions                    // tex coords
-                                            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,  -1.0f, 0.0f, 1.0f, 0.0f,
-                                            1.0f,  1.0f,  0.0f, 1.0f, 1.0f, -1.0f, 1.0f,  0.0f, 0.0f, 1.0f};
+                                            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 
+                                            1.0f,  -1.0f, 0.0f, 1.0f, 0.0f,
+                                            1.0f,  1.0f,  0.0f, 1.0f, 1.0f, 
+                                            -1.0f, 1.0f,  0.0f, 0.0f, 1.0f};
 
         std::vector<uint32_t> quad_indices = {0, 1, 2, 2, 3, 0};
 
