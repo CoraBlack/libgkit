@@ -129,7 +129,6 @@ int main(int argc, char* argv[]) {
         post_material.uniforms.values.push_back({"screenTexture", 0});
 
         gkit::graphic::RenderObject triangle_obj(tri_vertices, tri_indices, tri_layout, tri_material);
-        triangle_obj.clear = true; // clear the FBO color/depth before drawing
 
         gkit::graphic::RenderObject quad_obj(quad_vertices, quad_indices, quad_layout, post_material);
 #pragma endregion
@@ -151,9 +150,13 @@ int main(int argc, char* argv[]) {
 
             // Submit reusable render objects; Renderer enqueues them and flush() executes.
             // Draw 1: triangle to the FBO (target = fbo)
-            renderer.draw(triangle_obj, fbo.get(), {0, 0, fbo_width, fbo_height});
+            triangle_obj.clear = true; // clear the FBO color/depth before drawing
+            renderer.draw(triangle_obj, fbo.get());
             // Draw 2: post-processing quad to screen (samples fbo texture)
-            renderer.draw(quad_obj, nullptr, {0, 0, screen_width, screen_height});
+            renderer.draw(quad_obj);
+            // Draw 3:triangle to screen (no post-processing, just for comparison)
+            triangle_obj.clear = false;
+            renderer.draw(triangle_obj, nullptr, gkit::graphic::Viewport{.x=0, .y=0, .width=screen_width / 2, .height=screen_height / 2});
 
             renderer.flush();
 
