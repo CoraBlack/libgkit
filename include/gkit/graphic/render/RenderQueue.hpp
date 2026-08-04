@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gkit/graphic/RenderCommand.hpp"
-#include "gkit/graphic/RenderDevice.hpp"
+#include "gkit/graphic/render/RenderCommand.hpp"
+#include "gkit/graphic/render/RenderDevice.hpp"
 
 #include <vector>
 

@@ -1,5 +1,5 @@
-#include "gkit/graphic/Renderer.hpp"
 #include "gkit/graphic/VertexBufferLayout.hpp"
+#include "gkit/graphic/render/Renderer.hpp"
 #include "graphic/backend/opengl/Texture.hpp"
 #include "graphic/backend/opengl/config.hpp"
 
@@ -70,8 +70,6 @@ int main(int argc, char* argv[]) {
 
         auto& device = renderer.get_device();
 
-        gkit::graphic::RenderQueue command_queue;
-
 #pragma region triangle
         // Colored triangle vertex data (position + color)
         float tri_vertices[] = {// positions            // colors
@@ -123,6 +121,31 @@ int main(int argc, char* argv[]) {
         fbo->check();
 #pragma endregion
 
+#pragma region render_objects
+        // Reusable draw units (geometry + material + state), built once and
+        // submitted each frame via Renderer::draw(RenderObject).
+        gkit::graphic::RenderObject triangle_to_fbo;
+        triangle_to_fbo.target       = fbo.get();
+        triangle_to_fbo.vertex_array = tri_vao.get();
+        triangle_to_fbo.index_buffer = tri_ibo.get();
+        triangle_to_fbo.shader       = tri_shader.get();
+
+        gkit::graphic::RenderObject post_quad;
+        post_quad.target        = nullptr; // screen
+        post_quad.vertex_array  = quad_vao.get();
+        post_quad.index_buffer  = quad_ib.get();
+        post_quad.shader        = post_shader.get();
+        post_quad.textures[0]   = &fbo_texture;
+        post_quad.texture_count = 1;
+        post_quad.uniforms.values.push_back({"screenTexture", 0});
+
+        gkit::graphic::RenderObject overlay_triangle;
+        overlay_triangle.target       = nullptr; // screen
+        overlay_triangle.vertex_array = tri_vao.get();
+        overlay_triangle.index_buffer = tri_ibo.get();
+        overlay_triangle.shader       = tri_shader.get();
+#pragma endregion
+
         // Main loop
         bool quit = false;
         SDL_Event event;
@@ -141,47 +164,12 @@ int main(int argc, char* argv[]) {
             fbo->set_viewport(0, 0, screen_width, screen_height);
             renderer.clear(gkit::graphic::ClearFlags::All);
 
-            // 1. Render triangle to framebuffer (target = fbo)
-            {
-                gkit::graphic::RenderCommand cmd;
-                cmd.target        = fbo.get();
-                cmd.vertex_array  = tri_vao.get();
-                cmd.index_buffer  = tri_ibo.get();
-                cmd.shader        = tri_shader.get();
-                cmd.textures[0]   = nullptr;
-                cmd.texture_count = 0;
-                cmd.transparent   = false;
-                command_queue.submit(cmd);
-            }
+            // Submit reusable render objects; Renderer enqueues them and flush() executes.
+            renderer.draw(triangle_to_fbo); // 1. Triangle to framebuffer
+            renderer.draw(post_quad); // 2. Post-processing quad to screen (samples fbo)
+            renderer.draw(overlay_triangle); // 3. Small triangle overlay
 
-            // 2. Render post-processing quad to screen (target = nullptr, sample fbo_texture)
-            {
-                gkit::graphic::RenderCommand cmd;
-                cmd.target        = nullptr;
-                cmd.vertex_array  = quad_vao.get();
-                cmd.index_buffer  = quad_ib.get();
-                cmd.shader        = post_shader.get();
-                cmd.textures[0]   = &fbo_texture;
-                cmd.texture_count = 1;
-                cmd.transparent   = false;
-                cmd.uniforms.values.push_back({"screenTexture", 0});
-                command_queue.submit(cmd);
-            }
-
-            // 3. Small triangle overlay (screen)
-            {
-                gkit::graphic::RenderCommand cmd;
-                cmd.target        = nullptr;
-                cmd.vertex_array  = tri_vao.get();
-                cmd.index_buffer  = tri_ibo.get();
-                cmd.shader        = tri_shader.get();
-                cmd.textures[0]   = nullptr;
-                cmd.texture_count = 0;
-                cmd.transparent   = false;
-                command_queue.submit(cmd);
-            }
-
-            command_queue.flush(renderer.get_device());
+            renderer.flush();
 
             // Swap buffers
             SDL_GL_SwapWindow(window);

@@ -1,6 +1,6 @@
-#include "gkit/graphic/Renderer.hpp"
+#include "gkit/graphic/render/Renderer.hpp"
 
-#include "gkit/graphic/RenderDevice.hpp"
+#include "gkit/graphic/render/RenderDevice.hpp"
 
 namespace gkit::graphic {
 

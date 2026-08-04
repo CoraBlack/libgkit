@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/graphic/RenderDevice.hpp"
+#include "gkit/graphic/render/RenderDevice.hpp"
 #include "graphic/backend/opengl/StateManager.hpp"
 
 #include <memory>

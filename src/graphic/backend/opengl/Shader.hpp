@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/graphic/Shader.hpp"
+#include "gkit/graphic/resource/Shader.hpp"
 
 #include <cstdint>
 #include <string>

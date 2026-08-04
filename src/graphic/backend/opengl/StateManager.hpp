@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/graphic/RenderState.hpp"
+#include "gkit/graphic/render/RenderState.hpp"
 
 #include <cstdint>
 

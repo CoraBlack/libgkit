@@ -1,8 +1,8 @@
 #pragma once
 
-#include "gkit/graphic/FrameBuffer.hpp"
-#include "gkit/graphic/RenderBuffer.hpp"
-#include "gkit/graphic/Texture.hpp"
+#include "gkit/graphic/resource/FrameBuffer.hpp"
+#include "gkit/graphic/resource/RenderBuffer.hpp"
+#include "gkit/graphic/resource/Texture.hpp"
 
 #include <cstdint>
 

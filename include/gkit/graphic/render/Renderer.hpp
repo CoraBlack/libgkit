@@ -1,10 +1,10 @@
 #pragma once
 
 #include "gkit/core/templates/singleton.hpp"
-#include "gkit/graphic/RenderDevice.hpp"
-#include "gkit/graphic/RenderObject.hpp"
-#include "gkit/graphic/RenderQueue.hpp"
 #include "gkit/graphic/config.hpp"
+#include "gkit/graphic/render/RenderDevice.hpp"
+#include "gkit/graphic/render/RenderObject.hpp"
+#include "gkit/graphic/render/RenderQueue.hpp"
 
 #include <cstdint>
 #include <memory>

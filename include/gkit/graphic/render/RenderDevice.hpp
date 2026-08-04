@@ -1,14 +1,14 @@
 #pragma once
 
-#include "gkit/graphic/FrameBuffer.hpp"
-#include "gkit/graphic/IndexBuffer.hpp"
-#include "gkit/graphic/RenderBuffer.hpp"
-#include "gkit/graphic/RenderState.hpp"
-#include "gkit/graphic/Shader.hpp"
-#include "gkit/graphic/Texture.hpp"
-#include "gkit/graphic/VertexArray.hpp"
-#include "gkit/graphic/VertexBuffer.hpp"
 #include "gkit/graphic/config.hpp"
+#include "gkit/graphic/render/RenderState.hpp"
+#include "gkit/graphic/resource/FrameBuffer.hpp"
+#include "gkit/graphic/resource/IndexBuffer.hpp"
+#include "gkit/graphic/resource/RenderBuffer.hpp"
+#include "gkit/graphic/resource/Shader.hpp"
+#include "gkit/graphic/resource/Texture.hpp"
+#include "gkit/graphic/resource/VertexArray.hpp"
+#include "gkit/graphic/resource/VertexBuffer.hpp"
 
 #include <cstdint>
 #include <memory>

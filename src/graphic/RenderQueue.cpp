@@ -1,4 +1,4 @@
-#include "gkit/graphic/RenderQueue.hpp"
+#include "gkit/graphic/render/RenderQueue.hpp"
 
 #include <algorithm>
 #include <variant>
@@ -49,12 +49,15 @@ namespace gkit::graphic {
             // TODO(Step 6+/UBO): upload cmd.ubo via a UniformBuffer backend once implemented.
         }
 
-        /// @brief Sort comparator: opaque front-to-back, transparent back-to-front, group by state/shader
+        /// @brief Sort comparator: group by render target, then by state/transparency
         auto sort_key(const RenderCommand& cmd) -> uint64_t {
-            // Group primarily by state (reduces state switches), then by shader,
-            // then by transparency class; depth decides order within a class.
-            return (static_cast<uint64_t>(cmd.state.blend.enabled) << 48) |
-                   (static_cast<uint64_t>(cmd.transparent) << 40);
+            // Render target first: commands targeting the same FBO/screen must stay
+            // together (target switching is costly and order-sensitive).
+            // Then group by state (reduce state switches), then transparency class.
+            const uint64_t target_hash =
+                (cmd.target != nullptr) ? (reinterpret_cast<uint64_t>(cmd.target) & 0xFFFF) : 0;
+            return (target_hash << 48) | (static_cast<uint64_t>(cmd.state.blend.enabled) << 40) |
+                   (static_cast<uint64_t>(cmd.transparent) << 32);
         }
 
     } // namespace

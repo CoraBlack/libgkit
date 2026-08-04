@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gkit/graphic/Buffer.hpp"
+#include "gkit/graphic/resource/Buffer.hpp"
 #include "gkit/math/matrix3.hpp"
 #include "gkit/math/matrix4.hpp"
 #include "gkit/math/vector3.hpp"

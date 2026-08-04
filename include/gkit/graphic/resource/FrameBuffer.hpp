@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gkit/graphic/RenderBuffer.hpp"
-#include "gkit/graphic/Texture.hpp"
+#include "gkit/graphic/resource/RenderBuffer.hpp"
+#include "gkit/graphic/resource/Texture.hpp"
 
 namespace gkit::graphic {
 

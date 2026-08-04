@@ -1,7 +1,7 @@
 #pragma once
 
-#include "gkit/graphic/Texture.hpp"
 #include "gkit/graphic/config.hpp"
+#include "gkit/graphic/resource/Texture.hpp"
 
 #include <cstdint>
 #include <string>
