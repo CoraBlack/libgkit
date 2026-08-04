@@ -26,7 +26,16 @@ namespace gkit::core::reflect {
         SerdeBase();
         virtual ~SerdeBase();
 
+        /**
+         * @brief Serialize an object to serdedata
+         * @throw @ref std::invalid_argument, if objectid is invalid
+         */
         auto from(const ObjectId& id) -> void;
+
+        /**
+         * @brief Serialize a value to serdedata
+         * @throw @ref std::invalid_argument, if value is null.
+         */
         auto from(const Value& v) -> void;
 
         /**

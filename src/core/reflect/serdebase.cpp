@@ -1,6 +1,7 @@
 #include "gkit/core/reflect/serdebase.hpp"
 
 #include "core/reflect/seralize.hpp"
+#include "gkit/core/value.hpp"
 #include "seralize.hpp"
 
 #include <memory>
@@ -60,10 +61,15 @@ namespace gkit::core::reflect {
         if (!id.available()) {
             throw std::invalid_argument("id is not available");
         }
+
         this->data->ss.from(id);
     }
 
     auto SerdeBase::from(const Value& v) -> void {
+        if (v.type() == Type::Null) {
+            throw std::invalid_argument("id is not available");
+        }
+
         this->data->ss.from(v);
     }
 
