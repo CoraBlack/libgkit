@@ -32,7 +32,7 @@ namespace gkit::graphic {
         const FrameBuffer* target       = nullptr; // Render target (nullptr = screen)
         const VertexArray* vertex_array = nullptr;
         const IndexBuffer* index_buffer = nullptr;
-        const Shader* shader            = nullptr;
+        Shader* shader                  = nullptr; // Non-const: uniforms are mutated during execution
         RenderState state; // State snapshot (sorting key)
         UniformData uniforms; // Simple-path per-name uniforms (see design §5.1)
         UboBlock ubo; // Batch-path UBO reference (see design §5.2)
