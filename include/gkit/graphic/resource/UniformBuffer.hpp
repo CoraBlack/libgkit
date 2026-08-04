@@ -21,19 +21,22 @@ namespace gkit::graphic {
     using UniformValue = std::variant<int, float, math::Vector3, math::Vector4, math::Matrix3, math::Matrix4>;
 
     /**
-	 * @brief Simple uniform set (逐条赋值)
+	 * @brief Simple uniform set (value-by-value assignment)
 	 *
-	 * 简单路径: 命令携带 name→value 列表, 执行器逐个 set_uniform_*。
+	 * Simple path: the command carries a name→value list, and the executor
+	 * calls set_uniform_* for each entry.
 	 */
     struct UniformData {
         std::vector<std::pair<std::string, UniformValue>> values;
     };
 
     /**
-	 * @brief UBO block reference (批量上传)
+	 * @brief UBO block reference (bulk upload)
 	 *
-	 * 批量路径: 命令携带用户参数结构体的引用, 执行器一次上传整个 block。
-	 * 持引用不拥有 —— 用户结构体须存活到 flush 结束(生命周期契约)。
+	 * Batch path: the command carries a reference to the user's parameter
+	 * struct, and the executor uploads the whole block at once.
+	 * Holds a reference, does not own — the user struct must stay alive until
+	 * flush finishes (lifetime contract).
 	 */
     struct UboBlock {
         const void* data = nullptr; // Pointer to the user struct (e.g. SceneParams)

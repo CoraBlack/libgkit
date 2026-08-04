@@ -51,10 +51,11 @@ namespace gkit::graphic {
     };
 
     /**
-	 * @brief Composite render state snapshot (排序键, 命令自携带)
+	 * @brief Composite render state snapshot (sort key, carried by command)
 	 *
-	 * 把深度/混合/剔除/模板四个状态打包成一个快照,
-	 * 供 RenderCommand 携带、排序去重、以及 StateManager 增量应用。
+	 * Packs the depth/blend/cull/stencil states into one snapshot that is
+	 * carried by RenderCommand, used for sorting/deduplication, and applied
+	 * incrementally by StateManager.
 	 */
     struct RenderState {
         DepthState depth; // Depth test state
