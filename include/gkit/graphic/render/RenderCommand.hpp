@@ -29,15 +29,6 @@ namespace gkit::graphic {
     };
 
     /**
-	 * @brief Engine-declared texture slot limit (fixed conservative value)
-	 *
-	 * Most shaders fit within 8 slots; not chasing hardware limits
-	 * (GL_MAX_TEXTURE_IMAGE_UNITS varies by GPU, usually >= 32).
-	 * Start up may assert the hardware supports at least this many.
-	 */
-    static constexpr uint32_t MAX_TEXTURE_SLOTS = 8;
-
-    /**
 	 * @brief A single draw command carrying its complete render state
 	 *
 	 * Value type; references (not owns) resources. Sorting keys and state are
@@ -55,9 +46,9 @@ namespace gkit::graphic {
         std::array<const Texture*, MAX_TEXTURE_SLOTS> textures = {}; // Texture slots (slot ↔ shader sampler unit)
         uint32_t texture_count                                 = 0; // Number of slots actually used
         uint32_t instance_count                                = 1; // 1 = non-instanced
-        bool transparent = false; // Sort front-to-back (opaque) or back-to-front (transparent)
-        float depth_key  = 0.0f; // Depth sort key (filled by upper layer)
-        bool clear       = false; // Whether to clear the target before drawing
+        bool transparent       = false; // Sort front-to-back (opaque) or back-to-front (transparent)
+        float depth_key        = 0.0f; // Depth sort key (filled by upper layer)
+        bool clear             = false; // Whether to clear the target before drawing
         ClearFlags clear_flags = ClearFlags::All; // What to clear when clear is set
     };
 
