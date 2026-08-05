@@ -39,5 +39,6 @@ namespace gkit::core {
         static auto create(Args&&...) noexcept -> UniqueObject; */
 
         virtual auto class_name() const -> std::string final;
+        virtual constexpr auto class_raw_name() const -> const char* final;
     };
 } // namespace gkit::core

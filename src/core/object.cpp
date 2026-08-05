@@ -14,4 +14,8 @@ namespace gkit::core {
         auto class_info = reflect::ClassDB::instance().find_with_raw(raw_name);
         return class_info->class_name;
     }
+
+    constexpr auto Object::class_raw_name() const -> const char* {
+        return typeid(*this).name();
+    }
 } // namespace gkit::core
