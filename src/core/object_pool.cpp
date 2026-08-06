@@ -14,7 +14,7 @@ namespace gkit::core {
         this->id_instance_map.erase(target_it);
         delete drop_obj;
 
-        auto& id_alloc = ObjectIdAllocator::instance();
+        auto& id_alloc = ObjectId::IdAllocator::instance();
         id_alloc.drop(drop_id);
     }
 

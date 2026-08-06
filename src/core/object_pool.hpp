@@ -27,9 +27,9 @@ namespace gkit::core {
     auto ObjectPool::create(Args&&... args) noexcept -> std::optional<std::pair<ObjectId, Object*>> {
         try {
             auto* obj_ptr = new T(std::forward(args)...);
-            auto obj_id   = ObjectIdAllocator::instance().new_one();
+            auto obj_id   = ObjectId::IdAllocator::instance().new_one();
             this->id_instance_map.emplace(obj_id, obj_ptr);
-            return std::make_pair(std::move(obj_id), std::move(obj_ptr));
+            return std::make_pair(obj_id, obj_ptr);
         } catch (...) {
             return std::nullopt;
         }
