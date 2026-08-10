@@ -45,13 +45,13 @@ namespace gkit::graphic {
 
         /// @brief Apply material uniforms (simple path)
         auto apply_uniforms(const Material& material) -> void {
-            if (material.shader == nullptr) {
+            if (material.get_shader() == nullptr) {
                 return;
             }
-            for (const auto& [name, value] : material.uniforms.values) {
-                apply_uniform_value(*material.shader, name, value);
+            for (const auto& [name, value] : material.get_uniforms().values) {
+                apply_uniform_value(*material.get_shader(), name, value);
             }
-            // TODO(graphic): upload material.ubo via a UniformBuffer backend once implemented.
+            // TODO(graphic): upload material.get_ubo() via a UniformBuffer backend once implemented.
         }
 
         /// @brief Sort comparator: framebuffer commands first, then by state/transparency
@@ -119,14 +119,14 @@ namespace gkit::graphic {
             // program is guaranteed non-null and valid here.
             const auto& vao = cmd.object->ensure_uploaded(device);
             const auto& ibo = cmd.object->index_buffer();
-            material.shader->bind();
+            material.get_shader()->bind();
             bind_textures(material);
             apply_uniforms(material);
 
             if (cmd.instance_count > 1) {
-                device.draw_instance(vao, ibo, *material.shader, cmd.instance_count);
+                device.draw_instance(vao, ibo, *material.get_shader(), cmd.instance_count);
             } else {
-                device.draw(vao, ibo, *material.shader);
+                device.draw(vao, ibo, *material.get_shader());
             }
         }
 

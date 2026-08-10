@@ -23,7 +23,7 @@ auto test_render_loop() -> bool {
         return false;
     }
 
-    // Request OpenGL 4.6 Core Profile
+    // Request OpenGL 4.1 Core Profile
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -126,14 +126,14 @@ auto test_render_loop() -> bool {
 
         // Triangle material
         gkit::graphic::Material tri_material;
-        tri_material.shader = tri_shader.get();
+        tri_material.set_shader(tri_shader.get());
 
         // Post-processing quad material (samples the FBO texture).
         // set_texture assigns the next free slot automatically.
         gkit::graphic::Material post_material;
-        post_material.shader = post_shader.get();
+        post_material.set_shader(post_shader.get());
         post_material.set_texture(fbo_texture);
-        post_material.uniforms.values.push_back({"screenTexture", 0});
+        post_material.set_uniform("screenTexture", 0);
 
         // Opaque objects enable depth testing so they write their depth and the
         // translucent triangle is really depth-tested against them (a disabled
@@ -163,8 +163,8 @@ auto test_render_loop() -> bool {
         }
 
         gkit::graphic::Material alpha_material;
-        alpha_material.shader = alpha_shader.get();
-        alpha_material.uniforms.values.push_back({"u_alpha", 0.8f});
+        alpha_material.set_shader(alpha_shader.get());
+        alpha_material.set_uniform("u_alpha", 0.8f);
 
         gkit::graphic::RenderObject alpha_triangle_obj(alpha_vertices, tri_indices, tri_layout, alpha_material);
         alpha_triangle_obj.state.depth.enabled   = true; // depth-tests against quad + comparison triangle
