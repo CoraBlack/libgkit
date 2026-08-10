@@ -14,23 +14,22 @@ namespace gkit::graphic {
     }
 
     auto Renderer::draw(RenderObject& obj, const FrameBuffer* target, const Viewport& viewport) -> void {
-        // Reject shaderless materials: a null shader cannot be bound, and one that
+        // Reject invalid materials: a null shader cannot be bound, and one that
         // failed to compile/link is undefined to render with. Drawing with either
         // would dereference a null/invalid program, so refuse to enqueue instead.
-        const Shader* shader = obj.material.shader;
-        if (shader == nullptr) {
+        if (!obj.material.is_valid()) {
             core::Log::Message msg;
             msg.level     = core::Log::LogLevel::Error;
             msg.functions = static_cast<std::uint8_t>(core::Log::LogFunction::Both);
-            msg.message   = "Renderer::draw: object has no shader; command rejected";
+            msg.message   = "Renderer::draw: material has no valid shader; command rejected";
             core::Log::instance().log(std::move(msg));
             return;
         }
-        if (!shader->is_valid()) {
+        if (obj.instance_count == 0) {
             core::Log::Message msg;
             msg.level     = core::Log::LogLevel::Error;
             msg.functions = static_cast<std::uint8_t>(core::Log::LogFunction::Both);
-            msg.message   = "Renderer::draw: object shader is invalid (failed to compile/link); command rejected";
+            msg.message   = "Renderer::draw: instance_count must be >= 1; command rejected";
             core::Log::instance().log(std::move(msg));
             return;
         }

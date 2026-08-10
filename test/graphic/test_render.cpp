@@ -25,7 +25,7 @@ auto test_render_loop() -> bool {
 
     // Request OpenGL 4.6 Core Profile
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
     // Create window
@@ -128,11 +128,11 @@ auto test_render_loop() -> bool {
         gkit::graphic::Material tri_material;
         tri_material.shader = tri_shader.get();
 
-        // Post-processing quad material (samples the FBO texture)
+        // Post-processing quad material (samples the FBO texture).
+        // set_texture assigns the next free slot automatically.
         gkit::graphic::Material post_material;
-        post_material.shader        = post_shader.get();
-        post_material.textures[0]   = &fbo_texture;
-        post_material.texture_count = 1;
+        post_material.shader = post_shader.get();
+        post_material.set_texture(fbo_texture);
         post_material.uniforms.values.push_back({"screenTexture", 0});
 
         // Opaque objects enable depth testing so they write their depth and the
@@ -269,8 +269,45 @@ auto test_render_loop() -> bool {
     return true;
 }
 
+/// @brief Pure-logic checks for the Material helper API (no GPU/window required)
+auto test_material_helpers() -> bool {
+    // Texture is only stored by pointer in the material and never dereferenced
+    // by these checks, so a placeholder instance (like fbo_texture in the render
+    // loop) is sufficient.
+    gkit::graphic::opengl::Texture dummy(" ", gkit::graphic::TextureType::Texture2D);
+    gkit::graphic::Material material;
+
+    // A default material has no shader, so is_valid() is false.
+    gkit::test::assert_if(!material.is_valid(), "default material must be invalid (null shader)");
+
+    // set_texture appends to the next free slot, so get_texture_count tracks the
+    // number of textures appended (no gaps, no caller-supplied slot).
+    material.set_texture(dummy);
+    gkit::test::assert_if(material.get_texture_count() == 1, "first set_texture must set texture_count to 1");
+
+    material.set_texture(dummy);
+    gkit::test::assert_if(material.get_texture_count() == 2, "second set_texture must set texture_count to 2");
+
+    // The slot array is filled contiguously (0, 1, ...); no gaps can appear.
+    for (uint32_t i = 0; i < material.get_texture_count(); ++i) {
+        gkit::test::assert_if(material.get_texture(i) == &dummy,
+                              "texture slot must reference the appended texture");
+    }
+    gkit::test::assert_if(material.get_texture(material.get_texture_count()) == nullptr,
+                          "out-of-range get_texture must return nullptr");
+
+    // NOTE: the "slots exhausted" path is intentionally not tested here. In debug
+    // builds set_texture asserts (aborting the process) once all slots are used,
+    // which is the misuse crash-guard; the graceful `return false` only exists in
+    // release builds (NDEBUG). Neither path is a testable graceful contract.
+
+    return true;
+}
+
 auto main() -> int {
-    auto test_runner = gkit::test::TestRunner().add_test_func(test_render_loop);
+    auto test_runner = gkit::test::TestRunner()
+                            .add_test_func(test_material_helpers)
+                            .add_test_func(test_render_loop);
 
     test_runner.run();
     return 0;

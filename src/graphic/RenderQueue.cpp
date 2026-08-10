@@ -9,11 +9,14 @@ namespace gkit::graphic {
 
     namespace {
 
-        /// @brief Bind a texture slot to the shader sampler unit
+        /// @brief Bind texture slots to the shader sampler units
+        ///
+        /// texture_count is managed by Material::set_texture and never exceeds
+        /// MAX_TEXTURE_SLOTS, so the loop is bounded; null slots are skipped.
         auto bind_textures(const Material& material) -> void {
-            for (uint32_t i = 0; i < material.texture_count && i < MAX_TEXTURE_SLOTS; ++i) {
-                if (material.textures[i] != nullptr) {
-                    material.textures[i]->bind(i);
+            for (uint32_t i = 0; i < material.get_texture_count(); ++i) {
+                if (const Texture* texture = material.get_texture(i); texture != nullptr) {
+                    texture->bind(i);
                 }
             }
         }
