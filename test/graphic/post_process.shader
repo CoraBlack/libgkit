@@ -1,5 +1,5 @@
 #shader vertex
-#version 450 core
+#version 410 core
 
 layout(location = 0) in vec3 aPosition;
 layout(location = 1) in vec2 aTexCoord;
@@ -13,7 +13,7 @@ void main()
 }
 
 #shader fragment
-#version 450 core
+#version 410 core
 
 in vec2 TexCoord;
 out vec4 FragColor;
