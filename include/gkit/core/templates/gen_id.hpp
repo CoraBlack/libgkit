@@ -7,7 +7,6 @@
 #include <mutex>
 #include <stack>
 #include <unordered_map>
-#include <utility>
 
 namespace gkit::core::templates {
     /**
