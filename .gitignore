@@ -7,6 +7,10 @@
 test_log.txt
 AGENTS.md
 
+# local documentation (untracked)
+CLAUDE.md
+docs/
+
 # binary files
 bin/
 build/
