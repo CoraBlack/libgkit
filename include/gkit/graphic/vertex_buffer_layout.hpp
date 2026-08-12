@@ -16,12 +16,12 @@ enum class VertexElementType : std::uint8_t {
 namespace gkit::graphic {
 
     /**
-	 * @brief A single attribute element in a vertex layout
-	 */
+     * @brief A single attribute element in a vertex layout
+     */
     struct VertexBufferElement {
         /**
-		 * @brief Size in bytes of an element type
-		 */
+         * @brief Size in bytes of an element type
+         */
         static constexpr auto get_size_of_type(VertexElementType type) -> uint32_t {
             switch (type) {
             case VertexElementType::Float:
@@ -41,34 +41,34 @@ namespace gkit::graphic {
     };
 
     /**
-	 * @brief Vertex buffer layout (frontend definition; backends configure vertex input from it)
-	 */
+     * @brief Vertex buffer layout (frontend definition; backends configure vertex input from it)
+     */
     class VertexBufferLayout {
     public:
         VertexBufferLayout() = default;
 
         /**
-		 * @brief Add an attribute element (unsupported types trigger a compile-time error)
-		 * @tparam T data type
-		 * @param count number of components
-		 */
+         * @brief Add an attribute element (unsupported types trigger a compile-time error)
+         * @tparam T data type
+         * @param count number of components
+         */
         template<typename T>
         auto push(uint32_t count) -> void {
             static_assert(sizeof(T) == 0, "Unsupported type for VertexBufferLayout::push");
         }
 
         /**
-		 * @brief Get all elements in this layout (by const reference - zero copy)
-		 * @return Const reference to vector of vertex buffer elements
-		 */
+         * @brief Get all elements in this layout (by const reference - zero copy)
+         * @return Const reference to vector of vertex buffer elements
+         */
         [[nodiscard]] inline auto get_elements() const -> const std::vector<VertexBufferElement>& {
             return this->elements;
         }
 
         /**
-		 * @brief Get the stride (bytes between vertices)
-		 * @return Stride in bytes
-		 */
+         * @brief Get the stride (bytes between vertices)
+         * @return Stride in bytes
+         */
         [[nodiscard]] inline auto get_stride() const -> uint32_t { return this->stride; }
 
     private:

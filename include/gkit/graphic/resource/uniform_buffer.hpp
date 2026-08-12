@@ -16,28 +16,28 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief A single uniform value (type-erased)
-	 */
+     * @brief A single uniform value (type-erased)
+     */
     using UniformValue = std::variant<int, float, math::Vector3, math::Vector4, math::Matrix3, math::Matrix4>;
 
     /**
-	 * @brief Simple uniform set (value-by-value assignment)
-	 *
-	 * Simple path: the command carries a name→value list, and the executor
-	 * calls set_uniform_* for each entry.
-	 */
+     * @brief Simple uniform set (value-by-value assignment)
+     *
+     * Simple path: the command carries a name→value list, and the executor
+     * calls set_uniform_* for each entry.
+     */
     struct UniformData {
         std::vector<std::pair<std::string, UniformValue>> values;
     };
 
     /**
-	 * @brief UBO block reference (bulk upload)
-	 *
-	 * Batch path: the command carries a reference to the user's parameter
-	 * struct, and the executor uploads the whole block at once.
-	 * Holds a reference, does not own — the user struct must stay alive until
-	 * flush finishes (lifetime contract).
-	 */
+     * @brief UBO block reference (bulk upload)
+     *
+     * Batch path: the command carries a reference to the user's parameter
+     * struct, and the executor uploads the whole block at once.
+     * Holds a reference, does not own — the user struct must stay alive until
+     * flush finishes (lifetime contract).
+     */
     struct UboBlock {
         const void* data = nullptr; // Pointer to the user struct (e.g. SceneParams)
         size_t size      = 0; // Size of the struct in bytes
@@ -45,11 +45,11 @@ namespace gkit::graphic {
     };
 
     /**
-	 * @brief Uniform buffer object (UBO) base class (placeholder)
-	 *
-	 * Buffer that stores uniform data (UBO) for batching shader constants.
-	 * Backend (opengl::UniformBuffer) + Device factory not implemented yet.
-	 */
+     * @brief Uniform buffer object (UBO) base class (placeholder)
+     *
+     * Buffer that stores uniform data (UBO) for batching shader constants.
+     * Backend (opengl::UniformBuffer) + Device factory not implemented yet.
+     */
     // class UniformBuffer : public Buffer {
     // public:
     //     ~UniformBuffer() override = default;

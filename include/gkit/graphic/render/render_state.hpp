@@ -7,8 +7,8 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief Depth test state
-	 */
+     * @brief Depth test state
+     */
     struct DepthState {
         bool enabled             = false; // Whether depth test is enabled
         CompareFunc compare_func = CompareFunc::Less; // Depth comparison function
@@ -16,8 +16,8 @@ namespace gkit::graphic {
     };
 
     /**
-	 * @brief Blend state
-	 */
+     * @brief Blend state
+     */
     struct BlendState {
         bool enabled           = false; // Whether blending is enabled
         BlendFunc src_rgb      = BlendFunc::One; // Source RGB blend factor
@@ -28,8 +28,8 @@ namespace gkit::graphic {
     };
 
     /**
-	 * @brief Cull face state
-	 */
+     * @brief Cull face state
+     */
     struct CullFaceState {
         bool enabled         = false; // Whether cull face is enabled
         CullFaceMode mode    = CullFaceMode::Back; // Cull face mode
@@ -37,8 +37,8 @@ namespace gkit::graphic {
     };
 
     /**
-	 * @brief Stencil state
-	 */
+     * @brief Stencil state
+     */
     struct StencilState {
         bool enabled             = false; // Whether stencil test is enabled
         CompareFunc compare_func = CompareFunc::Always; // Stencil comparison function
@@ -51,12 +51,12 @@ namespace gkit::graphic {
     };
 
     /**
-	 * @brief Composite render state snapshot (sort key, carried by command)
-	 *
-	 * Packs the depth/blend/cull/stencil states into one snapshot that is
-	 * carried by RenderCommand, used for sorting/deduplication, and applied
-	 * incrementally by StateManager.
-	 */
+     * @brief Composite render state snapshot (sort key, carried by command)
+     *
+     * Packs the depth/blend/cull/stencil states into one snapshot that is
+     * carried by RenderCommand, used for sorting/deduplication, and applied
+     * incrementally by StateManager.
+     */
     struct RenderState {
         DepthState depth; // Depth test state
         BlendState blend; // Blend state

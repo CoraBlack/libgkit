@@ -26,11 +26,11 @@ namespace gkit::graphic::opengl {
         auto operator=(Texture&& other) noexcept -> Texture&;
 
         /**
-		 * @brief Construct a texture (placeholder)
-		 * @param path texture file path (may be empty for framebuffer textures)
-		 * @param type texture type
-		 * @deprecated textures will be provided by the resource module in the future
-		 */
+         * @brief Construct a texture (placeholder)
+         * @param path texture file path (may be empty for framebuffer textures)
+         * @param type texture type
+         * @deprecated textures will be provided by the resource module in the future
+         */
         [[deprecated("In the future, the texture resources provided by the resource management module will be used. "
                      "Currently, they are merely serving as placeholders.")]]
         explicit Texture(const std::string& path, TextureType type = TextureType::Texture2D);
@@ -44,19 +44,19 @@ namespace gkit::graphic::opengl {
         [[nodiscard]] auto get_height() const -> int override { return this->height; }
 
         /**
-		 * @brief Get the GL texture handle (backend escape hatch)
-		 */
+         * @brief Get the GL texture handle (backend escape hatch)
+         */
         [[nodiscard]] inline auto get_renderer_id() const -> uint32_t { return this->renderer_id; }
 
         /**
-		 * @brief Resize the texture storage (framebuffer textures only)
-		 *
-		 * A framebuffer texture is allocated empty at construction; attaching it
-		 * to a FrameBuffer reallocates storage to the FBO size so the texture is
-		 * never bound to the global SCR_WIDTH/SCR_HEIGHT constants.
-		 * @param width new width in pixels
-		 * @param height new height in pixels
-		 */
+         * @brief Resize the texture storage (framebuffer textures only)
+         *
+         * A framebuffer texture is allocated empty at construction; attaching it
+         * to a FrameBuffer reallocates storage to the FBO size so the texture is
+         * never bound to the global SCR_WIDTH/SCR_HEIGHT constants.
+         * @param width new width in pixels
+         * @param height new height in pixels
+         */
         auto set_size(int width, int height) -> void;
 
     private:

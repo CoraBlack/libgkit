@@ -29,10 +29,10 @@ namespace gkit::graphic::opengl {
 
     private:
         /**
-		 * @brief Construct an index buffer (only Device may create one)
-		 * @param data pointer to index data
-		 * @param count number of indices
-		 */
+         * @brief Construct an index buffer (only Device may create one)
+         * @param data pointer to index data
+         * @param count number of indices
+         */
         explicit IndexBuffer(const uint32_t* data, uint32_t count);
 
         uint32_t renderer_id = 0; // GL buffer handle

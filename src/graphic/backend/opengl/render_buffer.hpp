@@ -25,8 +25,8 @@ namespace gkit::graphic::opengl {
         auto unbind() const -> void override;
 
         /**
-		 * @brief Get the GL renderbuffer handle (backend escape hatch)
-		 */
+         * @brief Get the GL renderbuffer handle (backend escape hatch)
+         */
         [[nodiscard]] auto get_render_id() const -> uint32_t { return this->renderer_id; }
 
     private:

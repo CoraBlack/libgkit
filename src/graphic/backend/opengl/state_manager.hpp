@@ -18,33 +18,43 @@ namespace gkit::graphic::opengl {
         StateManager() = default;
 
         /**
-		 * @brief Apply a render state snapshot incrementally
-		 *
-		 * Compares against the previously applied state and only applies the
-		 * changed components (depth/blend/cull/stencil).
-		 * @param state Frontend render state snapshot
-		 */
+         * @brief Apply a render state snapshot incrementally
+         *
+         * Compares against the previously applied state and only applies the
+         * changed components (depth/blend/cull/stencil).
+         * @param state Frontend render state snapshot
+         */
         auto apply(const graphic::RenderState& state) -> void;
 
         /**
-		 * @brief Force apply all states (ignore dirty flags)
-		 */
+         * @brief Force apply all states (ignore dirty flags)
+         */
         auto force_apply_all() -> void;
 
     private:
-        /// @brief Apply depth state if changed
+        /**
+         * @brief Apply depth state if changed
+         */
         auto apply_depth_state() -> void;
 
-        /// @brief Apply blend state if changed
+        /**
+         * @brief Apply blend state if changed
+         */
         auto apply_blend_state() -> void;
 
-        /// @brief Apply cull face state if changed
+        /**
+         * @brief Apply cull face state if changed
+         */
         auto apply_cull_face_state() -> void;
 
-        /// @brief Apply stencil state if changed
+        /**
+         * @brief Apply stencil state if changed
+         */
         auto apply_stencil_state() -> void;
 
-        /// @brief Currently applied states (shadow state)
+        /**
+         * @brief Currently applied states (shadow state)
+         */
         graphic::DepthState depth_state; // Current depth state
         graphic::BlendState blend_state; // Current blend state
         graphic::CullFaceState cull_face_state; // Current cull face state

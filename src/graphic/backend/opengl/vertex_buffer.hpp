@@ -29,11 +29,11 @@ namespace gkit::graphic::opengl {
 
     private:
         /**
-		 * @brief Construct a vertex buffer (only Device may create one)
-		 * @param data pointer to vertex data
-		 * @param size size of the data in bytes
-		 * @param dynamic true if updated frequently (GL_DYNAMIC_DRAW)
-		 */
+         * @brief Construct a vertex buffer (only Device may create one)
+         * @param data pointer to vertex data
+         * @param size size of the data in bytes
+         * @param dynamic true if updated frequently (GL_DYNAMIC_DRAW)
+         */
         explicit VertexBuffer(const void* data, uint32_t size, bool dynamic = false);
 
         uint32_t renderer_id = 0; // GL buffer handle

@@ -42,9 +42,9 @@ namespace gkit::graphic::opengl {
 
     private:
         /**
-		 * @brief Construct a shader from a file (only Device may create one)
-		 * @param filepath path to the shader source file
-		 */
+         * @brief Construct a shader from a file (only Device may create one)
+         * @param filepath path to the shader source file
+         */
         explicit Shader(const std::string& filepath);
 
         auto parse_shader(const std::string& file_path) -> graphic::ShaderProgramSource;

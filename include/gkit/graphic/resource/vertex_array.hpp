@@ -23,23 +23,23 @@ namespace gkit::graphic {
         virtual ~VertexArray() = default;
 
         /**
-		 * @brief Bind a vertex buffer with its layout
-		 */
+         * @brief Bind a vertex buffer with its layout
+         */
         virtual auto add_buffer(const VertexBuffer& vb, const VertexBufferLayout& layout) -> void = 0;
 
         /**
-		 * @brief Add an instance buffer (per-instance data)
-		 */
+         * @brief Add an instance buffer (per-instance data)
+         */
         virtual auto add_instance_buffer(const VertexBuffer& vb) -> void = 0;
 
         /**
-		 * @brief Bind to the current backend context
-		 */
+         * @brief Bind to the current backend context
+         */
         virtual auto bind() const -> void = 0;
 
         /**
-		 * @brief Unbind
-		 */
+         * @brief Unbind
+         */
         virtual auto unbind() const -> void = 0;
     };
 

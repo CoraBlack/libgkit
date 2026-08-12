@@ -8,10 +8,10 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief Index data buffer (frontend abstract interface)
-	 *
-	 * Stores draw-order index data for efficient indexed geometry rendering.
-	 */
+     * @brief Index data buffer (frontend abstract interface)
+     *
+     * Stores draw-order index data for efficient indexed geometry rendering.
+     */
     class IndexBuffer : public Buffer {
     public:
         IndexBuffer()                                      = default;
@@ -29,8 +29,8 @@ namespace gkit::graphic {
         ~IndexBuffer() override = default;
 
         /**
-		 * @brief Number of indices
-		 */
+         * @brief Number of indices
+         */
         [[nodiscard]] virtual auto get_count() const -> uint32_t = 0;
     };
 

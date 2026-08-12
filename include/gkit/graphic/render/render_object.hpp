@@ -16,23 +16,23 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief A draw unit defined by CPU data (vertices/indices + material + state)
-	 *
-	 * Users provide vertex/index arrays, a vertex layout, a material, and state.
-	 * The VAO/VBO/IBO creation and binding are hidden: GPU resources are lazily
-	 * created and cached on first draw. Only a RenderCommand built from this
-	 * object is enqueued.
-	 */
+     * @brief A draw unit defined by CPU data (vertices/indices + material + state)
+     *
+     * Users provide vertex/index arrays, a vertex layout, a material, and state.
+     * The VAO/VBO/IBO creation and binding are hidden: GPU resources are lazily
+     * created and cached on first draw. Only a RenderCommand built from this
+     * object is enqueued.
+     */
     class RenderObject {
     public:
         /**
-		 * @brief Construct from CPU geometry data, layout, and material
-		 * @param vertices interleaved vertex data
-		 * @param indices index data
-		 * @param layout vertex attribute layout (position/color/uv...)
-		 * @param material material (shader + textures + uniforms)
-		 * @note vertices/indices are copied into the object (owned CPU data).
-		 */
+         * @brief Construct from CPU geometry data, layout, and material
+         * @param vertices interleaved vertex data
+         * @param indices index data
+         * @param layout vertex attribute layout (position/color/uv...)
+         * @param material material (shader + textures + uniforms)
+         * @note vertices/indices are copied into the object (owned CPU data).
+         */
         RenderObject(const std::vector<float>& vertices,
                      const std::vector<uint32_t>& indices,
                      const VertexBufferLayout& layout,
@@ -50,16 +50,20 @@ namespace gkit::graphic {
         ClearFlags clear_flags  = ClearFlags::All; // What to clear when clear is set
 
         /**
-		 * @brief Lazily upload vertices/indices to GPU and return the vertex array
-		 * @param device backend device used to create GPU buffers
-		 * @return reference to the cached vertex array
-		 */
+         * @brief Lazily upload vertices/indices to GPU and return the vertex array
+         * @param device backend device used to create GPU buffers
+         * @return reference to the cached vertex array
+         */
         auto ensure_uploaded(RenderDevice& device) -> const VertexArray&;
 
-        /// @brief Access the cached index buffer (valid after ensure_uploaded)
+        /**
+         * @brief Access the cached index buffer (valid after ensure_uploaded)
+         */
         [[nodiscard]] auto index_buffer() -> const IndexBuffer&;
 
-        /// @brief Whether GPU resources have been created
+        /**
+         * @brief Whether GPU resources have been created
+         */
         [[nodiscard]] auto is_uploaded() const -> bool { return this->uploaded; }
 
     private:

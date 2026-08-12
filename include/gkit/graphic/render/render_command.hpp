@@ -10,12 +10,12 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief Viewport rectangle for a render command
-	 *
-	 * Each command carries its own viewport so FBO-targeted commands use the
-	 * FBO size while screen commands use the window size (GL viewport is global
-	 * state, so it must be set per command).
-	 */
+     * @brief Viewport rectangle for a render command
+     *
+     * Each command carries its own viewport so FBO-targeted commands use the
+     * FBO size while screen commands use the window size (GL viewport is global
+     * state, so it must be set per command).
+     */
     struct Viewport {
         int x      = 0; // Left coordinate
         int y      = 0; // Bottom coordinate
@@ -26,13 +26,13 @@ namespace gkit::graphic {
     class RenderObject;
 
     /**
-	 * @brief A single draw command referencing a render object
-	 *
-	 * Value type; references (not owns) the RenderObject and its target.
-	 * The command carries a snapshot of the geometry's render state (so two
-	 * commands can share one RenderObject with different states) plus per-draw
-	 * controls (target, viewport, clear, sorting metadata).
-	 */
+     * @brief A single draw command referencing a render object
+     *
+     * Value type; references (not owns) the RenderObject and its target.
+     * The command carries a snapshot of the geometry's render state (so two
+     * commands can share one RenderObject with different states) plus per-draw
+     * controls (target, viewport, clear, sorting metadata).
+     */
     struct RenderCommand {
         const FrameBuffer* target = nullptr; // Render target (nullptr = screen)
         RenderObject* object      = nullptr; // Geometry + material source (lazily uploaded on execute)

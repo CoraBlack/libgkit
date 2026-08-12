@@ -25,40 +25,40 @@ namespace gkit::graphic {
 
     public:
         /**
-		 * @brief Select the render backend and create the device (defaults to OpenGL)
-		 * @param backend backend identifier
-		 */
+         * @brief Select the render backend and create the device (defaults to OpenGL)
+         * @param backend backend identifier
+         */
         auto init(Backend backend = Backend::OpenGL) -> void;
 
         /**
-		 * @brief Clear the current framebuffer
-		 *
-		 * @param flags Bitmask specifying which buffers to clear (e.g., ClearFlags::Color | ClearFlags::Depth)
-		 *              Defaults to ClearFlags::All (clears all buffers)
-		 */
+         * @brief Clear the current framebuffer
+         *
+         * @param flags Bitmask specifying which buffers to clear (e.g., ClearFlags::Color | ClearFlags::Depth)
+         *              Defaults to ClearFlags::All (clears all buffers)
+         */
         auto clear(ClearFlags flags = ClearFlags::All) -> void;
 
         /**
-		 * @brief Enqueue a draw from a reusable render object
-		 * @param obj Render object (geometry + material + state)
-		 * @param target render target (default nullptr = screen)
-		 * @param viewport viewport to use for this draw (default full window)
-		 * @note Enqueued into the render queue; executed on flush(). The object is
-		 *       non-const because its GPU resources are lazily uploaded on execute.
-		 */
+         * @brief Enqueue a draw from a reusable render object
+         * @param obj Render object (geometry + material + state)
+         * @param target render target (default nullptr = screen)
+         * @param viewport viewport to use for this draw (default full window)
+         * @note Enqueued into the render queue; executed on flush(). The object is
+         *       non-const because its GPU resources are lazily uploaded on execute.
+         */
         auto draw(RenderObject& obj,
                   const FrameBuffer* target = nullptr,
                   const Viewport& viewport  = Viewport{0, 0, static_cast<int>(SCR_WIDTH), static_cast<int>(SCR_HEIGHT)})
             -> void;
 
         /**
-		 * @brief Execute the queued render commands (sort + apply state + draw)
-		 */
+         * @brief Execute the queued render commands (sort + apply state + draw)
+         */
         auto flush() -> void;
 
         /**
-		 * @brief Access the current render device
-		 */
+         * @brief Access the current render device
+         */
         [[nodiscard]] auto get_device() -> RenderDevice&;
 
     private:

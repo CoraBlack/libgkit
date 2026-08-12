@@ -150,21 +150,21 @@ namespace gkit::graphic::opengl {
 namespace gkit::graphic::opengl::viewport {
 
     /**
-	 * @brief Set viewport with custom position and size
-	 *
-	 * @param x Left coordinate
-	 * @param y Bottom coordinate
-	 * @param width Viewport width
-	 * @param height Viewport height
-	 */
+     * @brief Set viewport with custom position and size
+     *
+     * @param x Left coordinate
+     * @param y Bottom coordinate
+     * @param width Viewport width
+     * @param height Viewport height
+     */
     auto set_viewport(int x, int y, int width, int height) -> void;
 
     /**
-	 * @brief Set viewport with custom size (origin at 0, 0)
-	 *
-	 * @param width Viewport width
-	 * @param height Viewport height
-	 */
+     * @brief Set viewport with custom size (origin at 0, 0)
+     *
+     * @param width Viewport width
+     * @param height Viewport height
+     */
     auto set_viewport(int width, int height) -> void;
 
 } // namespace gkit::graphic::opengl::viewport

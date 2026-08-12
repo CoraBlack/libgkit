@@ -29,28 +29,28 @@ namespace gkit::graphic {
         virtual ~Buffer() = default;
 
         /**
-		 * @brief Bind to the current backend context
-		 */
+         * @brief Bind to the current backend context
+         */
         virtual auto bind() const -> void = 0;
 
         /**
-		 * @brief Unbind
-		 */
+         * @brief Unbind
+         */
         virtual auto unbind() const -> void = 0;
 
         /**
-		 * @brief Update the whole buffer; uses SubData if size is unchanged, otherwise reallocates
-		 */
+         * @brief Update the whole buffer; uses SubData if size is unchanged, otherwise reallocates
+         */
         virtual auto update_data(const void* data, uint32_t size) -> void = 0;
 
         /**
-		 * @brief Update a byte range starting at offset
-		 */
+         * @brief Update a byte range starting at offset
+         */
         virtual auto update_sub_data(uint32_t offset, const void* data, uint32_t size) -> void = 0;
 
         /**
-		 * @brief Buffer size in bytes
-		 */
+         * @brief Buffer size in bytes
+         */
         [[nodiscard]] auto get_size() const -> uint32_t { return size; }
 
     protected:

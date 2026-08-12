@@ -9,10 +9,12 @@ namespace gkit::graphic {
 
     namespace {
 
-        /// @brief Bind texture slots to the shader sampler units
-        ///
-        /// texture_count is managed by Material::set_texture and never exceeds
-        /// MAX_TEXTURE_SLOTS, so the loop is bounded; null slots are skipped.
+        /**
+         * @brief Bind texture slots to the shader sampler units
+         *
+         * texture_count is managed by Material::set_texture and never exceeds
+         * MAX_TEXTURE_SLOTS, so the loop is bounded; null slots are skipped.
+         */
         auto bind_textures(const Material& material) -> void {
             for (uint32_t i = 0; i < material.get_texture_count(); ++i) {
                 if (const Texture* texture = material.get_texture(i); texture != nullptr) {
@@ -21,7 +23,9 @@ namespace gkit::graphic {
             }
         }
 
-        /// @brief Apply a single uniform value through the shader's set_uniform_*
+        /**
+         * @brief Apply a single uniform value through the shader's set_uniform_*
+         */
         auto apply_uniform_value(Shader& shader, const std::string& name, const UniformValue& value) -> void {
             std::visit(
                 [&](const auto& v) {
@@ -43,7 +47,9 @@ namespace gkit::graphic {
                 value);
         }
 
-        /// @brief Apply material uniforms (simple path)
+        /**
+         * @brief Apply material uniforms (simple path)
+         */
         auto apply_uniforms(const Material& material) -> void {
             if (material.get_shader() == nullptr) {
                 return;
@@ -54,7 +60,9 @@ namespace gkit::graphic {
             // TODO(graphic): upload material.get_ubo() via a UniformBuffer backend once implemented.
         }
 
-        /// @brief Sort comparator: framebuffer commands first, then by state/transparency
+        /**
+         * @brief Sort comparator: framebuffer commands first, then by state/transparency
+         */
         auto sort_key(const RenderCommand& cmd) -> uint64_t {
             // Render targets (FBO) must be drawn before screen commands, otherwise
             // post-processing cannot sample the FBO attachment. So target=null (screen)

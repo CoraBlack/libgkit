@@ -16,8 +16,8 @@
 namespace gkit::graphic {
 
     /**
-	 * @brief Shader source split by stage
-	 */
+     * @brief Shader source split by stage
+     */
     struct ShaderProgramSource {
         std::string vertex_shader; // Vertex shader source code
         std::string fragment_shader; // Fragment shader source code
@@ -35,21 +35,21 @@ namespace gkit::graphic {
         virtual ~Shader() = default;
 
         /**
-		 * @brief Bind the shader program to the current backend context
-		 */
+         * @brief Bind the shader program to the current backend context
+         */
         virtual auto bind() const -> void = 0;
 
         /**
-		 * @brief Unbind
-		 */
+         * @brief Unbind
+         */
         virtual auto unbind() const -> void = 0;
 
         /**
-		 * @brief Whether the shader program compiled and linked successfully
-		 *
-		 * A shader created from a file whose source failed to compile/link is
-		 * invalid; rendering with it is undefined, so the queue rejects it.
-		 */
+         * @brief Whether the shader program compiled and linked successfully
+         *
+         * A shader created from a file whose source failed to compile/link is
+         * invalid; rendering with it is undefined, so the queue rejects it.
+         */
         [[nodiscard]] virtual auto is_valid() const -> bool = 0;
 
         // Uniform setters (implemented by backends, mapped to the concrete API)
