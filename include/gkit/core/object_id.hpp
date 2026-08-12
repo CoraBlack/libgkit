@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gkit/core/object.hpp"
 #include "gkit/core/templates/gen_id.hpp"
 
 #include <functional>
@@ -17,9 +18,19 @@ namespace gkit::core {
 
         explicit ObjectId(const templates::GenId<ObjectIdTag>& base) noexcept : templates::GenId<ObjectIdTag>(base) {}
 
-        // ── Extension point: add ObjectId-specific methods below ──
+        auto deref() const noexcept -> Object*;
+
+        template<IsObject T>
+        auto deref_as() const noexcept -> T*;
     };
+
+    template<IsObject T>
+    auto ObjectId::deref_as() const noexcept -> T* {
+        return dynamic_cast<T*>(this->deref());
+    }
 } // namespace gkit::core
+
+
 
 template<>
 struct std::hash<gkit::core::ObjectId> {
