@@ -1,21 +1,21 @@
 set (GKIT_GRAPHIC "gkit_graphic")
 
 set (GRAPHIC_SRC
-    "./Renderer.cpp"
-    "./RenderObject.cpp"
-    "./RenderQueue.cpp"
+    "./renderer.cpp"
+    "./render_object.cpp"
+    "./render_queue.cpp"
     "./create_device.cpp"
 
     # Backend implementations (one subdirectory per graphics API)
-    "./backend/opengl/Device.cpp"
-    "./backend/opengl/FrameBuffer.cpp"
-    "./backend/opengl/IndexBuffer.cpp"
-    "./backend/opengl/RenderBuffer.cpp"
-    "./backend/opengl/Shader.cpp"
-    "./backend/opengl/StateManager.cpp"
-    "./backend/opengl/Texture.cpp"
-    "./backend/opengl/VertexArray.cpp"
-    "./backend/opengl/VertexBuffer.cpp"
+    "./backend/opengl/device.cpp"
+    "./backend/opengl/frame_buffer.cpp"
+    "./backend/opengl/index_buffer.cpp"
+    "./backend/opengl/render_buffer.cpp"
+    "./backend/opengl/shader.cpp"
+    "./backend/opengl/state_manager.cpp"
+    "./backend/opengl/texture.cpp"
+    "./backend/opengl/vertex_array.cpp"
+    "./backend/opengl/vertex_buffer.cpp"
     "./backend/opengl/config.cpp"
 )
 
