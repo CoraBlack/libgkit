@@ -4,6 +4,7 @@
 #include "gkit/core/templates/gen_id.hpp"
 
 #include <functional>
+#include <type_traits>
 
 namespace gkit::core {
     class ObjectIdTag;
@@ -26,7 +27,11 @@ namespace gkit::core {
 
     template<IsObject T>
     auto ObjectId::deref_as() const noexcept -> T* {
-        return dynamic_cast<T*>(this->deref());
+        if constexpr (std::is_same_v<T, Object>) {
+            return this->deref();
+        } else {
+            return dynamic_cast<T*>(this->deref());
+        }
     }
 } // namespace gkit::core
 
