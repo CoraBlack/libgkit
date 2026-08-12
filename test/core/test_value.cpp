@@ -206,11 +206,11 @@ auto test_safe_object_handling() -> bool {
     auto* empty_try = v_owner.try_as<TestObject>();
     TEST(empty_try == nullptr, "try_as on UniqueObject with no backing ptr → nullptr");
 
-    // Create a real object via ObjectPool for valid pointer tests
+    // Create a real object via UniqueObject for valid pointer tests
     {
-        auto pool_result = gkit::core::ObjectPool::instance().create<TestObject>();
-        TEST(pool_result.has_value(), "ObjectPool::create<TestObject> succeeds");
-        ObjectId valid_id = pool_result->first;
+        auto uobj     = gkit::core::UniqueObject::create<TestObject>();
+        TEST(uobj.get() != nullptr, "UniqueObject::create<TestObject> succeeds");
+        ObjectId valid_id = uobj.get_id();
 
         Value v_ref_obj{valid_id};
         TEST(v_ref_obj.is_object(), "ObjectId with backing object: is_object");
@@ -242,7 +242,7 @@ auto test_safe_object_handling() -> bool {
         TEST(ptr_or_fallback != nullptr, "as_object_or: not null");
         TEST(ptr_or_fallback != &fallback_obj, "as_object_or: returns stored ptr, not fallback");
 
-        gkit::core::ObjectPool::instance().release(valid_id);
+        // release happens automatically when uobj goes out of scope
     }
 
     // try_as on non-object → nullptr
@@ -360,9 +360,9 @@ auto test_template_conversion() -> bool {
 
     // as<T>() with wrong dynamic type → invalid_argument
     {
-        auto pool_result = gkit::core::ObjectPool::instance().create<TestObject>();
-        TEST(pool_result.has_value(), "ObjectPool::create<TestObject> for template conversion test");
-        Value v_obj{pool_result->first};
+        auto uobj = gkit::core::UniqueObject::create<TestObject>();
+        TEST(uobj.get() != nullptr, "UniqueObject::create<TestObject> for template conversion test");
+        Value v_obj{uobj.get_id()};
 
         bool caught_invalid_arg = false;
         try {
@@ -385,7 +385,7 @@ auto test_template_conversion() -> bool {
         const auto* c_wrong = cv2.try_as<OtherObject>();
         TEST(c_wrong == nullptr, "const try_as<OtherObject>() → nullptr");
 
-        gkit::core::ObjectPool::instance().release(pool_result->first);
+        // release happens automatically when uobj goes out of scope
     }
 
     return true;

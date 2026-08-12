@@ -4,6 +4,20 @@
 #include "gkit/core/object_id.hpp"
 
 namespace gkit::core {
+    auto ObjectPool::acquire(Object* obj) noexcept -> std::optional<ObjectId> {
+        if (obj == nullptr) return std::nullopt;
+
+        auto new_id = ObjectId(ObjectId::IdAllocator::instance().new_one());
+        try {
+            this->id_instance_map.emplace(new_id, obj);
+        } catch (...) {
+            // Registration failed; the caller keeps ownership of obj.
+            return std::nullopt;
+        }
+
+        return new_id;
+    }
+
     auto ObjectPool::release(const ObjectId& drop_id) noexcept -> void {
         if (!drop_id.available()) return;
 
@@ -14,6 +28,7 @@ namespace gkit::core {
         this->id_instance_map.erase(target_it);
         delete drop_obj;
 
+        // Recycle the id; the generation is bumped so stale references stay stale.
         auto& id_alloc = ObjectId::IdAllocator::instance();
         id_alloc.drop(drop_id);
     }

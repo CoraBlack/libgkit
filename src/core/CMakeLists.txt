@@ -15,6 +15,7 @@ set (CORE_SRC
     "./reflect/serdebase.cpp"
 
     "./log.cpp"
+    "./object_id.cpp"
     "./object_pool.cpp"
     "./object.cpp"
     "./unique_object.cpp"

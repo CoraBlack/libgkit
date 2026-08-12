@@ -12,9 +12,29 @@ namespace gkit::core {
         return reflect::ClassDB::instance().create(class_name);
     }
 
-    UniqueObject::UniqueObject(UniqueObject&& other) noexcept : id(std::move(other.id)) {
+    auto UniqueObject::from_raw_ptr(Object* obj) noexcept -> UniqueObject {
+        UniqueObject uobj;
+        if (obj == nullptr) return uobj;
+
+        auto& pool  = ObjectPool::instance();
+        auto id_opt = pool.acquire(obj);
+        if (id_opt.has_value()) {
+            uobj.id  = *id_opt;
+            uobj.obj = obj;
+        } else {
+            // Registration failed and the pool never took ownership;
+            // free the raw pointer to avoid a leak.
+            delete obj;
+        }
+
+        return uobj;
+    }
+
+    UniqueObject::UniqueObject(UniqueObject&& other) noexcept : id(other.id) {
         this->obj = other.obj;
         other.obj = nullptr;
+        // Reset the source id so the moved-from handle releases nothing.
+        other.id = ObjectId();
     }
 
     UniqueObject::~UniqueObject() noexcept {
@@ -26,9 +46,10 @@ namespace gkit::core {
         if (this != &other) {
             auto& obj_pool = ObjectPool::instance();
             obj_pool.release(this->id);
-            this->id  = std::move(other.id);
+            this->id  = other.id;
             this->obj = other.obj;
             other.obj = nullptr;
+            other.id  = ObjectId();
         }
         return *this;
     }
