@@ -11,6 +11,7 @@ namespace gkit::core {
         try {
             this->id_instance_map.emplace(new_id, obj);
         } catch (...) {
+            // Registration failed; the caller keeps ownership of obj.
             return std::nullopt;
         }
 
@@ -27,6 +28,7 @@ namespace gkit::core {
         this->id_instance_map.erase(target_it);
         delete drop_obj;
 
+        // Recycle the id; the generation is bumped so stale references stay stale.
         auto& id_alloc = ObjectId::IdAllocator::instance();
         id_alloc.drop(drop_id);
     }

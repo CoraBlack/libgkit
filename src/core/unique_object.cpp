@@ -22,6 +22,8 @@ namespace gkit::core {
             uobj.id  = *id_opt;
             uobj.obj = obj;
         } else {
+            // Registration failed and the pool never took ownership;
+            // free the raw pointer to avoid a leak.
             delete obj;
         }
 
@@ -31,7 +33,8 @@ namespace gkit::core {
     UniqueObject::UniqueObject(UniqueObject&& other) noexcept : id(other.id) {
         this->obj = other.obj;
         other.obj = nullptr;
-        other.id  = ObjectId();
+        // Reset the source id so the moved-from handle releases nothing.
+        other.id = ObjectId();
     }
 
     UniqueObject::~UniqueObject() noexcept {
