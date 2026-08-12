@@ -34,7 +34,7 @@ namespace gkit::core {
     auto UniqueObject::create(Args&&... args) noexcept -> UniqueObject {
         UniqueObject uobj;
         auto& obj_pool = ObjectPool::instance();
-        auto obj_opt   = obj_pool.create<T>(std::forward(args)...);
+        auto obj_opt   = obj_pool.create<T>(std::forward<Args>(args)...);
         if (obj_opt.has_value()) {
             uobj.id  = obj_opt->first;
             uobj.obj = obj_opt->second;

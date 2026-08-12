@@ -12,9 +12,10 @@ namespace gkit::core {
         return reflect::ClassDB::instance().create(class_name);
     }
 
-    UniqueObject::UniqueObject(UniqueObject&& other) noexcept : id(std::move(other.id)) {
+    UniqueObject::UniqueObject(UniqueObject&& other) noexcept : id(other.id) {
         this->obj = other.obj;
         other.obj = nullptr;
+        other.id  = ObjectId();
     }
 
     UniqueObject::~UniqueObject() noexcept {
@@ -26,9 +27,10 @@ namespace gkit::core {
         if (this != &other) {
             auto& obj_pool = ObjectPool::instance();
             obj_pool.release(this->id);
-            this->id  = std::move(other.id);
+            this->id  = other.id;
             this->obj = other.obj;
             other.obj = nullptr;
+            other.id  = ObjectId();
         }
         return *this;
     }
