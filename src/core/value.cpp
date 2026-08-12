@@ -1,5 +1,7 @@
 #include "gkit/core/value.hpp"
 
+#include "core/object_pool.hpp"
+
 namespace gkit::core {
     // =========================================================================
     // Value - Constructors

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "core/object_pool.hpp"
 #include "gkit/core/object.hpp"
 #include "object_id.hpp"
 
@@ -28,18 +27,17 @@ namespace gkit::core {
         template<IsObject T, class... Args>
         static auto create(Args&&... args) noexcept -> UniqueObject;
         static auto create_with_classname(const std::string& class_name) noexcept -> std::optional<UniqueObject>;
+
+    private:
+        static auto from_raw_ptr(Object* obj) noexcept -> UniqueObject;
     };
 
     template<IsObject T, class... Args>
     auto UniqueObject::create(Args&&... args) noexcept -> UniqueObject {
-        UniqueObject uobj;
-        auto& obj_pool = ObjectPool::instance();
-        auto obj_opt   = obj_pool.create<T>(std::forward<Args>(args)...);
-        if (obj_opt.has_value()) {
-            uobj.id  = obj_opt->first;
-            uobj.obj = obj_opt->second;
+        try {
+            return from_raw_ptr(new T(std::forward<Args>(args)...));
+        } catch (...) {
+            return UniqueObject();
         }
-
-        return uobj;
     }
 } // namespace gkit::core

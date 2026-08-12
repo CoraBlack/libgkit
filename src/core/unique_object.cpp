@@ -12,6 +12,22 @@ namespace gkit::core {
         return reflect::ClassDB::instance().create(class_name);
     }
 
+    auto UniqueObject::from_raw_ptr(Object* obj) noexcept -> UniqueObject {
+        UniqueObject uobj;
+        if (obj == nullptr) return uobj;
+
+        auto& pool  = ObjectPool::instance();
+        auto id_opt = pool.acquire(obj);
+        if (id_opt.has_value()) {
+            uobj.id  = *id_opt;
+            uobj.obj = obj;
+        } else {
+            delete obj;
+        }
+
+        return uobj;
+    }
+
     UniqueObject::UniqueObject(UniqueObject&& other) noexcept : id(other.id) {
         this->obj = other.obj;
         other.obj = nullptr;

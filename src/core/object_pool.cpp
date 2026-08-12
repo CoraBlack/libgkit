@@ -4,6 +4,19 @@
 #include "gkit/core/object_id.hpp"
 
 namespace gkit::core {
+    auto ObjectPool::acquire(Object* obj) noexcept -> std::optional<ObjectId> {
+        if (obj == nullptr) return std::nullopt;
+
+        auto new_id = ObjectId(ObjectId::IdAllocator::instance().new_one());
+        try {
+            this->id_instance_map.emplace(new_id, obj);
+        } catch (...) {
+            return std::nullopt;
+        }
+
+        return new_id;
+    }
+
     auto ObjectPool::release(const ObjectId& drop_id) noexcept -> void {
         if (!drop_id.available()) return;
 
