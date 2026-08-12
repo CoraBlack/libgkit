@@ -60,9 +60,9 @@ namespace gkit::scene {
         auto it = this->child_name_map.find(child_name);
         if (it == this->child_name_map.end()) {
             // Name conflict, rename as <name#id64>
-            const auto [id, gen] = obj_id.properties();
-            uint64_t id64        = (static_cast<uint64_t>(id) << 32) & gen;
-            child_name           = child_name + std::format("#{}", id64);
+            const auto id = obj_id.get_id(), gen = obj_id.get_generation();
+            uint64_t id64 = (static_cast<uint64_t>(id) << 32) & gen;
+            child_name    = child_name + std::format("#{}", id64);
         }
 
         this->child_name_map[child_name] = obj_id;
