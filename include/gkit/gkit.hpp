@@ -36,6 +36,6 @@
 #include <gkit/scene/2d/object2d.hpp>
 #include <gkit/scene/2d/renderable2d.hpp>
 #include <gkit/scene/2d/transform2d.hpp>
-#include <gkit/scene/unit.hpp>
+#include <gkit/scene/node.hpp>
 
 namespace gkit {} // namespace gkit
