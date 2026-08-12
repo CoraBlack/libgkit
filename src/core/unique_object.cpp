@@ -5,7 +5,6 @@
 #include "object_pool.hpp"
 
 #include <string>
-#include <utility>
 
 namespace gkit::core {
     auto UniqueObject::create_with_classname(const std::string& class_name) noexcept -> std::optional<UniqueObject> {
