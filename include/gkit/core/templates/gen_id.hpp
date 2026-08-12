@@ -21,11 +21,11 @@ namespace gkit::core::templates {
      */
     template<class T>
     class GenId {
-    public:
-        class IdAllocator;
-
         std::uint32_t id  = 0u;
         std::uint32_t gen = 0u;
+
+    public:
+        class IdAllocator;
 
         constexpr GenId() noexcept = default;
         ~GenId()                   = default;
@@ -40,6 +40,16 @@ namespace gkit::core::templates {
          * @return bool - both id and generation are non-zero.
          */
         [[nodiscard]] constexpr auto available() const noexcept -> bool { return this->id != 0 && this->gen != 0; }
+
+        /**
+         * @brief the raw id number
+         */
+        [[nodiscard]] constexpr auto get_id() const noexcept -> std::uint32_t { return this->id; }
+
+        /**
+         * @brief the generation counter of the id
+         */
+        [[nodiscard]] constexpr auto get_generation() const noexcept -> std::uint32_t { return this->gen; }
 
         friend constexpr auto operator==(const GenId<T>& lhs, const GenId<T>& rhs) noexcept -> bool {
             return lhs.id == rhs.id && lhs.gen == rhs.gen;
@@ -107,6 +117,6 @@ template<class T>
 struct std::hash<gkit::core::templates::GenId<T>> {
     auto operator()(const gkit::core::templates::GenId<T>& obj_id) const -> std::size_t {
         auto uint_hash = std::hash<std::uint32_t>();
-        return uint_hash(obj_id.id) ^ (uint_hash(obj_id.gen) << 1);
+        return uint_hash(obj_id.get_id()) ^ (uint_hash(obj_id.get_generation()) << 1);
     }
 };
