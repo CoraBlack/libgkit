@@ -13,8 +13,8 @@
 #include <gkit/core/value.hpp>
 
 /** graphic **/
-#include <gkit/graphic/render/Renderer.hpp>
-#include <gkit/graphic/resource/Shader.hpp>
+#include <gkit/graphic/render/renderer.hpp>
+#include <gkit/graphic/resource/shader.hpp>
 
 /** math **/
 #include <gkit/math/color.hpp>
