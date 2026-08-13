@@ -36,6 +36,16 @@ namespace gkit::scene {
         // pool-owned via UniqueObject and are not moved in practice.
     }
 
+    [[nodiscard]] auto Node::operator=(Node&& other) noexcept -> Node& {
+        if (this != &other) {
+            this->name           = std::move(other.name);
+            this->parent         = other.parent;
+            this->children       = std::move(other.children);
+            this->child_name_map = std::move(other.child_name_map);
+        }
+        return *this;
+    }
+
     auto Node::get_parent() const noexcept -> core::ObjectId {
         return this->parent;
     }
@@ -138,25 +148,34 @@ namespace gkit::scene {
      * NodeIterator
      */
     template<bool IsConst>
-    Node::NodeIterator<IsConst>::NodeIterator(const Node* owner, size_t pos) : m_owner(owner), m_pos(pos) {}
+    Node::NodeIterator<IsConst>::NodeIterator(pointer owner, size_t pos) : m_owner(owner), m_pos(pos) {
+        this->refresh();
+    }
+
+    template<bool IsConst>
+    auto Node::NodeIterator<IsConst>::refresh() -> void {
+        if (this->m_owner == nullptr) {
+            this->m_current = nullptr;
+            return;
+        }
+        auto child_id   = this->m_owner->get_child(static_cast<uint32_t>(this->m_pos));
+        this->m_current = dynamic_cast<Node*>(core::ObjectPool::instance().deref_from(child_id));
+    }
 
     template<bool IsConst>
     auto Node::NodeIterator<IsConst>::operator*() const -> reference {
-        auto& obj_pool = core::ObjectPool::instance();
-        auto child_id  = const_cast<Node*>(m_owner)->get_child(static_cast<uint32_t>(m_pos));
-        return *const_cast<Node*>(dynamic_cast<Node*>(obj_pool.deref_from(child_id)));
+        return *this->m_current;
     }
 
     template<bool IsConst>
     auto Node::NodeIterator<IsConst>::operator->() const -> pointer {
-        auto& obj_pool = core::ObjectPool::instance();
-        auto child_id  = const_cast<Node*>(m_owner)->get_child(static_cast<uint32_t>(m_pos));
-        return const_cast<Node*>(dynamic_cast<Node*>(obj_pool.deref_from(child_id)));
+        return this->m_current;
     }
 
     template<bool IsConst>
     auto Node::NodeIterator<IsConst>::operator++() -> NodeIterator& {
-        ++m_pos;
+        ++this->m_pos;
+        this->refresh();
         return *this;
     }
 
@@ -169,7 +188,8 @@ namespace gkit::scene {
 
     template<bool IsConst>
     auto Node::NodeIterator<IsConst>::operator--() -> NodeIterator& {
-        --m_pos;
+        --this->m_pos;
+        this->refresh();
         return *this;
     }
 
@@ -182,7 +202,7 @@ namespace gkit::scene {
 
     template<bool IsConst>
     auto Node::NodeIterator<IsConst>::operator==(const NodeIterator& other) const -> bool {
-        return m_owner == other.m_owner && m_pos == other.m_pos;
+        return this->m_owner == other.m_owner && this->m_pos == other.m_pos;
     }
 
     template class Node::NodeIterator<true>;
@@ -192,13 +212,15 @@ namespace gkit::scene {
         return iterator(this, 0);
     }
     auto Node::end() -> iterator {
-        return iterator(this, children.size());
+        std::lock_guard children_lock(this->children_mutex);
+        return iterator(this, this->children.size());
     }
     auto Node::begin() const -> const_iterator {
         return const_iterator(this, 0);
     }
     auto Node::end() const -> const_iterator {
-        return const_iterator(this, children.size());
+        std::lock_guard children_lock(this->children_mutex);
+        return const_iterator(this, this->children.size());
     }
     auto Node::cbegin() const -> const_iterator {
         return begin();

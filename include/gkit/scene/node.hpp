@@ -64,12 +64,15 @@ namespace gkit::scene {
             // NOLINTEND(readability-identifier-naming)
 
         private:
-            const Node* m_owner;
+            pointer m_owner;
             size_t m_pos;
+            pointer m_current = nullptr;
+
+            auto refresh() -> void;
 
         public:
             NodeIterator() = default;
-            NodeIterator(const Node* owner, size_t pos);
+            NodeIterator(pointer owner, size_t pos);
             auto operator*() const -> reference;
             auto operator->() const -> pointer;
             auto operator++() -> NodeIterator&;
