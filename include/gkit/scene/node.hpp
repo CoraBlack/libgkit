@@ -26,6 +26,9 @@ namespace gkit::scene {
         std::unordered_map<std::string_view, core::ObjectId> child_name_map;
 
     public:
+        static auto regist_method() -> void;
+
+    public:
         Node() noexcept = default;
         explicit Node(const std::string& name) : name(name) {};
         Node(const Node&)           = delete;

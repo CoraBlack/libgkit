@@ -2,6 +2,7 @@
 
 #include "core/object_pool.hpp"
 #include "gkit/core/object_id.hpp"
+#include "gkit/core/reflect/registry.hpp"
 #include "gkit/core/unique_object.hpp"
 
 #include <cstdint>
@@ -14,10 +15,25 @@ namespace gkit::scene {
     /**
      * Node
      */
+    static auto regist_holder = core::reflect::RegistHolder([]() -> void {
+        Node::regist_method();
+    });
+
+    auto Node::regist_method() -> void {
+        auto& db = core::reflect::ClassDB::instance();
+        db.regist<Node>("Node").add_field("Node", "name", &Node::name);
+        // "parent" is an ObjectId, which the reflection system cannot represent as a field
+        // type yet (see the IsValueType concept in core/value.hpp); register it once supported.
+    }
+
     Node::Node(Node&& other) noexcept {
         this->name           = std::move(other.name);
+        this->parent         = other.parent; // Not sure, because relationship always changes when the node is moved
         this->children       = std::move(other.children);
         this->child_name_map = std::move(other.child_name_map);
+        // Note: children's `parent` still point back to `other`; this cannot be fixed here
+        // because `this` is not registered yet (get_id() returns an invalid id). Nodes are
+        // pool-owned via UniqueObject and are not moved in practice.
     }
 
     auto Node::get_parent() const noexcept -> core::ObjectId {
@@ -53,15 +69,16 @@ namespace gkit::scene {
         if (node_ptr == nullptr) {
             throw std::invalid_argument("child is not Node type");
         }
+        node_ptr->parent = this->get_id();
 
         auto& child_name = node_ptr->name;
 
         std::lock_guard children_lock(this->children_mutex);
         auto it = this->child_name_map.find(child_name);
-        if (it == this->child_name_map.end()) {
+        if (it != this->child_name_map.end()) {
             // Name conflict, rename as <name#id64>
             const auto id = obj_id.get_id(), gen = obj_id.get_generation();
-            uint64_t id64 = (static_cast<uint64_t>(id) << 32) & gen;
+            uint64_t id64 = (static_cast<uint64_t>(id) << 32) | gen;
             child_name    = child_name + std::format("#{}", id64);
         }
 
@@ -84,6 +101,7 @@ namespace gkit::scene {
             // noreachable
             throw std::runtime_error("Error type cast");
         }
+        node_ptr->parent = core::ObjectId();
 
         const auto& child_name = node_ptr->name;
         this->child_name_map.erase(child_name);
@@ -99,7 +117,12 @@ namespace gkit::scene {
             throw std::invalid_argument(std::format("Node named {} is not exist", name));
         }
 
-        auto obj_id = obj_it->second;
+        auto obj_id    = obj_it->second;
+        auto* obj_ptr  = core::ObjectPool::instance().deref_from(obj_id);
+        auto* node_ptr = dynamic_cast<Node*>(obj_ptr);
+        if (node_ptr != nullptr) {
+            node_ptr->parent = core::ObjectId();
+        }
         for (auto it = this->children.begin(); it != this->children.end(); ++it) {
             if (it->get_id() == obj_id) {
                 this->children.erase(it);
