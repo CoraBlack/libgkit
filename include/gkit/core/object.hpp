@@ -5,8 +5,12 @@
 #include <string>
 #include <utility>
 
+#include "gkit/core/templates/gen_id.hpp"
+
 namespace gkit::core {
     class Object;
+    class ObjectId;
+    class ObjectIdTag;
     class ObjectPool;
 
     template<class T>
@@ -24,9 +28,14 @@ namespace gkit::core {
         friend class gkit::core::reflect::detail::ObjectNode;
         friend ObjectPool;
 
+    private:
+        templates::GenId<ObjectIdTag> self_id{};
+
     public:
         Object()          = default;
         virtual ~Object() = default;
+
+        [[nodiscard]] auto get_id() const noexcept -> ObjectId;
 
         /**
          * @brief Create a instance of the type which is based of class Object,

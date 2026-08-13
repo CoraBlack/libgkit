@@ -1,5 +1,6 @@
 #include "gkit/core/object.hpp"
 
+#include "gkit/core/object_id.hpp"
 #include "gkit/core/reflect/registry.hpp"
 
 namespace gkit::core {
@@ -8,6 +9,10 @@ namespace gkit::core {
         classdb.regist<Object>("Object");
         return;
     });
+
+    auto Object::get_id() const noexcept -> ObjectId {
+        return ObjectId(this->self_id);
+    }
 
     auto Object::class_name() const -> std::string {
         auto* raw_name  = typeid(*this).name();

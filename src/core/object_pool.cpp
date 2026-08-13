@@ -8,10 +8,12 @@ namespace gkit::core {
         if (obj == nullptr) return std::nullopt;
 
         auto new_id = ObjectId(ObjectId::IdAllocator::instance().new_one());
+        obj->self_id = new_id;
         try {
             this->id_instance_map.emplace(new_id, obj);
         } catch (...) {
             // Registration failed; the caller keeps ownership of obj.
+            obj->self_id = {};
             return std::nullopt;
         }
 
