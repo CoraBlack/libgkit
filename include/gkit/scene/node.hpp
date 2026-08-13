@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <mutex>
 #include <string>
-#include <string_view>
 #include <unordered_map>
 #include <vector>
 
@@ -23,7 +22,8 @@ namespace gkit::scene {
         core::ObjectId parent{}; // Must be node type
         mutable std::mutex children_mutex{};
         std::vector<core::UniqueObject> children; // Must be node type
-        std::unordered_map<std::string_view, core::ObjectId> child_name_map;
+        // It will be messy after name of child node changes
+        std::unordered_map<std::string, core::ObjectId> child_name_map;
 
     public:
         static auto regist_method() -> void;
